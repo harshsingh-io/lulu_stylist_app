@@ -108,6 +108,11 @@ final GoRouter router = GoRouter(
           const SettingScreen(),
     ),
     GoRoute(
+      name: profileCompletionRoute,
+      path: '/profile-completion',
+      builder: (context, state) => ProfileCompletionScreen(),
+    ),
+    GoRoute(
       name: '/userProfile',
       path: userProfileRoute,
       builder: (BuildContext context, GoRouterState state) =>

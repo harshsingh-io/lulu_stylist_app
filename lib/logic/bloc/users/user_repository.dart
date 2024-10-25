@@ -14,46 +14,47 @@ class UserRepository {
   const UserRepository(this._api);
   final UserApi _api;
 
-  Future<UserModel> updateUserProfile(
+  Future<UserUpdateRequestModel?> updateUserProfile(
     UserUpdateRequestModel updateUserModelRequest,
-    File? imageFile,
   ) async {
-    UserUpdateRequestModel? userUpdateRequestModelWithPath;
-    if (imageFile != null) {
-      final uploadPhotoModel = await _api.getPhotoUploadUrl();
-      final uploadPath = uploadPhotoModel.path; // This is the current path
-      print('path is $uploadPath');
+    //TODO UPDATE USER IMAGE TO BACKEND
+    // UserUpdateRequestModel? userUpdateRequestModelWithPath;
+    // if (imageFile != null) {
 
-      final headers = {'Content-Type': 'image/jpg'};
-      final List<int> imageBytes = await imageFile.readAsBytes();
+    //   final uploadPhotoModel = await _api.getPhotoUploadUrl();
+    //   final uploadPath = uploadPhotoModel.path; // This is the current path
+    //   print('path is $uploadPath');
 
-      final dio = Dio();
-      final responsePhotoUpload = await dio.request(
-        uploadPhotoModel.postUrl,
-        options: Options(
-          method: 'POST',
-          headers: headers,
-        ),
-        data: imageBytes,
-      );
+    //   final headers = {'Content-Type': 'image/jpg'};
+    //   final List<int> imageBytes = await imageFile.readAsBytes();
 
-      if (responsePhotoUpload.statusCode == 200) {
-        // Handle successful photo upload
-        userUpdateRequestModelWithPath =
-            updateUserModelRequest.copyWith(path: uploadPath);
-        log.d('photo Uploaded');
-      } else {
-        // Handle unsuccessful photo upload
-        log.e('There is an error in photoUpload');
-      }
-    }
+    //   final dio = Dio();
+    //   final responsePhotoUpload = await dio.request(
+    //     uploadPhotoModel.postUrl,
+    //     options: Options(
+    //       method: 'POST',
+    //       headers: headers,
+    //     ),
+    //     data: imageBytes,
+    //   );
 
-    if (userUpdateRequestModelWithPath != null) {
-      final response = await _api.updateUser(userUpdateRequestModelWithPath);
-      return response;
-    } else {
+    //   if (responsePhotoUpload.statusCode == 200) {
+    //     // Handle successful photo upload
+    //     userUpdateRequestModelWithPath =
+    //         updateUserModelRequest.copyWith(path: uploadPath);
+    //     log.d('photo Uploaded');
+    //   } else {
+    //     // Handle unsuccessful photo upload
+    //     log.e('There is an error in photoUpload');
+    //   }
+    // }
+
+    try {
       final response = await _api.updateUser(updateUserModelRequest);
       return response;
+    } catch (e) {
+      log.e('An error occurred while updating user: $e');
+      return null; // Return null if an error occurs
     }
   }
 }

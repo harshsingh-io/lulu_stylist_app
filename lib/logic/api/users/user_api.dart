@@ -61,8 +61,7 @@ abstract class UserApi {
   Future<UploadPhotoModel> getPhotoUploadUrl();
 
   @POST('/users')
-  Future<UserModel> updateUser(
+  Future<UserUpdateRequestModel> updateUser(
     @Body() UserUpdateRequestModel updateUserRequestModel,
   );
-
 }

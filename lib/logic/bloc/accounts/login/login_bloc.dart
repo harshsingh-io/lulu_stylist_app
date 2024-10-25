@@ -28,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<_VerifyLogin>(_verifyLogin);
   }
 
-  final _authenticationBloc = AuthenticationBloc();
+  // final _authenticationBloc = AuthenticationBloc();
   final _userApi = UserApi(DioFactory().create());
   final String _logTag = 'LoginBloc';
 
@@ -83,12 +83,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           ),
         );
 
-        _authenticationBloc.add(
-          AuthenticationEvent.newUserLogin(
-            authToken: loggedInUser.accessToken,
-            user: loggedInUser.user,
-          ),
-        );
+        // _authenticationBloc.add(
+        //   AuthenticationEvent.newUserLogin(
+        //     authToken: loggedInUser.accessToken,
+        //     user: loggedInUser.user,
+        //   ),
+        // );
 
         await setDeviceForNotification();
       } else {

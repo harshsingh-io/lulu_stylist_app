@@ -922,8 +922,6 @@ abstract class _$$ProfileUpdateSuccessImplCopyWith<$Res> {
       __$$ProfileUpdateSuccessImplCopyWithImpl<$Res>;
   @useResult
   $Res call({UserModel updatedProfile});
-
-  $UserModelCopyWith<$Res> get updatedProfile;
 }
 
 /// @nodoc
@@ -939,24 +937,14 @@ class __$$ProfileUpdateSuccessImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? updatedProfile = null,
+    Object? updatedProfile = freezed,
   }) {
     return _then(_$ProfileUpdateSuccessImpl(
-      null == updatedProfile
+      freezed == updatedProfile
           ? _value.updatedProfile
           : updatedProfile // ignore: cast_nullable_to_non_nullable
               as UserModel,
     ));
-  }
-
-  /// Create a copy of UserState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserModelCopyWith<$Res> get updatedProfile {
-    return $UserModelCopyWith<$Res>(_value.updatedProfile, (value) {
-      return _then(_value.copyWith(updatedProfile: value));
-    });
   }
 }
 
@@ -978,12 +966,13 @@ class _$ProfileUpdateSuccessImpl implements _ProfileUpdateSuccess {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProfileUpdateSuccessImpl &&
-            (identical(other.updatedProfile, updatedProfile) ||
-                other.updatedProfile == updatedProfile));
+            const DeepCollectionEquality()
+                .equals(other.updatedProfile, updatedProfile));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, updatedProfile);
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(updatedProfile));
 
   /// Create a copy of UserState
   /// with the given fields replaced by the non-null parameter values.

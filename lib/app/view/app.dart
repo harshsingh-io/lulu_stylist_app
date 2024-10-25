@@ -4,10 +4,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/l10n/l10n.dart';
+import 'package:lulu_stylist_app/logic/api/users/user_api.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/login/login_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/mqtt/mqtt_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/networks/network_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/users/user_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/users/user_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_app_bar_theme.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
@@ -60,11 +64,12 @@ class _AppState extends State<App> {
           return MultiBlocProvider(
             providers: [
               BlocProvider<AuthenticationBloc>(
-                create: (context) => AuthenticationBloc()
+                create: (context) => AuthenticationBloc(AuthRepository())
                   ..add(AuthenticationEvent.checkExisting()),
               ),
-              BlocProvider<LoginBloc>(
-                create: (context) => LoginBloc(),
+              BlocProvider<UserBloc>(
+                create: (context) => UserBloc(
+                    UserRepository(), context.read<AuthenticationBloc>()),
               ),
               BlocProvider<MqttBloc>(
                 create: (context) => MqttBloc(),
@@ -95,49 +100,35 @@ class _AppState extends State<App> {
               },
               child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
                 listener: (context, state) {
-                  state.maybeWhen(
+                  state.when(
                     initial: () {
-                      // Optionally show a splash screen
+                      // Optionally show a splash screen or loading indicator
                     },
-                    checking: () {
-                      // Optionally show a loading indicator
+                    loading: () {
+                      // Show a loading indicator
                     },
-                    unAuthenticated: () {
-                      // Navigate to the onboarding screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
-                    },
-                    userNeedsProfileDetails: (userModel, authToken) {
-                      // Navigate to the profile update screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed('profile_update',
-                          extra: userModel);
-                    },
-                    userLoggedIn: (user, authToken) {
+                    authenticated: (user, userData) {
                       // Navigate to the home screen
                       GoRouter.of(
                         App.globalNavigatorKey.currentContext!,
                       ).pushReplacementNamed(homeRoute, extra: user);
                     },
-                    userAuthenticated: (user, authToken) {
-                      // User is authenticated but not logged in yet (if applicable)
-                      // For simplicity, navigate to home
+                    unauthenticated: () {
+                      // Navigate to the login screen
                       GoRouter.of(
                         App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(homeRoute, extra: user);
+                      ).pushReplacementNamed(loginRoute);
                     },
-                    loggedOut: () {
-                      // Navigate back to the onboarding screen
+                    needsProfileCompletion: (user) {
                       GoRouter.of(
                         App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
+                      ).pushReplacementNamed(profileUpdate, extra: user);
                     },
-                    orElse: () {
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
+                    error: (message) {
+                      // Handle error state, maybe show an error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(message)),
+                      );
                     },
                   );
                 },
