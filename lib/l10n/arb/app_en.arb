@@ -1,0 +1,398 @@
+{
+    "@@locale": "en",
+    
+    "home": "Home",
+    "experts": "Experts",
+    "live": "Live",
+    "welcomeRegisterToGetStarted": "Welcome, register to get started!",
+    "enterYourMobileNumber": "Enter your mobile number",
+    "loginAsUser": "Login",
+    "signUpAsUser": "Sign Up",
+    "getOtp": "Get OTP",
+    "enterValidOTP": "Enter a valid 6-digit OTP",
+    "somethingWentWrongOTP": "Something Went Wrong. Wrong OTP/Internet Issue",      
+    "wrongOTPPleaseEnterCorrectOTP": "Wrong OTP, Please Enter Correct OTP",           
+    "pleaseEnterValidNo": "Please enter a 10-digit mobile number",
+    "otpVerification": "OTP Verification",
+    "enterVerificaitonCode": "Enter verification code. We just sent to your number",
+    "edit": "Edit",
+    "scheduleAvailability": "Schedule \n Availability",
+    "blockBusyTime": "Block \n Busy Time",
+    "didnotRecieveOtp": "Didn't receive code?",
+    "processing_video_message": "Video is processing",
+    "viewProfile": "View Profile",
+    "muteNotifications": "Mute Notification",
+    "blockUser": "Block User",
+    "resend": "Resend",
+    "getStarted": "Get Started",
+    "settings": "Settings",
+    "phoneNo": "Phone No.",
+    "login": "Login",
+    "hindi": "Hindi",
+    "english": "English",
+    "editInfo": "Edit your Information",
+    "language": "Language",
+    "notification": "Notification",
+    "dailyReminders": "Daily Reminders",
+    "eventUpdates": "Event Updates",
+    "expertAvailableForCall": "Expert Available for Call",
+    "liveNotification": "Live Notification",
+    "chatNotification": "Chat Notification",
+    "aboutUs": "About Us",
+    "faqHelp": "FAQ/Help",
+    "contactUs": "Contact Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms and Conditions",
+    "logout": "LogOut",
+    "chats": "Chats",
+    "search": "Search",
+    "addYourFamilyAndFriends": "Add your family & friends!",
+    "addThemToGain": "Add them to gain deeper insights into their lives!!",
+    "name": "Name",
+    "dob": "Date Of Birth",
+    "tob": "Time Of Birth",
+    "selectADate": "Select a date",
+    "enterPOB": "Enter Place of Birth",
+    "createProfile": "Create Profile",
+    "feed": "Feed",
+    "seeForEveryone": "See for Everyone",
+    "forYou": "For You",
+    "readMore": "Read more",
+    "readLess": "Read less",
+    "deleteAstroProfileMessage": "Deleting the astroprofile once, you can't revert this change back. Are you sure you want to delete the profile?",
+    "deleteAstroProfile": "Delete {name}?",
+    "@deleteAstroProfile": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "helloName": "Hello {name}!",
+    "@helloName": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "typeAMessage" : "Type a Message",
+    "availableForCall" : "Available for \n Call.",
+    "availableForVideoCall" : "Available for \n VideoCall.",
+    "dashBoard" : "Dashboard",
+    "earnings" : "Earnings",
+    "total" : "Total",
+    "monday" : "Mon",
+    "tuesday" : "Tue",
+    "wednesday" : "Wed",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "you": "You",
+    "titleHere": "Title Here",
+    "subtitleHere": "Sub title Here",
+    "seeAllComments": "See all {count} comments",
+    "@seeAllComments": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "signUpForm": "Sign up form!",
+    "enterYourName": "Enter your name",
+    "title": "Title",
+    "image":"image",
+    "enterYourTitle": "Enter Your Title",
+    "titleThreeValidCharacter": "Title should be greater than 3 characters",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "expertise": "Expertise",
+    "yearsOfExperience": "Experience(In Years)",
+    "years": "Years",
+    "aboutYou": "About You",
+    "writeSomethingAboutYou": "Write something about You",
+    "pricing": "Pricing",
+    "videoCall": "Video Call",
+    "voiceCall": "Voice Call",
+    "submit": "Submit",
+    "perMin": "per min", 
+    "followers": "Followers",
+    "posts": "Posts",
+    "rating": "Rating",
+    "follow": "Follow",
+    "unFollow": "Unfollow",
+    "expCountYears": "Exp. {count}+ years",
+    "@expCountYears": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "chat": "Chat",
+    "call": "Call",
+    "videoCall": "Video Call",
+    "reviews": "Reviews",
+    "callRate": "₹{count}/min",
+    "@callRate": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "noMoreItems": "No more {items}. Click here to back to top.",
+    "@noMoreItems": {
+        "placeholders": {
+            "items": {
+                "type": "String"
+            }
+        }
+    },
+    "couldNotLoadItems": "Could not load {items}. Try again.",
+    "@noMoreItems": {
+        "placeholders": {
+            "items": {
+                "type": "String"
+            }
+        }
+    },
+    "about": "About",
+    "noExpertFound": "No Expert Found!",
+    "goToHomePage": "Go back to Home",
+    "sharingIntentMessage": "'Check out this {name} who has experience is astrology more than {experience}. Check it out the link given below : {baseUrl}/expert/{id}'",
+    "@sharingIntentMessage": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "experience": {
+                "type": "String"
+            },
+            "baseUrl": {
+                "type": "String"
+            },
+            "id": {
+                "type": "String"
+            }
+        }
+    },
+    "pageNotFound": "Page not found, redirected to Home.",
+    "goLive":"Go Live",
+    "theLive":" the live",
+    "ended":"ended",
+    "has":"has ",
+    "fieldEmpty":"Field Empty",
+    "fieldErrorName":"'Please Enter {name}'",
+    "@fieldErrorName": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "fieldErrorPlace":"'Please provide {placeOfBirth}'",
+    "@fieldErrorPlace": {
+        "placeholders": {
+            "placeOfBirth": {
+                "type": "String"
+            }
+        }
+    },
+    "fieldErrorImage":"'Please Enter {image}'",
+    "@fieldErrorImage": {
+        "placeholders": {
+            "image": {
+                "type": "String"
+            }
+        }
+    },
+    "fieldErrorTime":"'Please Enter {time}'",
+    "@fieldErrorTime": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "fieldErrorDate":"'Please Enter {date}'",
+    "@fieldErrorDate": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "swipeUpToSeeMore":"Swipe up to see more",
+    "noLiveStreamAvailable":"No Live Stream Available",
+    "heyThere": "Hey There!",
+    "addYourAstroProfile": "Add your Astro Profile to gain deeper insights of your life!",
+   
+  "bookingPageTitle": "Booking Page",
+  "videoReadingTitle": "Video Reading",
+  "videoReadingSubtitle": "Delivered in 24 hrs",
+  "rushVideoReadingTitle": "Rush Video Reading",
+  "rushVideoReadingSubtitle": "Recorded and delivered in\n60 minutes",
+  "videoCallTitle": "Video Call",
+  "videoCallSubtitle": "Live video recording now",
+  "liveChatTitle": "Live Chat",
+  "liveChatSubtitle": "Delivered in 24 hrs",
+  "liveVoiceCallTitle": "Live Voice Call",
+  "liveVoiceCallSubtitle": "Live Instant Messaging",
+  "orderPrice": "Order ${price}",
+  "pricePerMinute": "${price}/min",
+    "dailyUpdatesTitle": "Daily Updates",
+  "monday": "Mon",
+  "tuesday": "Tue",
+  "wednesday": "Wed",
+  "thursday": "Thu",
+  "friday": "Fri",
+  "saturday": "Sat",
+  "sunday": "Sun",
+  "zodiacName": "Zodiac Name",
+  "updateDescription": "You may feel strained by your responsibilities between home and the office. Practice self-care through spiritual practices later tonight when Neptune stirs.",
+  "loveLifeQuestion": "Are you worried about your love life?",
+  "bookExpert": "Book an expert today",
+  "seeAll": "See All",
+  "cardOfTheDay": "Card of the Day",
+  "foolCardDescription": "The Fool marks the beginning of a journey. He is ready, willing, and excited for a new adventure. Whether this is his first time out in the world or just the latest of a series of adventures, he greets each new experience with a childlike sense of wonder and enthusiasm. There may be obstacles along the way, but you know what? He's got this.",
+  "todaysMatches": "Today’s Matches",
+  "loveMatch": "Love",
+  "friendshipMatch": "Friendship",
+  "careerMatch": "Career",
+  "dearZodiac": "Dear {zodiacName},",
+  "dailyUpdates": "Daily Updates",
+  "weeklyUpdates": "Weekly Updates",
+  "live": "LIVE",
+  "audioBio": "Audio Bio",
+  "readings": "Readings",
+  "yearJoined": "Year Joined",
+    "expertName": "Expert Name",
+  "aboutMyServices": "About my Services",
+  "aboutMyServicesContent": "I am a 3rd generation psychic advisor. My approach to readings is mostly divination with the use of tarot cards, I also am a reiki master and can balance out your chakras to ground you.",
+  "aboutMe": "About Me",
+  "aboutMeContent": "I am an empath and was born with many spiritual gifts As a spirit life led healer and teacher, I use my gifts to guide others. I channel from the spirit world and the 5D and can get in touch with loved ones that are near or far that have passed away.",
+  "book": "Book",
+    "reviews": "Reviews",
+  "allReviews": "All Reviews",
+  "showRating": "Show Rating",
+  "showRatingContent": "Show Rating Content",
+  "greeting": "{name},\nGood morning!",
+  "luckyColor": "Lucky Color {color}",
+  "luckyNumber": "Lucky number {number}",
+  "todayDate": "Today, {date}",
+  "health": "Health",
+  "healthDescription": "On the health front, changes can spark initial distress, but they bring an opportunity to improve your lifestyle. Whether it's a new workout regime, a fresh diet, or simply a shift in your sleep cycle, approach these changes with positivity.",
+  "readMore": "Read more",
+  "readLess": "Read less",
+  "seeAll": "See all",
+  "psychicExperts": "Psychic Experts",
+  "viewAll": "View all",
+  "live": "LIVE",
+  "love": "Love",
+  "yearsExperience": "{years} yrs",
+  "pricePerMinute": "{price}/mn",
+    "otpVerification": "OTP \nVerification",
+  "enterVerificationCode": "Enter the verification code sent to ",
+  "edit": "Edit",
+  "didNotReceiveOtp": "Didn't receive the OTP?",
+  "resend": "Resend",
+  "getStarted": "Get Started",
+  "somethingWentWrongOTP": "Something went wrong. Please try again.",
+  "enterValidOTP": "Please enter a valid OTP.",
+
+  "friends": "Friends",
+
+  "otp_verification": "Otp Verification",
+  "enter_verification_code": "Enter your verification code we just sent to your number +91*****235",
+  "did_not_receive_code": "Did not receive code?",
+  "resend": " Resend",
+  "get_started": "Get Started",
+  "back_button_tapped": "Back button tapped",
+  "button_tapped": "Button tapped",
+    "video_post": "Video Post",
+  "share": "Share",
+  "no_video_selected": "You haven't selected any video.",
+  "pick_video": "Pick Video from Camera",
+  "write_caption": "Write a caption...",
+  "add_location": "Add location",
+  "tag_people": "Tag people",
+  "add_music": "Add music",
+  "advanced_settings": "Advanced settings",
+  "uploading_message": "Please wait. Your Post is being uploaded.",
+  "cancel": "Cancel",
+  "post_uploaded": "Post Uploaded",
+  "post_uploaded_message": "Your Post has been uploaded successfully!",
+  "upload_cancelled": "Cancelled Uploading!",
+  "upload_cancelled_message": "Your Post has been cancelled successfully!",
+  "no_caption": "It seems you haven't entered any caption. Please enter Caption.",
+  "no_video": "It seems you haven't selected Video. Please select Video.",
+  "home": "Home",
+  "chats": "Chats",
+  "profile": "Profile",
+  "settings": "Settings",
+  "post_photo": "Post Photo",
+  "post_video": "Post Video",
+  "post_audio": "Post Audio",
+  "thankYouSubmitting": "Thank you for submitting! We will ",
+  "reviewYourApplication": "review your application",
+  "getBackToYou": " and get back to you!",
+  "logout": "Logout",
+   "signupForm": "Signup Form",
+  "profileUpdated": "Profile updated",
+  "noVideoSelected": "No video selected",
+  "nameRequired": "Name is required",
+  "titleRequired": "Title is required",
+  "genderRequired": "Gender selection is required",
+  "yearsOfExperienceRequired": "Years of Experience is required",
+  "photosRequired": "Both profile and cover photos are required",
+  "expertiseRequired": "Expertise is required",
+  "aboutYouRequired": "About You is required",
+  "voiceCallPricingRequired": "Voice Call Pricing is required",
+  "videoCallPricingRequired": "Video Call Pricing is required",
+  "name": "Name",
+  "title": "Title",
+  "chooseExpertise": "Choose Expertise",
+  "yearsOfExperience": "Years of Experience",
+  "aboutYou": "About You",
+  "voiceCallRate": "Voice Call Rate (per minute)",
+  "videoCallRate": "Video Call Rate (per minute)",
+  "videoBio": "Video Bio",
+  "submit": "Submit",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "phoneNumber": "Phone Number",
+  "noPhoneNumber": "No Phone Number",
+  "feedPost": "Feed Post",
+  "storyPost": "Story Post",
+    "voiceCallRatePerMinute": "Voice Call Rate (per minute)",
+  "videoCallRatePerMinute": "Video Call Rate (per minute)",
+"addFamilyAndFriends":"Add Family & Friends",
+ "friendsFeed":"Friends Feed",
+ "connect":"Connect",
+"addFamilyorFriends":"Add Family \n or Friend",
+"connectContacts":"Connect \n  Contacts",
+ "bestFriends":"BestFriends",
+"checkSynastry":"Check\nSynastry",
+ "discoverInsights":"Discover new insights of those you know",
+ "findFriends":"Find Friends",
+"searchForFriends":"Search For Friend...",
+"enterFriendName":"Enter Friend’s Name",
+"enterBirthDate":"Enter Birth Date",
+"monthDateYear":"mm/dd/yyyy",
+"selectTimeofBirth":"Select Time of Birth",
+"ten":"10",
+"twentyEight":"28",
+"am":"AM",
+"pm":"PM",
+"hour":"Hour",
+"minute":"Minute",
+"synastry":"Synastry",
+"subtitle":"Subtitle",
+"serviceDescription":"Service Description"
+
+
+}
