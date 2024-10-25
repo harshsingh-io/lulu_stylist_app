@@ -23,11 +23,11 @@ mixin _$Item {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
-  String get colors => throw _privateConstructorUsedError;
+  List<String> get colors => throw _privateConstructorUsedError;
   String get brand => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  Category get category => throw _privateConstructorUsedError;
   bool get isFavorite => throw _privateConstructorUsedError;
-  int get price => throw _privateConstructorUsedError;
+  double get price => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
   String get imageLocalPath => throw _privateConstructorUsedError;
   String get imageData => throw _privateConstructorUsedError;
@@ -53,11 +53,11 @@ abstract class $ItemCopyWith<$Res> {
       {String id,
       String name,
       DateTime createdAt,
-      String colors,
+      List<String> colors,
       String brand,
-      String category,
+      Category category,
       bool isFavorite,
-      int price,
+      double price,
       String userId,
       String imageLocalPath,
       String imageData,
@@ -112,7 +112,7 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
       colors: null == colors
           ? _value.colors
           : colors // ignore: cast_nullable_to_non_nullable
-              as String,
+              as List<String>,
       brand: null == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
@@ -120,7 +120,7 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as Category,
       isFavorite: null == isFavorite
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
@@ -128,7 +128,7 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -168,11 +168,11 @@ abstract class _$$ItemImplCopyWith<$Res> implements $ItemCopyWith<$Res> {
       {String id,
       String name,
       DateTime createdAt,
-      String colors,
+      List<String> colors,
       String brand,
-      String category,
+      Category category,
       bool isFavorite,
-      int price,
+      double price,
       String userId,
       String imageLocalPath,
       String imageData,
@@ -222,9 +222,9 @@ class __$$ItemImplCopyWithImpl<$Res>
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
       colors: null == colors
-          ? _value.colors
+          ? _value._colors
           : colors // ignore: cast_nullable_to_non_nullable
-              as String,
+              as List<String>,
       brand: null == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
@@ -232,7 +232,7 @@ class __$$ItemImplCopyWithImpl<$Res>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
+              as Category,
       isFavorite: null == isFavorite
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
@@ -240,7 +240,7 @@ class __$$ItemImplCopyWithImpl<$Res>
       price: null == price
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -276,7 +276,7 @@ class _$ItemImpl extends _Item {
       {required this.id,
       required this.name,
       required this.createdAt,
-      required this.colors,
+      required final List<String> colors,
       required this.brand,
       required this.category,
       required this.isFavorite,
@@ -287,7 +287,8 @@ class _$ItemImpl extends _Item {
       required this.notes,
       required this.size,
       required final List<Tag> tags})
-      : _tags = tags,
+      : _colors = colors,
+        _tags = tags,
         super._();
 
   factory _$ItemImpl.fromJson(Map<String, dynamic> json) =>
@@ -299,16 +300,22 @@ class _$ItemImpl extends _Item {
   final String name;
   @override
   final DateTime createdAt;
+  final List<String> _colors;
   @override
-  final String colors;
+  List<String> get colors {
+    if (_colors is EqualUnmodifiableListView) return _colors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_colors);
+  }
+
   @override
   final String brand;
   @override
-  final String category;
+  final Category category;
   @override
   final bool isFavorite;
   @override
-  final int price;
+  final double price;
   @override
   final String userId;
   @override
@@ -341,7 +348,7 @@ class _$ItemImpl extends _Item {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.colors, colors) || other.colors == colors) &&
+            const DeepCollectionEquality().equals(other._colors, _colors) &&
             (identical(other.brand, brand) || other.brand == brand) &&
             (identical(other.category, category) ||
                 other.category == category) &&
@@ -365,7 +372,7 @@ class _$ItemImpl extends _Item {
       id,
       name,
       createdAt,
-      colors,
+      const DeepCollectionEquality().hash(_colors),
       brand,
       category,
       isFavorite,
@@ -398,11 +405,11 @@ abstract class _Item extends Item {
       {required final String id,
       required final String name,
       required final DateTime createdAt,
-      required final String colors,
+      required final List<String> colors,
       required final String brand,
-      required final String category,
+      required final Category category,
       required final bool isFavorite,
-      required final int price,
+      required final double price,
       required final String userId,
       required final String imageLocalPath,
       required final String imageData,
@@ -420,15 +427,15 @@ abstract class _Item extends Item {
   @override
   DateTime get createdAt;
   @override
-  String get colors;
+  List<String> get colors;
   @override
   String get brand;
   @override
-  String get category;
+  Category get category;
   @override
   bool get isFavorite;
   @override
-  int get price;
+  double get price;
   @override
   String get userId;
   @override

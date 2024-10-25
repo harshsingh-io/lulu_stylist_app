@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class LuluBrandColor {
   LuluBrandColor._();
 
-  static const Color brandPrimary = Color.fromRGBO(32, 45, 16, 1);
+  static const Color brandPrimary = Color(0xFF202D10);
   static const Color brandPrimary75 = Color.fromRGBO(32, 45, 16, 0.7);
   static const Color brandPrimary50 = Color.fromRGBO(32, 45, 16, 0.5);
   static const Color brandPrimary25 = Color.fromRGBO(32, 45, 16, 0.2);
@@ -15,7 +15,7 @@ class LuluBrandColor {
   static const Color brandAccentMidNightAqua = Color.fromRGBO(0, 42, 58, 1);
   static const Color brandAccentDeepTurquoise = Color.fromRGBO(0, 81, 95, 1);
   static const Color brandAccentAbyssalGreen = Color.fromRGBO(25, 97, 110, 1);
-  static const Color brandAccentSoftIvory = Color.fromRGBO(245, 244, 231, 1);
+  static const Color brandAccentSoftIvory = Color(0xFFF5F4E7);
 
   static const Color brandWhite = Color.fromRGBO(246, 247, 246, 1);
   static const Color brandRed = Color.fromARGB(255, 244, 67, 54);

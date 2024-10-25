@@ -106,22 +106,30 @@ class _HomePageState extends State<HomePage> {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       extendBody: true,
+      resizeToAvoidBottomInset:
+          false, // Prevent resizing that causes overlapping
       bottomNavigationBar: _buildCustomBottomNavBar(localizations),
-      body: PageView.builder(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        itemBuilder: (context, index) => _getTabPage(index),
-        itemCount: 6,
+      body: Padding(
+        padding: EdgeInsets.only(
+          bottom: kBottomNavigationBarHeight + LuluSpacing.md.h,
+        ),
+        child: PageView.builder(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) => _getTabPage(index),
+          itemCount: 6,
+        ),
       ),
     );
   }
 
   Widget _buildCustomBottomNavBar(AppLocalizations localizations) {
     return BottomAppBar(
+      height: 65.h,
       color: LuluBrandColor.brandPrimary, // Dark teal background color
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0.r,
@@ -141,14 +149,14 @@ class _HomePageState extends State<HomePage> {
             index: 1,
           ),
           _buildNavItem(
-            icon: 'assets/bottom_bar_icons/user_star_line.svg',
-            activeIcon: 'assets/bottom_bar_icons/user_star_fill.svg',
-            label: localizations.experts,
+            icon: 'assets/bottom_bar_icons/hanger_icon.svg',
+            activeIcon: 'assets/bottom_bar_icons/hanger_icon_filled.svg',
+            label: localizations.wardrobe,
             index: 2,
           ),
           _buildNavItem(
-            icon: 'assets/bottom_bar_icons/user_3_line.svg',
-            activeIcon: 'assets/bottom_bar_icons/user_3_fill.svg',
+            icon: 'assets/bottom_bar_icons/user_star_line.svg',
+            activeIcon: 'assets/bottom_bar_icons/user_star_fill.svg',
             label: localizations.profile,
             index: 3,
           ),
@@ -172,6 +180,8 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SvgPicture.asset(
+            height: 20.h,
+            width: 20.w,
             _currentIndex == index ? activeIcon : icon,
             color: LuluBrandColor
                 .brandAccentSoftIvory, // White icons for both active and inactive states
@@ -199,13 +209,13 @@ class _HomePageState extends State<HomePage> {
   Widget _getTabPage(int index) {
     switch (index) {
       case 0:
-        return const Placeholder();
+        return const Scaffold();
       case 1:
         return const AiChatScreen();
       case 2:
         return WardrobeScreen();
       case 3:
-        return const UserProfileScreen();
+        return UserProfileScreen();
       default:
         return const Placeholder();
     }

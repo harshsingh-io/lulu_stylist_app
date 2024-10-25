@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lulu_stylist_app/app/login_and_signup/home/login_number_screen.dart';
-import 'package:lulu_stylist_app/app/login_and_signup/home/login_otp_screen.dart';
+import 'package:lottie/lottie.dart';
+import 'package:lulu_stylist_app/app/login_and_signup/login_number_screen.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
@@ -25,6 +25,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Column(
               children: [
                 const Spacer(),
+                // Lottie.asset(
+                //   'assets/lottie/onboarding.json',
+                //   width: 300,
+                //   height: 300,
+                //   fit: BoxFit.contain,
+                // ),
                 SvgPicture.asset(
                   'assets/logo/lulu.svg',
                   semanticsLabel: 'Lulu Logo',

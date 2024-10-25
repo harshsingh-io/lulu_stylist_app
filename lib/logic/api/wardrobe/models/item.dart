@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 
 part 'item.freezed.dart';
@@ -12,11 +13,11 @@ class Item with _$Item {
     required String id,
     required String name,
     required DateTime createdAt,
-    required String colors,
+    required List<String> colors,
     required String brand,
-    required String category,
+    required Category category,
     required bool isFavorite,
-    required int price,
+    required double price,
     required String userId,
     required String imageLocalPath,
     required String imageData,
