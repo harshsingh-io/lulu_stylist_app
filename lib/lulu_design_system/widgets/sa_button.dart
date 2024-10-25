@@ -95,6 +95,9 @@ class LuluButton extends StatelessWidget {
         if (label != null)
           Text(
             label!,
+            style: const TextStyle(
+              color: LuluBrandColor.brandWhite,
+            ),
           ),
       ],
     );
