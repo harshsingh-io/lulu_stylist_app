@@ -1,0 +1,9 @@
+{
+    "@@locale": "hi",
+
+    "home": "होम",
+    "live": "लाइव",
+    "welcomeRegisterToGetStarted": "स्वागत है, प्रारंभ करने के लिए पंजीकरण करें!",
+    "enterYourMobileNumber": "अपना मोबाइल नंबर दर्ज करें",
+    "loginAsUser": "उपयोगकर्ता के रूप में लॉगिन करें"
+}
