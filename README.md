@@ -1,5 +1,7 @@
 # Lulu Stylist App
 
+[![wakatime](https://wakatime.com/badge/user/018ecd32-5efb-491a-be09-136c9f428be6/project/c6c3b441-078a-4f6a-8ae0-bc9a4ae080dd.svg)](https://wakatime.com/badge/user/018ecd32-5efb-491a-be09-136c9f428be6/project/c6c3b441-078a-4f6a-8ae0-bc9a4ae080dd)
+
 Lulu, is an AI-driven personal styling assistant that provides outfit recommendations based on your wardrobe and personal style preferences. It includes features like AI chat for fashion advice, wardrobe management, and user profile customization for a highly personalized fashion experience.
 
 ---
