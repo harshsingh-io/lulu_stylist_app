@@ -6,6 +6,7 @@ import 'package:lulu_stylist_app/logic/api/users/models/user_device_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_device_token_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'user_api.g.dart';
@@ -51,8 +52,8 @@ abstract class UserApi {
   @GET('/users/me')
   Future<UserModel> getMe();
 
-  @POST('/users/astro_profile')
-  Future<List<UserDeviceModel>> addAstroProfile(
+  @POST('/users/update_wardrobe')
+  Future<Item> addWardrobeItem(
     @Body() String deviceToken,
     @Body() String platform,
   );
@@ -64,5 +65,4 @@ abstract class UserApi {
   Future<UserModel> updateUser(
     @Body() UserUpdateRequestModel updateUserRequestModel,
   );
-
 }

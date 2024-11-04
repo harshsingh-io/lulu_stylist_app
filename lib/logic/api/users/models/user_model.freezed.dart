@@ -24,7 +24,6 @@ mixin _$UserModel {
   String? get phone => throw _privateConstructorUsedError;
   String? get fullName => throw _privateConstructorUsedError;
   String? get imageBlurhash => throw _privateConstructorUsedError;
-  bool get isActive => throw _privateConstructorUsedError;
   String? get publicUrl => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
@@ -49,7 +48,6 @@ abstract class $UserModelCopyWith<$Res> {
       String? phone,
       String? fullName,
       String? imageBlurhash,
-      bool isActive,
       String? publicUrl,
       DateTime createdAt,
       DateTime updatedAt});
@@ -74,7 +72,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? phone = freezed,
     Object? fullName = freezed,
     Object? imageBlurhash = freezed,
-    Object? isActive = null,
     Object? publicUrl = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -96,10 +93,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.imageBlurhash
           : imageBlurhash // ignore: cast_nullable_to_non_nullable
               as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
       publicUrl: freezed == publicUrl
           ? _value.publicUrl
           : publicUrl // ignore: cast_nullable_to_non_nullable
@@ -129,7 +122,6 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? phone,
       String? fullName,
       String? imageBlurhash,
-      bool isActive,
       String? publicUrl,
       DateTime createdAt,
       DateTime updatedAt});
@@ -152,7 +144,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? phone = freezed,
     Object? fullName = freezed,
     Object? imageBlurhash = freezed,
-    Object? isActive = null,
     Object? publicUrl = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -174,10 +165,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.imageBlurhash
           : imageBlurhash // ignore: cast_nullable_to_non_nullable
               as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
       publicUrl: freezed == publicUrl
           ? _value.publicUrl
           : publicUrl // ignore: cast_nullable_to_non_nullable
@@ -202,7 +189,6 @@ class _$UserModelImpl extends _UserModel {
       required this.phone,
       required this.fullName,
       required this.imageBlurhash,
-      required this.isActive,
       required this.publicUrl,
       required this.createdAt,
       required this.updatedAt})
@@ -220,8 +206,6 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String? imageBlurhash;
   @override
-  final bool isActive;
-  @override
   final String? publicUrl;
   @override
   final DateTime createdAt;
@@ -230,7 +214,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, phone: $phone, fullName: $fullName, imageBlurhash: $imageBlurhash, isActive: $isActive, publicUrl: $publicUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserModel(id: $id, phone: $phone, fullName: $fullName, imageBlurhash: $imageBlurhash, publicUrl: $publicUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -244,8 +228,6 @@ class _$UserModelImpl extends _UserModel {
                 other.fullName == fullName) &&
             (identical(other.imageBlurhash, imageBlurhash) ||
                 other.imageBlurhash == imageBlurhash) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
             (identical(other.publicUrl, publicUrl) ||
                 other.publicUrl == publicUrl) &&
             (identical(other.createdAt, createdAt) ||
@@ -257,7 +239,7 @@ class _$UserModelImpl extends _UserModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, phone, fullName,
-      imageBlurhash, isActive, publicUrl, createdAt, updatedAt);
+      imageBlurhash, publicUrl, createdAt, updatedAt);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -281,7 +263,6 @@ abstract class _UserModel extends UserModel {
       required final String? phone,
       required final String? fullName,
       required final String? imageBlurhash,
-      required final bool isActive,
       required final String? publicUrl,
       required final DateTime createdAt,
       required final DateTime updatedAt}) = _$UserModelImpl;
@@ -298,8 +279,6 @@ abstract class _UserModel extends UserModel {
   String? get fullName;
   @override
   String? get imageBlurhash;
-  @override
-  bool get isActive;
   @override
   String? get publicUrl;
   @override

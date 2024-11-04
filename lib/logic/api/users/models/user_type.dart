@@ -1,4 +1,4 @@
 enum UserType {
   user,
-  expert,
+  stylist,
 }

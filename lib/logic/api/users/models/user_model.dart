@@ -10,7 +10,6 @@ class UserModel with _$UserModel {
     required String? phone,
     required String? fullName,
     required String? imageBlurhash,
-    required bool isActive,
     required String? publicUrl,
     required DateTime createdAt,
     required DateTime updatedAt,

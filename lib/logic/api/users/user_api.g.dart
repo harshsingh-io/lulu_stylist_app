@@ -293,7 +293,7 @@ class _UserApi implements UserApi {
   }
 
   @override
-  Future<List<UserDeviceModel>> addAstroProfile(
+  Future<Item> addWardrobeItem(
     String deviceToken,
     String platform,
   ) async {
@@ -301,14 +301,14 @@ class _UserApi implements UserApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = deviceToken;
-    final _options = _setStreamType<List<UserDeviceModel>>(Options(
+    final _options = _setStreamType<Item>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/users/astro_profile',
+          '/users/update_wardrobe',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -317,13 +317,10 @@ class _UserApi implements UserApi {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<UserDeviceModel> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late Item _value;
     try {
-      _value = _result.data!
-          .map((dynamic i) =>
-              UserDeviceModel.fromJson(i as Map<String, dynamic>))
-          .toList();
+      _value = Item.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
