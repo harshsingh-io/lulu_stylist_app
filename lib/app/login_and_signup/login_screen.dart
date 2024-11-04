@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 120.h),
                 Lottie.asset(
                   'assets/lottie/login_lottie.json',
-                  width: 300.h, // Adjust the size as per your design
+                  width: 300.h,
                   height: 300.h,
                   fit: BoxFit.cover,
                 ),
@@ -104,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.transparent,
                   ),
                 ),
-                // Password Field with visibility toggle
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,

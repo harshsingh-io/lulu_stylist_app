@@ -51,12 +51,6 @@ abstract class UserApi {
   @GET('/users/me')
   Future<UserModel> getMe();
 
-  @POST('/users/astro_profile')
-  Future<List<UserDeviceModel>> addAstroProfile(
-    @Body() String deviceToken,
-    @Body() String platform,
-  );
-
   @GET('/users/photo_url')
   Future<UploadPhotoModel> getPhotoUploadUrl();
 
@@ -64,5 +58,4 @@ abstract class UserApi {
   Future<UserModel> updateUser(
     @Body() UserUpdateRequestModel updateUserRequestModel,
   );
-
 }
