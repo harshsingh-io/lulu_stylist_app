@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/item.dart';
 
 part 'user_update_request_model.freezed.dart';
 part 'user_update_request_model.g.dart';

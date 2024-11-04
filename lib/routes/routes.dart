@@ -57,8 +57,8 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) => WardrobeScreen(),
     ),
     GoRoute(
-      name: '/addItemWardrobe',
-      path: addItemWardrobeRoute,
+      path: '/addItemWardrobe',
+      name: addItemWardrobeRoute,
       builder: (BuildContext context, GoRouterState state) => AddItemScreen(),
     ),
     GoRoute(
@@ -71,13 +71,15 @@ final GoRouter router = GoRouter(
       name: '/signUp',
       path: signUpRoute,
       builder: (BuildContext context, GoRouterState state) =>
-          const UserSignUpScreen(),
+          const UserSignUpScreen(
+        isUser: true,
+      ),
     ),
     GoRoute(
       name: '/onboarding',
       path: onboardingRoute,
       builder: (BuildContext context, GoRouterState state) =>
-          const OnboardingScreen(),
+          OnboardingScreen(error: ''),
     ),
     GoRoute(
       name: '/settings',

@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/tag.dart';
 
 part 'item.freezed.dart';
 part 'item.g.dart';

@@ -1,27 +1,25 @@
-part of 'login_bloc.dart';
+// lib/blocs/login/login_state.dart
 
-@freezed
-class LoginState with _$LoginState {
-  const factory LoginState.initial() = _Initial;
-  const factory LoginState.inProgress() = _InProgress;
+import 'package:equatable/equatable.dart';
 
-  const factory LoginState.loginStarted({
-    required UserType userType,
-    required String phone,
-    required int attempts,
-  }) = _LoginStarted;
+abstract class LoginState extends Equatable {
+  const LoginState();
 
-  const factory LoginState.verificationStarted({
-    required UserType userType,
-    required String phone,
-    required int attempts,
-  }) = _VerificationStarted;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory LoginState.loginUserSuccess({
-    required String authToken,
-    required UserType userType,
-    required UserModel user,
-  }) = _LoginUserSucces;
+class LoginInitial extends LoginState {}
 
-  const factory LoginState.error(String message) = _LoginError;
+class LoginLoading extends LoginState {}
+
+class LoginSuccess extends LoginState {}
+
+class LoginFailure extends LoginState {
+  final String error;
+
+  const LoginFailure({required this.error});
+
+  @override
+  List<Object?> get props => [error];
 }

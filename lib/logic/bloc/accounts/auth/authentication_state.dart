@@ -1,40 +1,36 @@
-part of 'authentication_bloc.dart';
+// lib/blocs/authentication/authentication_state.dart
 
-@freezed
-class AuthenticationState with _$AuthenticationState {
-  factory AuthenticationState.initial() = _Initial;
-  factory AuthenticationState.checking() = _Checking;
-  factory AuthenticationState.inProgress({
-    required UserType userType,
-    required String phone,
-    required int attempt,
-  }) = _InProgess;
-  factory AuthenticationState.userAuthenticated({
-    required UserModel user,
-    required String authToken,
-  }) = _UserAuthenticated;
+import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-  factory AuthenticationState.unAuthenticated() = _UnAuthenticated;
-  factory AuthenticationState.loggedOut() = _LoggedOut;
-
-  factory AuthenticationState.userLoggedIn({
-    required UserModel user,
-    required String authToken,
-  }) = _UserLoggedIn;
-  factory AuthenticationState.userNeedsProfileDetails({
-    required UserModel userModel,
-    required String authToken,
-  }) = _UserNeedsProfileDetails;
-  factory AuthenticationState.userNeedsOnboard() = _UserNeedsOnboard;
+abstract class AuthenticationState extends Equatable {
+  const AuthenticationState();
 }
 
-extension AuthenticationStateX on AuthenticationState {
-  bool get isAuthenticated =>
-      this is _UserAuthenticated || this is _UserLoggedIn;
-  bool get isAuthUser => this is _UserAuthenticated || this is _UserLoggedIn;
-  UserModel? get authUser => maybeWhen(
-        userAuthenticated: (user, authToken) => user,
-        userLoggedIn: (user, authToken) => user,
-        orElse: () => null,
-      );
+class Unauthenticated extends AuthenticationState {
+  @override
+  List<Object?> get props => [];
+}
+
+class Authenticating extends AuthenticationState {
+  @override
+  List<Object?> get props => [];
+}
+
+class Authenticated extends AuthenticationState {
+  final User user;
+
+  const Authenticated({required this.user});
+
+  @override
+  List<Object?> get props => [user];
+}
+
+class AuthenticationFailure extends AuthenticationState {
+  final String message;
+
+  const AuthenticationFailure({required this.message});
+
+  @override
+  List<Object?> get props => [message];
 }

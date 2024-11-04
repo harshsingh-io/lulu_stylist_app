@@ -1,6 +1,6 @@
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/tag.dart';
 import 'package:nanoid/nanoid.dart';
 
 final List<Item> tops = [

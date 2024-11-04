@@ -1,9 +1,18 @@
+// lib/screens/add_item_screen.dart
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/tag.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_event.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:nanoid/nanoid.dart';
 
 class AddItemScreen extends StatefulWidget {
   @override
@@ -27,19 +36,50 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void saveItem() async {
     if (_formKey.currentState!.validate()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('name', nameController.text);
-      await prefs.setString('brand', brandController.text);
-      await prefs.setDouble('price', double.parse(priceController.text));
-      await prefs.setString('size', sizeController.text);
-      await prefs.setString('notes', notesController.text);
-      await prefs.setString('tags', tagsController.text);
-      await prefs.setBool('isFavorite', _isFavorite);
-      await prefs.setString('category', _selectedCategory.toString());
-      await prefs.setString('createdAt', _createdAt.toIso8601String());
-      // Handle image saving logic here if needed
-      Navigator.pop(
-          context); // Go back to the previous screen with a success message
+      // Handle image encoding if needed
+      String imageData = '';
+      if (_image != null) {
+        final bytes = await _image!.readAsBytes();
+        imageData = base64Encode(bytes);
+      }
+
+      // Split tags by comma and trim whitespace
+      List<Tag> tags = tagsController.text
+          .split(',')
+          .map((tag) => Tag(id: nanoid(), name: tag.trim()))
+          .toList();
+
+      final newItem = Item(
+        id: nanoid(),
+        name: nameController.text.trim(),
+        createdAt: _createdAt,
+        colors: ['Black'], // Implement color selection logic
+        brand: brandController.text.trim(),
+        category: _selectedCategory,
+        isFavorite: _isFavorite,
+        price: double.parse(priceController.text.trim()),
+        userId: 'user_001', // Replace with actual user ID
+        imageLocalPath: _image != null
+            ? _image!.path
+            : 'assets/images/default.jpg', // Placeholder image
+        imageData: imageData,
+        notes: notesController.text.trim(),
+        size: sizeController.text.trim(),
+        tags: tags,
+      );
+
+      // Dispatch the AddWardrobeItem event
+      context.read<WardrobeBloc>().add(AddWardrobeItem(newItem));
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Item added successfully!')),
+      );
+
+      // Navigate back after a short delay to allow the SnackBar to show
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -203,9 +243,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a price' : null,
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a price';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 16),
                     TextFormField(

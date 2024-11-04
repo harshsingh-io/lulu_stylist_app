@@ -25,7 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
   static const String logTag = 'UserBloc';
 
-  final _authBloc = AuthenticationBloc();
+  // final _authBloc = AuthenticationBloc();
   final _userRepo = UserRepository(UserApi(DioFactory().create()));
 
   Future<void> _onUpdateUserProfile(
@@ -42,11 +42,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       print('_onUpdateUserProfile $updatedUser');
       emit(UserState.profileUpdateSuccess(updatedUser));
-      _authBloc.add(
-        AuthenticationEvent.userProfileUpdate(
-          userModel: updatedUser,
-        ),
-      );
+      // _authBloc.add(
+      //   AuthenticationEvent.userProfileUpdate(
+      //     userModel: updatedUser,
+      //   ),
+      // );
     } catch (error) {
       print('erorrrr $error');
       emit(const UserState.profileUpdateError());

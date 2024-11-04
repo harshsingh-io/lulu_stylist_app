@@ -1,8 +1,17 @@
+// lib/screens/wardrobe_screen.dart
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lulu_stylist_app/app/wardrobe_management/add_item_wardrobe_screen.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/item.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_event.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_state.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class WardrobeScreen extends StatefulWidget {
@@ -13,11 +22,25 @@ class WardrobeScreen extends StatefulWidget {
 class _WardrobeScreenState extends State<WardrobeScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
+// lib/screens/wardrobe_screen.dart
+
+// Add this list inside your _WardrobeScreenState class
+  final List<Category> categories = [
+    Category.TOP,
+    Category.BOTTOM,
+    Category.SHOES,
+    Category.ACCESSORIES,
+    Category.INNERWEAR,
+    Category.OTHER,
+  ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 6);
+
+    // Fetch all items when the screen initializes
+    context.read<WardrobeBloc>().add(FetchAllWardrobeItems());
   }
 
   @override
@@ -40,8 +63,8 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8), // Adjust the radius as needed
                 ),
-                child: Image.asset(
-                  item.imageLocalPath,
+                child: Image.file(
+                  File(item.imageLocalPath),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -64,14 +87,52 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.favorite_border),
-                onPressed: () {},
+                icon: Icon(
+                  item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: item.isFavorite ? Colors.red : null,
+                ),
+                onPressed: () {
+                  // Toggle favorite status
+                  final updatedItem = Item(
+                    id: item.id,
+                    name: item.name,
+                    createdAt: item.createdAt,
+                    colors: item.colors,
+                    brand: item.brand,
+                    category: item.category,
+                    isFavorite: !item.isFavorite,
+                    price: item.price,
+                    userId: item.userId,
+                    imageLocalPath: item.imageLocalPath,
+                    imageData: item.imageData,
+                    notes: item.notes,
+                    size: item.size,
+                    tags: item.tags,
+                  );
+                  context
+                      .read<WardrobeBloc>()
+                      .add(UpdateWardrobeItem(updatedItem));
+                },
               )
             ],
           ),
           const SizedBox(height: 8),
         ],
       ),
+    );
+  }
+
+  Widget buildGridView(List<Item> items) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: (1 / 1.5),
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return buildItemCard(items[index]);
+      },
     );
   }
 
@@ -92,6 +153,10 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 padding:
                     const EdgeInsets.all(16), // Padding around the search bar
                 child: TextField(
+                  onChanged: (query) {
+                    // Implement search functionality
+                    // You can dispatch a search event to the Bloc here
+                  },
                   style: const TextStyle(
                       color: LuluBrandColor.brandWhite), // Text color
                   decoration: InputDecoration(
@@ -150,35 +215,53 @@ class _WardrobeScreenState extends State<WardrobeScreen>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context).pushNamed(addItemWardrobeRoute);
+          // Navigate to Add Item Screen
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => AddItemScreen()),
+          );
         },
         child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
         backgroundColor: LuluBrandColor.brandPrimary,
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          buildGridView(tops),
-          buildGridView(bottoms),
-          buildGridView(shoes),
-          buildGridView(accessories),
-          buildGridView(innerWear),
-          buildGridView(otherItems),
-        ],
-      ),
-    );
-  }
+      body: BlocBuilder<WardrobeBloc, WardrobeState>(
+        builder: (context, state) {
+          if (state is WardrobeLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is WardrobeLoaded) {
+            // Access the current tab's category using the categories list
+            Category currentCategory = categories[_tabController!.index];
 
-  Widget buildGridView(List<Item> items) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: (1 / 1.5),
+            // Filter items based on the current category
+            List<Item> filteredItems = state.items
+                .where((item) => item.category == currentCategory)
+                .toList();
+
+            return TabBarView(
+              controller: _tabController,
+              children: categories.map((category) {
+                List<Item> categoryItems = state.items
+                    .where((item) => item.category == category)
+                    .toList();
+                return buildGridView(categoryItems);
+              }).toList(),
+            );
+          } else if (state is WardrobeOperationFailure) {
+            return Center(child: Text('Error: ${state.message}'));
+          }
+          // Default fallback
+          return TabBarView(
+            controller: _tabController,
+            children: const [
+              Center(child: Text('No items found.')),
+              Center(child: Text('No items found.')),
+              Center(child: Text('No items found.')),
+              Center(child: Text('No items found.')),
+              Center(child: Text('No items found.')),
+              Center(child: Text('No items found.')),
+            ],
+          );
+        },
       ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return buildItemCard(items[index]);
-      },
     );
   }
 }

@@ -5,11 +5,16 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/app.dart';
 import 'package:lulu_stylist_app/bootstrap.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/local/tag.dart';
 import 'package:lulu_stylist_app/lulu_design_system/sa_bloc_observer.dart';
 import 'package:lulu_stylist_app/notification/notification_controller.dart';
 import 'package:workmanager/workmanager.dart';
@@ -32,6 +37,19 @@ String _installationId = 'Unknown';
 void main() {
   bootstrap(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    // Initialize Hive
+    await Hive.initFlutter();
+
+    // Register Hive adapters
+    Hive.registerAdapter(ItemAdapter());
+    Hive.registerAdapter(TagAdapter());
+    //TODO: Resolve this category adapter issue.
+    Hive.registerAdapter(CategoryAdapter());
+
+    // Open Hive boxes
+    await Hive.openBox<Item>('items');
+    await Hive.openBox<Tag>('tags');
+    await Firebase.initializeApp();
     await Workmanager().initialize(callbackDispatcher);
     await HomeWidget.setAppGroupId('group.lulu_stylist_app');
     // await HomeWidget.registerBackgroundCallback(backgroundCallback);

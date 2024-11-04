@@ -1,19 +1,35 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lulu_stylist_app/app/login_and_signup/login_screen.dart';
+import 'package:lulu_stylist_app/app/login_and_signup/sign_up_screen.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
+import 'package:lulu_stylist_app/lulu_design_system/toast/sa_toast.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
-
+  OnboardingScreen({required this.error, super.key});
+  String error;
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  @override
+  void initState() {
+    if (widget.error.isNotEmpty) {
+      LuluToast.showToast(
+        title: 'Oh! Error occured',
+        message: 'It seems like an error occured while Login/SignUp',
+        contentType: ContentType.failure,
+      );
+    }
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,12 +41,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Column(
               children: [
                 const Spacer(),
-                // Lottie.asset(
-                //   'assets/lottie/onboarding.json',
-                //   width: 300,
-                //   height: 300,
-                //   fit: BoxFit.contain,
-                // ),
                 SvgPicture.asset(
                   'assets/logo/lulu.svg',
                   semanticsLabel: 'Lulu Logo',
@@ -41,15 +51,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () {
-                    // GoRouter.of(context).pushNamed(
-                    //   loginScreen,
-                    //   pathParameters: {
-                    //     'isUser': 'true',
-                    //   },
-                    // );
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => LoginScreen(
+                          builder: (context) => UserSignUpScreen(
                                 isUser: true,
                               )),
                     );
@@ -67,7 +71,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => LoginScreen(
+                                isUser: true,
+                              )),
+                    );
+                  },
                   child: const Text(
                     'I already have an account',
                     style: TextStyle(

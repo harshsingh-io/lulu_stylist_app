@@ -1,17 +1,20 @@
-part of 'login_bloc.dart';
+// lib/blocs/login/login_event.dart
 
-@freezed
-class LoginEvent with _$LoginEvent {
-  const factory LoginEvent.startLogin({
-    required UserType userType,
-    required String phone,
-    required int attempts,
-  }) = _StartLogin;
+import 'package:equatable/equatable.dart';
 
-  const factory LoginEvent.verifyLogin({
-    required UserType userType,
-    required String phone,
-    required String otp,
-    required int attempts,
-  }) = _VerifyLogin;
+abstract class LoginEvent extends Equatable {
+  const LoginEvent();
+}
+
+class LoginButtonPressed extends LoginEvent {
+  final String email;
+  final String password;
+
+  const LoginButtonPressed({
+    required this.email,
+    required this.password,
+  });
+
+  @override
+  List<Object> get props => [email, password];
 }

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/remote/models/item.dart';
 
 part 'look.freezed.dart';
 part 'look.g.dart';
