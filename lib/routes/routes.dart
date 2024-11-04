@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/ai_chat_assistent/ai_chat_screen.dart';
 import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
-import 'package:lulu_stylist_app/app/login_and_signup/login_number_screen.dart';
+import 'package:lulu_stylist_app/app/login_and_signup/login_screen.dart';
 import 'package:lulu_stylist_app/app/login_and_signup/sign_up_screen.dart';
 import 'package:lulu_stylist_app/app/onboarding/onboarding_screen.dart';
 import 'package:lulu_stylist_app/app/settings/setting_screen.dart';
