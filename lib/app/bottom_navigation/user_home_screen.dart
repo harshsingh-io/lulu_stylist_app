@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
           itemBuilder: (context, index) => _getTabPage(index),
-          itemCount: 6,
+          itemCount: 4,
         ),
       ),
     );

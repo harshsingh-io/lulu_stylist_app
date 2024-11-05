@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class ProfileUdpateSuccess extends StatefulWidget {
@@ -16,7 +17,11 @@ class _ProfileUdpateSuccessState extends State<ProfileUdpateSuccess> {
     super.initState();
     // Navigate to the home screen after a delay of 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
-      GoRouter.of(context).pushReplacementNamed(homeRoute);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
     });
   }
 

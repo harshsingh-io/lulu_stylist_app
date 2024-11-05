@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
+import 'package:lulu_stylist_app/app/update_profile/update_profile_form.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class LoginSuccessSplashScreen extends StatefulWidget {
@@ -16,9 +18,12 @@ class _LoginSuccessSplashScreenState extends State<LoginSuccessSplashScreen> {
   void initState() {
     super.initState();
     // Navigate to the main screen after a delay of 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      GoRouter.of(context).pushReplacementNamed(updateUserProfile);
-    });
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => UserUpdateForm(),
+      ),
+    );
   }
 
   @override

@@ -51,10 +51,10 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       log.e("User age is missing or invalid.");
       return;
     }
-    if (userGender == null || userGender!.isEmpty) {
-      log.e("User gender is missing.");
-      return;
-    }
+    // if (userGender == null || userGender!.isEmpty) {
+    //   log.e("User gender is missing.");
+    //   return;
+    // }
     if (userLocation == null || userLocation!.isEmpty) {
       log.e("User location is missing.");
       return;
@@ -89,7 +89,7 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       userDetails: UserDetails(
         name: userName ?? '',
         age: userAge ?? 0,
-        gender: userGender,
+        gender: userGender ?? '',
         location: userLocation,
         bodyMeasurements: BodyMeasurements(
           height: heightCm ?? 0.0,
@@ -641,9 +641,13 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
               _formKey.currentState!.save();
               // Handle form submission
               _saveFormData();
-
-              // Show the profile update splash screen after saving the form data
-              GoRouter.of(context).go(profileUpdateSuccess);
+              setState(() {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileUdpateSuccess(),
+                  ),
+                );
+              });
             }
           },
           child: const Text(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_event.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -67,6 +70,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       appBar: AppBar(
         title: Text('User Profile', style: TextStyle(color: Colors.white)),
         backgroundColor: LuluBrandColor.brandPrimary,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              // Call the logout event
+              BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
