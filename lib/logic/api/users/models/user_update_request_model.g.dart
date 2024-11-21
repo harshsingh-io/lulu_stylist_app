@@ -10,6 +10,7 @@ _$UserUpdateRequestModelImpl _$$UserUpdateRequestModelImplFromJson(
         Map<String, dynamic> json) =>
     _$UserUpdateRequestModelImpl(
       userId: json['userId'] as String,
+      profileImagePath: json['profileImagePath'] as String?,
       userDetails:
           UserDetails.fromJson(json['userDetails'] as Map<String, dynamic>),
       wardrobeItems: (json['wardrobeItems'] as List<dynamic>)
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$UserUpdateRequestModelImplToJson(
         _$UserUpdateRequestModelImpl instance) =>
     <String, dynamic>{
       'userId': instance.userId,
+      'profileImagePath': instance.profileImagePath,
       'userDetails': instance.userDetails,
       'wardrobeItems': instance.wardrobeItems,
       'preferences': instance.preferences,
@@ -33,7 +35,8 @@ _$UserDetailsImpl _$$UserDetailsImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       age: (json['age'] as num).toInt(),
       gender: json['gender'] as String?,
-      location: json['location'] as String?,
+      locationLong: json['locationLong'] as String?,
+      locationLat: json['locationLat'] as String?,
       bodyMeasurements: json['bodyMeasurements'] == null
           ? null
           : BodyMeasurements.fromJson(
@@ -49,7 +52,8 @@ Map<String, dynamic> _$$UserDetailsImplToJson(_$UserDetailsImpl instance) =>
       'name': instance.name,
       'age': instance.age,
       'gender': instance.gender,
-      'location': instance.location,
+      'locationLong': instance.locationLong,
+      'locationLat': instance.locationLat,
       'bodyMeasurements': instance.bodyMeasurements,
       'stylePreferences': instance.stylePreferences,
     };

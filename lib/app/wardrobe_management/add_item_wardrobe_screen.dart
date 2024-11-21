@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
+import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -24,22 +28,77 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Category _selectedCategory = Category.TOP;
 
   final ImagePicker _picker = ImagePicker();
-
-  void saveItem() async {
+  void saveItem() {
     if (_formKey.currentState!.validate()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('name', nameController.text);
-      await prefs.setString('brand', brandController.text);
-      await prefs.setDouble('price', double.parse(priceController.text));
-      await prefs.setString('size', sizeController.text);
-      await prefs.setString('notes', notesController.text);
-      await prefs.setString('tags', tagsController.text);
-      await prefs.setBool('isFavorite', _isFavorite);
-      await prefs.setString('category', _selectedCategory.toString());
-      await prefs.setString('createdAt', _createdAt.toIso8601String());
-      // Handle image saving logic here if needed
-      Navigator.pop(
-          context); // Go back to the previous screen with a success message
+      // Generate a new ID using nanoid
+      String newId = nanoid();
+
+      // Parse tags from the comma-separated input
+      List<Tag> parsedTags = tagsController.text
+          .split(',')
+          .map((tag) => Tag(id: nanoid(), name: tag.trim()))
+          .toList();
+
+      // Determine image paths and data
+      String imagePath =
+          _image != null ? _image!.path : 'assets/images/default.jpg';
+      String imageData = _image != null
+          ? 'base64'
+          : 'base64'; // Placeholder for actual base64 encoding
+
+      // Create a new Item instance
+      Item newItem = Item(
+        id: newId,
+        name: nameController.text,
+        createdAt: DateTime.now(),
+        colors: [
+          'Unspecified'
+        ], // You can add a color picker in the form for better input
+        brand: brandController.text,
+        category: _selectedCategory,
+        isFavorite: _isFavorite,
+        price: double.parse(priceController.text),
+        userId: 'user_001', // Replace with actual user ID if available
+        imageLocalPath: imagePath,
+        imageData: imageData,
+        notes: notesController.text,
+        size: sizeController.text,
+        tags: parsedTags,
+      );
+
+      // Add the new item to the appropriate list
+      switch (_selectedCategory) {
+        case Category.TOP:
+          tops.add(newItem);
+          break;
+        case Category.BOTTOM:
+          bottoms.add(newItem);
+          break;
+        case Category.INNERWEAR:
+          innerWear.add(newItem);
+          break;
+        case Category.ACCESSORIES:
+          accessories.add(newItem);
+          break;
+        case Category.SHOES:
+          shoes.add(newItem);
+          break;
+        case Category.OTHER:
+          otherItems.add(newItem);
+          break;
+        default:
+          otherItems.add(newItem);
+      }
+
+      // Optionally, show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Item "${newItem.name}" added successfully!')),
+      );
+
+      // Navigate back to the previous screen after a short delay to allow the SnackBar to display
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
     }
   }
 

@@ -293,45 +293,6 @@ class _UserApi implements UserApi {
   }
 
   @override
-  Future<List<UserDeviceModel>> addAstroProfile(
-    String deviceToken,
-    String platform,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = deviceToken;
-    final _options = _setStreamType<List<UserDeviceModel>>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/users/astro_profile',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<UserDeviceModel> _value;
-    try {
-      _value = _result.data!
-          .map((dynamic i) =>
-              UserDeviceModel.fromJson(i as Map<String, dynamic>))
-          .toList();
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<UploadPhotoModel> getPhotoUploadUrl() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

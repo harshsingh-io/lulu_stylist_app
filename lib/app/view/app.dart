@@ -66,10 +66,10 @@ class _AppState extends State<App> {
               BlocProvider<LoginBloc>(
                 create: (context) => LoginBloc(),
               ),
-              BlocProvider<MqttBloc>(
-                create: (context) => MqttBloc(),
-                lazy: false,
-              ),
+              // BlocProvider<MqttBloc>(
+              //   create: (context) => MqttBloc(),
+              //   lazy: false,
+              // ),
               BlocProvider<NetworkBloc>(
                 create: (context) =>
                     NetworkBloc()..add(NetworkEvent.observer()),

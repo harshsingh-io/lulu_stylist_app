@@ -8,6 +8,7 @@ part 'user_update_request_model.g.dart';
 class UserUpdateRequestModel with _$UserUpdateRequestModel {
   const factory UserUpdateRequestModel({
     required String userId,
+    String? profileImagePath,
     required UserDetails userDetails,
     required List<Item> wardrobeItems,
     required UserPreferences preferences,
@@ -25,7 +26,8 @@ class UserDetails with _$UserDetails {
     required String name,
     required int age,
     String? gender,
-    String? location,
+    String? locationLong,
+    String? locationLat,
     BodyMeasurements? bodyMeasurements,
     StylePreferences? stylePreferences,
   }) = _UserDetails;

@@ -22,6 +22,7 @@ UserUpdateRequestModel _$UserUpdateRequestModelFromJson(
 /// @nodoc
 mixin _$UserUpdateRequestModel {
   String get userId => throw _privateConstructorUsedError;
+  String? get profileImagePath => throw _privateConstructorUsedError;
   UserDetails get userDetails => throw _privateConstructorUsedError;
   List<Item> get wardrobeItems => throw _privateConstructorUsedError;
   UserPreferences get preferences => throw _privateConstructorUsedError;
@@ -44,6 +45,7 @@ abstract class $UserUpdateRequestModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String userId,
+      String? profileImagePath,
       UserDetails userDetails,
       List<Item> wardrobeItems,
       UserPreferences preferences});
@@ -69,6 +71,7 @@ class _$UserUpdateRequestModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? userId = null,
+    Object? profileImagePath = freezed,
     Object? userDetails = null,
     Object? wardrobeItems = null,
     Object? preferences = null,
@@ -78,6 +81,10 @@ class _$UserUpdateRequestModelCopyWithImpl<$Res,
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
+      profileImagePath: freezed == profileImagePath
+          ? _value.profileImagePath
+          : profileImagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
       userDetails: null == userDetails
           ? _value.userDetails
           : userDetails // ignore: cast_nullable_to_non_nullable
@@ -125,6 +132,7 @@ abstract class _$$UserUpdateRequestModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String userId,
+      String? profileImagePath,
       UserDetails userDetails,
       List<Item> wardrobeItems,
       UserPreferences preferences});
@@ -151,6 +159,7 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? userId = null,
+    Object? profileImagePath = freezed,
     Object? userDetails = null,
     Object? wardrobeItems = null,
     Object? preferences = null,
@@ -160,6 +169,10 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
+      profileImagePath: freezed == profileImagePath
+          ? _value.profileImagePath
+          : profileImagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
       userDetails: null == userDetails
           ? _value.userDetails
           : userDetails // ignore: cast_nullable_to_non_nullable
@@ -181,6 +194,7 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
 class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
   const _$UserUpdateRequestModelImpl(
       {required this.userId,
+      this.profileImagePath,
       required this.userDetails,
       required final List<Item> wardrobeItems,
       required this.preferences})
@@ -191,6 +205,8 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
   @override
   final String userId;
+  @override
+  final String? profileImagePath;
   @override
   final UserDetails userDetails;
   final List<Item> _wardrobeItems;
@@ -206,7 +222,7 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
   @override
   String toString() {
-    return 'UserUpdateRequestModel(userId: $userId, userDetails: $userDetails, wardrobeItems: $wardrobeItems, preferences: $preferences)';
+    return 'UserUpdateRequestModel(userId: $userId, profileImagePath: $profileImagePath, userDetails: $userDetails, wardrobeItems: $wardrobeItems, preferences: $preferences)';
   }
 
   @override
@@ -215,6 +231,8 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
         (other.runtimeType == runtimeType &&
             other is _$UserUpdateRequestModelImpl &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.profileImagePath, profileImagePath) ||
+                other.profileImagePath == profileImagePath) &&
             (identical(other.userDetails, userDetails) ||
                 other.userDetails == userDetails) &&
             const DeepCollectionEquality()
@@ -225,8 +243,13 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, userId, userDetails,
-      const DeepCollectionEquality().hash(_wardrobeItems), preferences);
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      profileImagePath,
+      userDetails,
+      const DeepCollectionEquality().hash(_wardrobeItems),
+      preferences);
 
   /// Create a copy of UserUpdateRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -248,6 +271,7 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 abstract class _UserUpdateRequestModel implements UserUpdateRequestModel {
   const factory _UserUpdateRequestModel(
           {required final String userId,
+          final String? profileImagePath,
           required final UserDetails userDetails,
           required final List<Item> wardrobeItems,
           required final UserPreferences preferences}) =
@@ -258,6 +282,8 @@ abstract class _UserUpdateRequestModel implements UserUpdateRequestModel {
 
   @override
   String get userId;
+  @override
+  String? get profileImagePath;
   @override
   UserDetails get userDetails;
   @override
@@ -282,7 +308,8 @@ mixin _$UserDetails {
   String get name => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
-  String? get location => throw _privateConstructorUsedError;
+  String? get locationLong => throw _privateConstructorUsedError;
+  String? get locationLat => throw _privateConstructorUsedError;
   BodyMeasurements? get bodyMeasurements => throw _privateConstructorUsedError;
   StylePreferences? get stylePreferences => throw _privateConstructorUsedError;
 
@@ -306,7 +333,8 @@ abstract class $UserDetailsCopyWith<$Res> {
       {String name,
       int age,
       String? gender,
-      String? location,
+      String? locationLong,
+      String? locationLat,
       BodyMeasurements? bodyMeasurements,
       StylePreferences? stylePreferences});
 
@@ -332,7 +360,8 @@ class _$UserDetailsCopyWithImpl<$Res, $Val extends UserDetails>
     Object? name = null,
     Object? age = null,
     Object? gender = freezed,
-    Object? location = freezed,
+    Object? locationLong = freezed,
+    Object? locationLat = freezed,
     Object? bodyMeasurements = freezed,
     Object? stylePreferences = freezed,
   }) {
@@ -349,9 +378,13 @@ class _$UserDetailsCopyWithImpl<$Res, $Val extends UserDetails>
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
+      locationLong: freezed == locationLong
+          ? _value.locationLong
+          : locationLong // ignore: cast_nullable_to_non_nullable
+              as String?,
+      locationLat: freezed == locationLat
+          ? _value.locationLat
+          : locationLat // ignore: cast_nullable_to_non_nullable
               as String?,
       bodyMeasurements: freezed == bodyMeasurements
           ? _value.bodyMeasurements
@@ -405,7 +438,8 @@ abstract class _$$UserDetailsImplCopyWith<$Res>
       {String name,
       int age,
       String? gender,
-      String? location,
+      String? locationLong,
+      String? locationLat,
       BodyMeasurements? bodyMeasurements,
       StylePreferences? stylePreferences});
 
@@ -431,7 +465,8 @@ class __$$UserDetailsImplCopyWithImpl<$Res>
     Object? name = null,
     Object? age = null,
     Object? gender = freezed,
-    Object? location = freezed,
+    Object? locationLong = freezed,
+    Object? locationLat = freezed,
     Object? bodyMeasurements = freezed,
     Object? stylePreferences = freezed,
   }) {
@@ -448,9 +483,13 @@ class __$$UserDetailsImplCopyWithImpl<$Res>
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
+      locationLong: freezed == locationLong
+          ? _value.locationLong
+          : locationLong // ignore: cast_nullable_to_non_nullable
+              as String?,
+      locationLat: freezed == locationLat
+          ? _value.locationLat
+          : locationLat // ignore: cast_nullable_to_non_nullable
               as String?,
       bodyMeasurements: freezed == bodyMeasurements
           ? _value.bodyMeasurements
@@ -471,7 +510,8 @@ class _$UserDetailsImpl implements _UserDetails {
       {required this.name,
       required this.age,
       this.gender,
-      this.location,
+      this.locationLong,
+      this.locationLat,
       this.bodyMeasurements,
       this.stylePreferences});
 
@@ -485,7 +525,9 @@ class _$UserDetailsImpl implements _UserDetails {
   @override
   final String? gender;
   @override
-  final String? location;
+  final String? locationLong;
+  @override
+  final String? locationLat;
   @override
   final BodyMeasurements? bodyMeasurements;
   @override
@@ -493,7 +535,7 @@ class _$UserDetailsImpl implements _UserDetails {
 
   @override
   String toString() {
-    return 'UserDetails(name: $name, age: $age, gender: $gender, location: $location, bodyMeasurements: $bodyMeasurements, stylePreferences: $stylePreferences)';
+    return 'UserDetails(name: $name, age: $age, gender: $gender, locationLong: $locationLong, locationLat: $locationLat, bodyMeasurements: $bodyMeasurements, stylePreferences: $stylePreferences)';
   }
 
   @override
@@ -504,8 +546,10 @@ class _$UserDetailsImpl implements _UserDetails {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.age, age) || other.age == age) &&
             (identical(other.gender, gender) || other.gender == gender) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
+            (identical(other.locationLong, locationLong) ||
+                other.locationLong == locationLong) &&
+            (identical(other.locationLat, locationLat) ||
+                other.locationLat == locationLat) &&
             (identical(other.bodyMeasurements, bodyMeasurements) ||
                 other.bodyMeasurements == bodyMeasurements) &&
             (identical(other.stylePreferences, stylePreferences) ||
@@ -514,8 +558,8 @@ class _$UserDetailsImpl implements _UserDetails {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, age, gender, location,
-      bodyMeasurements, stylePreferences);
+  int get hashCode => Object.hash(runtimeType, name, age, gender, locationLong,
+      locationLat, bodyMeasurements, stylePreferences);
 
   /// Create a copy of UserDetails
   /// with the given fields replaced by the non-null parameter values.
@@ -538,7 +582,8 @@ abstract class _UserDetails implements UserDetails {
       {required final String name,
       required final int age,
       final String? gender,
-      final String? location,
+      final String? locationLong,
+      final String? locationLat,
       final BodyMeasurements? bodyMeasurements,
       final StylePreferences? stylePreferences}) = _$UserDetailsImpl;
 
@@ -552,7 +597,9 @@ abstract class _UserDetails implements UserDetails {
   @override
   String? get gender;
   @override
-  String? get location;
+  String? get locationLong;
+  @override
+  String? get locationLat;
   @override
   BodyMeasurements? get bodyMeasurements;
   @override

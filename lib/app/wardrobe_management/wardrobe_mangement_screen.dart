@@ -4,6 +4,7 @@ import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
+import 'dart:io'; // Import File
 
 class WardrobeScreen extends StatefulWidget {
   @override
@@ -40,10 +41,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8), // Adjust the radius as needed
                 ),
-                child: Image.asset(
-                  item.imageLocalPath,
-                  fit: BoxFit.cover,
-                ),
+                child: _buildImage(item.imageLocalPath),
               ),
             ),
           ),
@@ -54,8 +52,10 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(item.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -64,8 +64,15 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.favorite_border),
-                onPressed: () {},
+                icon: Icon(
+                  item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: item.isFavorite ? Colors.red : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    // item.isFavorite = !item.isFavorite;
+                  });
+                },
               )
             ],
           ),
@@ -73,6 +80,31 @@ class _WardrobeScreenState extends State<WardrobeScreen>
         ],
       ),
     );
+  }
+
+  Widget _buildImage(String imagePath) {
+    if (imagePath.startsWith('assets/')) {
+      // Load image from assets
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+      );
+    } else {
+      // Assume it's a file path, load image from file
+      final file = File(imagePath);
+      if (file.existsSync()) {
+        return Image.file(
+          file,
+          fit: BoxFit.cover,
+        );
+      } else {
+        // If the file doesn't exist, load a placeholder image
+        return Image.asset(
+          'assets/images/default.jpg', // Ensure you have this placeholder image
+          fit: BoxFit.cover,
+        );
+      }
+    }
   }
 
   @override
@@ -126,6 +158,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                           const BorderSide(color: LuluBrandColor.brandGrey200),
                     ),
                   ),
+                  onChanged: (value) {
+                    // Implement search functionality if needed
+                  },
                 ),
               ),
               TabBar(
@@ -149,8 +184,11 @@ class _WardrobeScreenState extends State<WardrobeScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          GoRouter.of(context).pushNamed(addItemWardrobeRoute);
+        onPressed: () async {
+          // Navigate to AddItemScreen and wait for it to return
+          await GoRouter.of(context).pushNamed(addItemWardrobeRoute);
+          // After returning, refresh the UI to show the new item
+          setState(() {});
         },
         child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
         backgroundColor: LuluBrandColor.brandPrimary,
@@ -169,6 +207,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     );
   }
 
+  // Function to build the grid view for each category
   Widget buildGridView(List<Item> items) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
