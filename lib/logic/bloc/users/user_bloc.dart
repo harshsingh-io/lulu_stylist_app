@@ -42,11 +42,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       print('_onUpdateUserProfile $updatedUser');
       emit(UserState.profileUpdateSuccess(updatedUser));
-      _authBloc.add(
-        AuthenticationEvent.userProfileUpdate(
-          userModel: updatedUser,
-        ),
-      );
+      //TODO: Check User Profile Update
+      // _authBloc.add(
+      //   AuthenticationEvent.userProfileUpdate(
+      //     userModel: updatedUser,
+      //   ),
+      // );
     } catch (error) {
       print('erorrrr $error');
       emit(const UserState.profileUpdateError());

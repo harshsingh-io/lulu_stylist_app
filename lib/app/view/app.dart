@@ -47,134 +47,111 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(
-          designSizeWidth,
-          designSizeHeight,
-        ),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (
-          _,
-          child,
-        ) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider<AuthenticationBloc>(
-                create: (context) => AuthenticationBloc()
-                  ..add(AuthenticationEvent.checkExisting()),
-              ),
-              BlocProvider<LoginBloc>(
-                create: (context) => LoginBloc(),
-              ),
-              // BlocProvider<MqttBloc>(
-              //   create: (context) => MqttBloc(),
-              //   lazy: false,
-              // ),
-              BlocProvider<NetworkBloc>(
-                create: (context) =>
-                    NetworkBloc()..add(NetworkEvent.observer()),
-              ),
-            ],
-            child: BlocListener<NetworkBloc, NetworkState>(
+      designSize: const Size(designSizeWidth, designSizeHeight),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthenticationBloc>(
+              create: (context) => AuthenticationBloc()
+                ..add(const AuthenticationEvent.checkExisting()),
+            ),
+            BlocProvider<LoginBloc>(
+              create: (context) => LoginBloc(),
+            ),
+            BlocProvider<NetworkBloc>(
+              create: (context) =>
+                  NetworkBloc()..add(const NetworkEvent.observer()),
+            ),
+          ],
+          child: BlocListener<NetworkBloc, NetworkState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                failure: () {
+                  App.scaffoldMessengerKey.currentState?.showSnackBar(
+                    const SnackBar(content: Text('No internet connection')),
+                  );
+                },
+                success: () {
+                  App.scaffoldMessengerKey.currentState?.showSnackBar(
+                    const SnackBar(content: Text('Connected to internet')),
+                  );
+                },
+                orElse: () {},
+              );
+            },
+            child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
               listener: (context, state) {
                 state.maybeWhen(
-                  failure: () {
-                    // Show a failure message when network is unavailable
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('No internet connection')),
-                    );
+                  initial: () {
+                    // Initial state, can show splash screen
                   },
-                  success: () {
-                    // Show a success message when network is available
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Connected to internet')),
+                  checking: () {
+                    // Show loading indicator if needed
+                  },
+                  unAuthenticated: () {
+                    GoRouter.of(App.globalNavigatorKey.currentContext!)
+                        .pushReplacementNamed(onboardingRoute);
+                  },
+                  userNeedsProfileDetails: (user, authToken) {
+                    GoRouter.of(App.globalNavigatorKey.currentContext!)
+                        .pushReplacementNamed('profile_update', extra: user);
+                  },
+                  userLoggedIn: (user, authToken) {
+                    GoRouter.of(App.globalNavigatorKey.currentContext!)
+                        .pushReplacementNamed(homeRoute, extra: user);
+                  },
+                  userAuthenticated: (user, authToken) {
+                    GoRouter.of(App.globalNavigatorKey.currentContext!)
+                        .pushReplacementNamed(homeRoute, extra: user);
+                  },
+                  loggedOut: () {
+                    GoRouter.of(App.globalNavigatorKey.currentContext!)
+                        .pushReplacementNamed(onboardingRoute);
+                  },
+                  error: (message) {
+                    App.scaffoldMessengerKey.currentState?.showSnackBar(
+                      SnackBar(content: Text(message)),
                     );
                   },
                   orElse: () {},
                 );
               },
-              child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    initial: () {
-                      // Optionally show a splash screen
-                    },
-                    checking: () {
-                      // Optionally show a loading indicator
-                    },
-                    unAuthenticated: () {
-                      // Navigate to the onboarding screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
-                    },
-                    userNeedsProfileDetails: (userModel, authToken) {
-                      // Navigate to the profile update screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed('profile_update',
-                          extra: userModel);
-                    },
-                    userLoggedIn: (user, authToken) {
-                      // Navigate to the home screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(homeRoute, extra: user);
-                    },
-                    userAuthenticated: (user, authToken) {
-                      // User is authenticated but not logged in yet (if applicable)
-                      // For simplicity, navigate to home
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(homeRoute, extra: user);
-                    },
-                    loggedOut: () {
-                      // Navigate back to the onboarding screen
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
-                    },
-                    orElse: () {
-                      GoRouter.of(
-                        App.globalNavigatorKey.currentContext!,
-                      ).pushReplacementNamed(onboardingRoute);
-                    },
-                  );
-                },
-                builder: (context, state) {
-                  return MaterialApp.router(
-                    routerConfig: router,
-                    scaffoldMessengerKey: App.scaffoldMessengerKey,
-                    supportedLocales: const [
-                      Locale('en'),
-                      Locale('hi'),
-                    ],
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                    ],
-                    localeResolutionCallback: (locale, supportedLocales) {
-                      for (final supportedLocale in supportedLocales) {
-                        if (locale != null &&
-                            supportedLocale.languageCode ==
-                                locale.languageCode) {
-                          return supportedLocale;
-                        }
+              builder: (context, state) {
+                return MaterialApp.router(
+                  routerConfig: router,
+                  scaffoldMessengerKey: App.scaffoldMessengerKey,
+                  supportedLocales: const [
+                    Locale('en'),
+                    Locale('hi'),
+                  ],
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                  ],
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    for (final supportedLocale in supportedLocales) {
+                      if (locale != null &&
+                          supportedLocale.languageCode == locale.languageCode) {
+                        return supportedLocale;
                       }
-                      return supportedLocales.first;
-                    },
-                    locale: _appLocale,
-                    title: 'Lulu',
-                    theme: ThemeData(
-                      useMaterial3: true,
-                      appBarTheme: LuluAppBarTheme.appBarLightThemeData,
-                    ),
-                  );
-                },
-              ),
+                    }
+                    return supportedLocales.first;
+                  },
+                  locale: _appLocale,
+                  title: 'Lulu',
+                  theme: ThemeData(
+                    useMaterial3: true,
+                    appBarTheme: LuluAppBarTheme.appBarLightThemeData,
+                  ),
+                );
+              },
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

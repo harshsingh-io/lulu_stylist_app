@@ -213,9 +213,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const AiChatScreen();
       case 2:
-        return WardrobeScreen();
+        return const WardrobeScreen();
       case 3:
-        return UserProfileScreen();
+        return const UserProfileScreen();
       default:
         return const Placeholder();
     }

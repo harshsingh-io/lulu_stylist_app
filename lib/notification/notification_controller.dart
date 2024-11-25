@@ -30,7 +30,7 @@ class NotificationController with ChangeNotifier {
   final String _nativeToken = '';
   String get nativeToken => _nativeToken;
 
-  String _firebaseInstanceId = '';
+  final String _firebaseInstanceId = '';
   FcmSilentData? _lastSilentData;
   FcmSilentData? get lastSilentData => _lastSilentData;
 

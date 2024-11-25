@@ -56,7 +56,6 @@ class LuluBottomSheet {
     if (Platform.isAndroid) {
       // Android-specific code
       showMaterialModalBottomSheet(
-        enableDrag: true,
         context: context,
         isDismissible: false,
         useRootNavigator: true,
@@ -85,10 +84,8 @@ class LuluBottomSheet {
       );
     } else if (Platform.isIOS) {
       showCupertinoModalBottomSheet(
-        enableDrag: true,
         isDismissible: false,
         context: context,
-        bounce: true,
         builder: (context) => SingleChildScrollView(
           controller: ModalScrollController.of(context),
           padding:

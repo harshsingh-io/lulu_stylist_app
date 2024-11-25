@@ -49,9 +49,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // );
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => LoginScreen(
-                                isUser: true,
-                              )),
+                        builder: (context) => const LoginScreen(
+                          isUser: true,
+                        ),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

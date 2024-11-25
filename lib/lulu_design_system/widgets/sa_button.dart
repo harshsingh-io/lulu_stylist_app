@@ -34,8 +34,8 @@ class LuluButton extends StatelessWidget {
   // // Use asserts to enforce rules which cannot be done at compile time
 
   const LuluButton.primary({
-    super.key,
     required this.label,
+    super.key,
     this.icon,
     this.color = LuluButtonColor.primary,
     this.onPressed,

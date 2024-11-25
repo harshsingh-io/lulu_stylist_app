@@ -18,57 +18,63 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AuthenticationEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() started,
     required TResult Function() checkExisting,
     required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
     TResult? Function()? checkExisting,
     TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
     TResult Function()? checkExisting,
     TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
     required TResult Function(_CheckExisting value) checkExisting,
     required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
     TResult? Function(_CheckExisting value)? checkExisting,
     TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
     TResult Function(_CheckExisting value)? checkExisting,
     TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -93,129 +99,6 @@ class _$AuthenticationEventCopyWithImpl<$Res, $Val extends AuthenticationEvent>
 
   /// Create a copy of AuthenticationEvent
   /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$StartedImplCopyWith<$Res> {
-  factory _$$StartedImplCopyWith(
-          _$StartedImpl value, $Res Function(_$StartedImpl) then) =
-      __$$StartedImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$StartedImplCopyWithImpl<$Res>
-    extends _$AuthenticationEventCopyWithImpl<$Res, _$StartedImpl>
-    implements _$$StartedImplCopyWith<$Res> {
-  __$$StartedImplCopyWithImpl(
-      _$StartedImpl _value, $Res Function(_$StartedImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthenticationEvent
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$StartedImpl implements _Started {
-  const _$StartedImpl();
-
-  @override
-  String toString() {
-    return 'AuthenticationEvent.started()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$StartedImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() started,
-    required TResult Function() checkExisting,
-    required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
-  }) {
-    return started();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
-    TResult? Function()? checkExisting,
-    TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
-  }) {
-    return started?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
-    TResult Function()? checkExisting,
-    TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
-    required TResult orElse(),
-  }) {
-    if (started != null) {
-      return started();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
-    required TResult Function(_CheckExisting value) checkExisting,
-    required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
-  }) {
-    return started(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
-    TResult? Function(_CheckExisting value)? checkExisting,
-    TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
-  }) {
-    return started?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
-    TResult Function(_CheckExisting value)? checkExisting,
-    TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
-    required TResult orElse(),
-  }) {
-    if (started != null) {
-      return started(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Started implements AuthenticationEvent {
-  const factory _Started() = _$StartedImpl;
 }
 
 /// @nodoc
@@ -259,11 +142,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() started,
     required TResult Function() checkExisting,
     required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
   }) {
     return checkExisting();
   }
@@ -271,11 +155,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
     TResult? Function()? checkExisting,
     TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
   }) {
     return checkExisting?.call();
   }
@@ -283,11 +168,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
     TResult Function()? checkExisting,
     TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
     required TResult orElse(),
   }) {
     if (checkExisting != null) {
@@ -299,11 +185,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
     required TResult Function(_CheckExisting value) checkExisting,
     required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
   }) {
     return checkExisting(this);
   }
@@ -311,11 +198,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
     TResult? Function(_CheckExisting value)? checkExisting,
     TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
   }) {
     return checkExisting?.call(this);
   }
@@ -323,11 +211,12 @@ class _$CheckExistingImpl implements _CheckExisting {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
     TResult Function(_CheckExisting value)? checkExisting,
     TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
     required TResult orElse(),
   }) {
     if (checkExisting != null) {
@@ -430,11 +319,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() started,
     required TResult Function() checkExisting,
     required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
   }) {
     return newUserLogin(authToken, user);
   }
@@ -442,11 +332,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
     TResult? Function()? checkExisting,
     TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
   }) {
     return newUserLogin?.call(authToken, user);
   }
@@ -454,11 +345,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
     TResult Function()? checkExisting,
     TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
     required TResult orElse(),
   }) {
     if (newUserLogin != null) {
@@ -470,11 +362,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
     required TResult Function(_CheckExisting value) checkExisting,
     required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
   }) {
     return newUserLogin(this);
   }
@@ -482,11 +375,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
     TResult? Function(_CheckExisting value)? checkExisting,
     TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
   }) {
     return newUserLogin?.call(this);
   }
@@ -494,11 +388,12 @@ class _$NewUserLoginImpl implements _NewUserLogin {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
     TResult Function(_CheckExisting value)? checkExisting,
     TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
     required TResult orElse(),
   }) {
     if (newUserLogin != null) {
@@ -524,18 +419,396 @@ abstract class _NewUserLogin implements AuthenticationEvent {
 }
 
 /// @nodoc
-abstract class _$$LogoutImplCopyWith<$Res> {
-  factory _$$LogoutImplCopyWith(
-          _$LogoutImpl value, $Res Function(_$LogoutImpl) then) =
-      __$$LogoutImplCopyWithImpl<$Res>;
+abstract class _$$CompleteProfileImplCopyWith<$Res> {
+  factory _$$CompleteProfileImplCopyWith(_$CompleteProfileImpl value,
+          $Res Function(_$CompleteProfileImpl) then) =
+      __$$CompleteProfileImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel user, String authToken});
+
+  $UserModelCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class __$$LogoutImplCopyWithImpl<$Res>
-    extends _$AuthenticationEventCopyWithImpl<$Res, _$LogoutImpl>
-    implements _$$LogoutImplCopyWith<$Res> {
-  __$$LogoutImplCopyWithImpl(
-      _$LogoutImpl _value, $Res Function(_$LogoutImpl) _then)
+class __$$CompleteProfileImplCopyWithImpl<$Res>
+    extends _$AuthenticationEventCopyWithImpl<$Res, _$CompleteProfileImpl>
+    implements _$$CompleteProfileImplCopyWith<$Res> {
+  __$$CompleteProfileImplCopyWithImpl(
+      _$CompleteProfileImpl _value, $Res Function(_$CompleteProfileImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? authToken = null,
+  }) {
+    return _then(_$CompleteProfileImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      authToken: null == authToken
+          ? _value.authToken
+          : authToken // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$CompleteProfileImpl implements _CompleteProfile {
+  const _$CompleteProfileImpl({required this.user, required this.authToken});
+
+  @override
+  final UserModel user;
+  @override
+  final String authToken;
+
+  @override
+  String toString() {
+    return 'AuthenticationEvent.completeProfile(user: $user, authToken: $authToken)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CompleteProfileImpl &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.authToken, authToken) ||
+                other.authToken == authToken));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, user, authToken);
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CompleteProfileImplCopyWith<_$CompleteProfileImpl> get copyWith =>
+      __$$CompleteProfileImplCopyWithImpl<_$CompleteProfileImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() checkExisting,
+    required TResult Function(String authToken, UserModel user) newUserLogin,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
+  }) {
+    return completeProfile(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? checkExisting,
+    TResult? Function(String authToken, UserModel user)? newUserLogin,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
+  }) {
+    return completeProfile?.call(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? checkExisting,
+    TResult Function(String authToken, UserModel user)? newUserLogin,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
+    required TResult orElse(),
+  }) {
+    if (completeProfile != null) {
+      return completeProfile(user, authToken);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_CheckExisting value) checkExisting,
+    required TResult Function(_NewUserLogin value) newUserLogin,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
+  }) {
+    return completeProfile(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_CheckExisting value)? checkExisting,
+    TResult? Function(_NewUserLogin value)? newUserLogin,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
+  }) {
+    return completeProfile?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_CheckExisting value)? checkExisting,
+    TResult Function(_NewUserLogin value)? newUserLogin,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
+    required TResult orElse(),
+  }) {
+    if (completeProfile != null) {
+      return completeProfile(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _CompleteProfile implements AuthenticationEvent {
+  const factory _CompleteProfile(
+      {required final UserModel user,
+      required final String authToken}) = _$CompleteProfileImpl;
+
+  UserModel get user;
+  String get authToken;
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CompleteProfileImplCopyWith<_$CompleteProfileImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AuthenticateUserImplCopyWith<$Res> {
+  factory _$$AuthenticateUserImplCopyWith(_$AuthenticateUserImpl value,
+          $Res Function(_$AuthenticateUserImpl) then) =
+      __$$AuthenticateUserImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel user, String authToken});
+
+  $UserModelCopyWith<$Res> get user;
+}
+
+/// @nodoc
+class __$$AuthenticateUserImplCopyWithImpl<$Res>
+    extends _$AuthenticationEventCopyWithImpl<$Res, _$AuthenticateUserImpl>
+    implements _$$AuthenticateUserImplCopyWith<$Res> {
+  __$$AuthenticateUserImplCopyWithImpl(_$AuthenticateUserImpl _value,
+      $Res Function(_$AuthenticateUserImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? authToken = null,
+  }) {
+    return _then(_$AuthenticateUserImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      authToken: null == authToken
+          ? _value.authToken
+          : authToken // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$AuthenticateUserImpl implements _AuthenticateUser {
+  const _$AuthenticateUserImpl({required this.user, required this.authToken});
+
+  @override
+  final UserModel user;
+  @override
+  final String authToken;
+
+  @override
+  String toString() {
+    return 'AuthenticationEvent.authenticatUser(user: $user, authToken: $authToken)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuthenticateUserImpl &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.authToken, authToken) ||
+                other.authToken == authToken));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, user, authToken);
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthenticateUserImplCopyWith<_$AuthenticateUserImpl> get copyWith =>
+      __$$AuthenticateUserImplCopyWithImpl<_$AuthenticateUserImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() checkExisting,
+    required TResult Function(String authToken, UserModel user) newUserLogin,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
+  }) {
+    return authenticatUser(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? checkExisting,
+    TResult? Function(String authToken, UserModel user)? newUserLogin,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
+  }) {
+    return authenticatUser?.call(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? checkExisting,
+    TResult Function(String authToken, UserModel user)? newUserLogin,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
+    required TResult orElse(),
+  }) {
+    if (authenticatUser != null) {
+      return authenticatUser(user, authToken);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_CheckExisting value) checkExisting,
+    required TResult Function(_NewUserLogin value) newUserLogin,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
+  }) {
+    return authenticatUser(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_CheckExisting value)? checkExisting,
+    TResult? Function(_NewUserLogin value)? newUserLogin,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
+  }) {
+    return authenticatUser?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_CheckExisting value)? checkExisting,
+    TResult Function(_NewUserLogin value)? newUserLogin,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
+    required TResult orElse(),
+  }) {
+    if (authenticatUser != null) {
+      return authenticatUser(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _AuthenticateUser implements AuthenticationEvent {
+  const factory _AuthenticateUser(
+      {required final UserModel user,
+      required final String authToken}) = _$AuthenticateUserImpl;
+
+  UserModel get user;
+  String get authToken;
+
+  /// Create a copy of AuthenticationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AuthenticateUserImplCopyWith<_$AuthenticateUserImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LogoutRequestedImplCopyWith<$Res> {
+  factory _$$LogoutRequestedImplCopyWith(_$LogoutRequestedImpl value,
+          $Res Function(_$LogoutRequestedImpl) then) =
+      __$$LogoutRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LogoutRequestedImplCopyWithImpl<$Res>
+    extends _$AuthenticationEventCopyWithImpl<$Res, _$LogoutRequestedImpl>
+    implements _$$LogoutRequestedImplCopyWith<$Res> {
+  __$$LogoutRequestedImplCopyWithImpl(
+      _$LogoutRequestedImpl _value, $Res Function(_$LogoutRequestedImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of AuthenticationEvent
@@ -544,18 +817,18 @@ class __$$LogoutImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LogoutImpl implements _Logout {
-  const _$LogoutImpl();
+class _$LogoutRequestedImpl implements _LogoutRequested {
+  const _$LogoutRequestedImpl();
 
   @override
   String toString() {
-    return 'AuthenticationEvent.logout()';
+    return 'AuthenticationEvent.logoutRequested()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LogoutImpl);
+        (other.runtimeType == runtimeType && other is _$LogoutRequestedImpl);
   }
 
   @override
@@ -564,39 +837,42 @@ class _$LogoutImpl implements _Logout {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() started,
     required TResult Function() checkExisting,
     required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
   }) {
-    return logout();
+    return logoutRequested();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
     TResult? Function()? checkExisting,
     TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
   }) {
-    return logout?.call();
+    return logoutRequested?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
     TResult Function()? checkExisting,
     TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
     required TResult orElse(),
   }) {
-    if (logout != null) {
-      return logout();
+    if (logoutRequested != null) {
+      return logoutRequested();
     }
     return orElse();
   }
@@ -604,163 +880,128 @@ class _$LogoutImpl implements _Logout {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
     required TResult Function(_CheckExisting value) checkExisting,
     required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
   }) {
-    return logout(this);
+    return logoutRequested(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
     TResult? Function(_CheckExisting value)? checkExisting,
     TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
   }) {
-    return logout?.call(this);
+    return logoutRequested?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
     TResult Function(_CheckExisting value)? checkExisting,
     TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
     required TResult orElse(),
   }) {
-    if (logout != null) {
-      return logout(this);
+    if (logoutRequested != null) {
+      return logoutRequested(this);
     }
     return orElse();
   }
 }
 
-abstract class _Logout implements AuthenticationEvent {
-  const factory _Logout() = _$LogoutImpl;
+abstract class _LogoutRequested implements AuthenticationEvent {
+  const factory _LogoutRequested() = _$LogoutRequestedImpl;
 }
 
 /// @nodoc
-abstract class _$$UserProfileUpdatedImplCopyWith<$Res> {
-  factory _$$UserProfileUpdatedImplCopyWith(_$UserProfileUpdatedImpl value,
-          $Res Function(_$UserProfileUpdatedImpl) then) =
-      __$$UserProfileUpdatedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({UserModel userModel});
-
-  $UserModelCopyWith<$Res> get userModel;
+abstract class _$$SessionExpiredImplCopyWith<$Res> {
+  factory _$$SessionExpiredImplCopyWith(_$SessionExpiredImpl value,
+          $Res Function(_$SessionExpiredImpl) then) =
+      __$$SessionExpiredImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$UserProfileUpdatedImplCopyWithImpl<$Res>
-    extends _$AuthenticationEventCopyWithImpl<$Res, _$UserProfileUpdatedImpl>
-    implements _$$UserProfileUpdatedImplCopyWith<$Res> {
-  __$$UserProfileUpdatedImplCopyWithImpl(_$UserProfileUpdatedImpl _value,
-      $Res Function(_$UserProfileUpdatedImpl) _then)
+class __$$SessionExpiredImplCopyWithImpl<$Res>
+    extends _$AuthenticationEventCopyWithImpl<$Res, _$SessionExpiredImpl>
+    implements _$$SessionExpiredImplCopyWith<$Res> {
+  __$$SessionExpiredImplCopyWithImpl(
+      _$SessionExpiredImpl _value, $Res Function(_$SessionExpiredImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of AuthenticationEvent
   /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userModel = null,
-  }) {
-    return _then(_$UserProfileUpdatedImpl(
-      userModel: null == userModel
-          ? _value.userModel
-          : userModel // ignore: cast_nullable_to_non_nullable
-              as UserModel,
-    ));
-  }
-
-  /// Create a copy of AuthenticationEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserModelCopyWith<$Res> get userModel {
-    return $UserModelCopyWith<$Res>(_value.userModel, (value) {
-      return _then(_value.copyWith(userModel: value));
-    });
-  }
 }
 
 /// @nodoc
 
-class _$UserProfileUpdatedImpl implements _UserProfileUpdated {
-  const _$UserProfileUpdatedImpl({required this.userModel});
-
-  @override
-  final UserModel userModel;
+class _$SessionExpiredImpl implements _SessionExpired {
+  const _$SessionExpiredImpl();
 
   @override
   String toString() {
-    return 'AuthenticationEvent.userProfileUpdate(userModel: $userModel)';
+    return 'AuthenticationEvent.sessionExpired()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserProfileUpdatedImpl &&
-            (identical(other.userModel, userModel) ||
-                other.userModel == userModel));
+        (other.runtimeType == runtimeType && other is _$SessionExpiredImpl);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userModel);
-
-  /// Create a copy of AuthenticationEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserProfileUpdatedImplCopyWith<_$UserProfileUpdatedImpl> get copyWith =>
-      __$$UserProfileUpdatedImplCopyWithImpl<_$UserProfileUpdatedImpl>(
-          this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() started,
     required TResult Function() checkExisting,
     required TResult Function(String authToken, UserModel user) newUserLogin,
-    required TResult Function() logout,
-    required TResult Function(UserModel userModel) userProfileUpdate,
+    required TResult Function(UserModel user, String authToken) completeProfile,
+    required TResult Function(UserModel user, String authToken) authenticatUser,
+    required TResult Function() logoutRequested,
+    required TResult Function() sessionExpired,
   }) {
-    return userProfileUpdate(userModel);
+    return sessionExpired();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? started,
     TResult? Function()? checkExisting,
     TResult? Function(String authToken, UserModel user)? newUserLogin,
-    TResult? Function()? logout,
-    TResult? Function(UserModel userModel)? userProfileUpdate,
+    TResult? Function(UserModel user, String authToken)? completeProfile,
+    TResult? Function(UserModel user, String authToken)? authenticatUser,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? sessionExpired,
   }) {
-    return userProfileUpdate?.call(userModel);
+    return sessionExpired?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? started,
     TResult Function()? checkExisting,
     TResult Function(String authToken, UserModel user)? newUserLogin,
-    TResult Function()? logout,
-    TResult Function(UserModel userModel)? userProfileUpdate,
+    TResult Function(UserModel user, String authToken)? completeProfile,
+    TResult Function(UserModel user, String authToken)? authenticatUser,
+    TResult Function()? logoutRequested,
+    TResult Function()? sessionExpired,
     required TResult orElse(),
   }) {
-    if (userProfileUpdate != null) {
-      return userProfileUpdate(userModel);
+    if (sessionExpired != null) {
+      return sessionExpired();
     }
     return orElse();
   }
@@ -768,55 +1009,49 @@ class _$UserProfileUpdatedImpl implements _UserProfileUpdated {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Started value) started,
     required TResult Function(_CheckExisting value) checkExisting,
     required TResult Function(_NewUserLogin value) newUserLogin,
-    required TResult Function(_Logout value) logout,
-    required TResult Function(_UserProfileUpdated value) userProfileUpdate,
+    required TResult Function(_CompleteProfile value) completeProfile,
+    required TResult Function(_AuthenticateUser value) authenticatUser,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_SessionExpired value) sessionExpired,
   }) {
-    return userProfileUpdate(this);
+    return sessionExpired(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Started value)? started,
     TResult? Function(_CheckExisting value)? checkExisting,
     TResult? Function(_NewUserLogin value)? newUserLogin,
-    TResult? Function(_Logout value)? logout,
-    TResult? Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult? Function(_CompleteProfile value)? completeProfile,
+    TResult? Function(_AuthenticateUser value)? authenticatUser,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_SessionExpired value)? sessionExpired,
   }) {
-    return userProfileUpdate?.call(this);
+    return sessionExpired?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Started value)? started,
     TResult Function(_CheckExisting value)? checkExisting,
     TResult Function(_NewUserLogin value)? newUserLogin,
-    TResult Function(_Logout value)? logout,
-    TResult Function(_UserProfileUpdated value)? userProfileUpdate,
+    TResult Function(_CompleteProfile value)? completeProfile,
+    TResult Function(_AuthenticateUser value)? authenticatUser,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_SessionExpired value)? sessionExpired,
     required TResult orElse(),
   }) {
-    if (userProfileUpdate != null) {
-      return userProfileUpdate(this);
+    if (sessionExpired != null) {
+      return sessionExpired(this);
     }
     return orElse();
   }
 }
 
-abstract class _UserProfileUpdated implements AuthenticationEvent {
-  const factory _UserProfileUpdated({required final UserModel userModel}) =
-      _$UserProfileUpdatedImpl;
-
-  UserModel get userModel;
-
-  /// Create a copy of AuthenticationEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserProfileUpdatedImplCopyWith<_$UserProfileUpdatedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+abstract class _SessionExpired implements AuthenticationEvent {
+  const factory _SessionExpired() = _$SessionExpiredImpl;
 }
 
 /// @nodoc
@@ -825,44 +1060,39 @@ mixin _$AuthenticationState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -870,40 +1100,37 @@ mixin _$AuthenticationState {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -952,7 +1179,7 @@ class __$$InitialImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$InitialImpl implements _Initial {
-  _$InitialImpl();
+  const _$InitialImpl();
 
   @override
   String toString() {
@@ -973,16 +1200,14 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
     return initial();
   }
@@ -992,14 +1217,13 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
     return initial?.call();
   }
@@ -1009,14 +1233,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1030,14 +1252,13 @@ class _$InitialImpl implements _Initial {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
     return initial(this);
   }
@@ -1047,13 +1268,12 @@ class _$InitialImpl implements _Initial {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
   }
@@ -1063,13 +1283,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1080,7 +1299,7 @@ class _$InitialImpl implements _Initial {
 }
 
 abstract class _Initial implements AuthenticationState {
-  factory _Initial() = _$InitialImpl;
+  const factory _Initial() = _$InitialImpl;
 }
 
 /// @nodoc
@@ -1105,7 +1324,7 @@ class __$$CheckingImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$CheckingImpl implements _Checking {
-  _$CheckingImpl();
+  const _$CheckingImpl();
 
   @override
   String toString() {
@@ -1126,16 +1345,14 @@ class _$CheckingImpl implements _Checking {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
     return checking();
   }
@@ -1145,14 +1362,13 @@ class _$CheckingImpl implements _Checking {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
     return checking?.call();
   }
@@ -1162,14 +1378,12 @@ class _$CheckingImpl implements _Checking {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (checking != null) {
@@ -1183,14 +1397,13 @@ class _$CheckingImpl implements _Checking {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
     return checking(this);
   }
@@ -1200,13 +1413,12 @@ class _$CheckingImpl implements _Checking {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
     return checking?.call(this);
   }
@@ -1216,13 +1428,12 @@ class _$CheckingImpl implements _Checking {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
     if (checking != null) {
@@ -1233,109 +1444,62 @@ class _$CheckingImpl implements _Checking {
 }
 
 abstract class _Checking implements AuthenticationState {
-  factory _Checking() = _$CheckingImpl;
+  const factory _Checking() = _$CheckingImpl;
 }
 
 /// @nodoc
-abstract class _$$InProgessImplCopyWith<$Res> {
-  factory _$$InProgessImplCopyWith(
-          _$InProgessImpl value, $Res Function(_$InProgessImpl) then) =
-      __$$InProgessImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({UserType userType, String phone, int attempt});
+abstract class _$$UnAuthenticatedImplCopyWith<$Res> {
+  factory _$$UnAuthenticatedImplCopyWith(_$UnAuthenticatedImpl value,
+          $Res Function(_$UnAuthenticatedImpl) then) =
+      __$$UnAuthenticatedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$InProgessImplCopyWithImpl<$Res>
-    extends _$AuthenticationStateCopyWithImpl<$Res, _$InProgessImpl>
-    implements _$$InProgessImplCopyWith<$Res> {
-  __$$InProgessImplCopyWithImpl(
-      _$InProgessImpl _value, $Res Function(_$InProgessImpl) _then)
+class __$$UnAuthenticatedImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res, _$UnAuthenticatedImpl>
+    implements _$$UnAuthenticatedImplCopyWith<$Res> {
+  __$$UnAuthenticatedImplCopyWithImpl(
+      _$UnAuthenticatedImpl _value, $Res Function(_$UnAuthenticatedImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userType = null,
-    Object? phone = null,
-    Object? attempt = null,
-  }) {
-    return _then(_$InProgessImpl(
-      userType: null == userType
-          ? _value.userType
-          : userType // ignore: cast_nullable_to_non_nullable
-              as UserType,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      attempt: null == attempt
-          ? _value.attempt
-          : attempt // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$InProgessImpl implements _InProgess {
-  _$InProgessImpl(
-      {required this.userType, required this.phone, required this.attempt});
-
-  @override
-  final UserType userType;
-  @override
-  final String phone;
-  @override
-  final int attempt;
+class _$UnAuthenticatedImpl implements _UnAuthenticated {
+  const _$UnAuthenticatedImpl();
 
   @override
   String toString() {
-    return 'AuthenticationState.inProgress(userType: $userType, phone: $phone, attempt: $attempt)';
+    return 'AuthenticationState.unAuthenticated()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$InProgessImpl &&
-            (identical(other.userType, userType) ||
-                other.userType == userType) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.attempt, attempt) || other.attempt == attempt));
+        (other.runtimeType == runtimeType && other is _$UnAuthenticatedImpl);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userType, phone, attempt);
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$InProgessImplCopyWith<_$InProgessImpl> get copyWith =>
-      __$$InProgessImplCopyWithImpl<_$InProgessImpl>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
-    return inProgress(userType, phone, attempt);
+    return unAuthenticated();
   }
 
   @override
@@ -1343,16 +1507,15 @@ class _$InProgessImpl implements _InProgess {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
-    return inProgress?.call(userType, phone, attempt);
+    return unAuthenticated?.call();
   }
 
   @override
@@ -1360,18 +1523,16 @@ class _$InProgessImpl implements _InProgess {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
-    if (inProgress != null) {
-      return inProgress(userType, phone, attempt);
+    if (unAuthenticated != null) {
+      return unAuthenticated();
     }
     return orElse();
   }
@@ -1381,16 +1542,15 @@ class _$InProgessImpl implements _InProgess {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
-    return inProgress(this);
+    return unAuthenticated(this);
   }
 
   @override
@@ -1398,15 +1558,14 @@ class _$InProgessImpl implements _InProgess {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
-    return inProgress?.call(this);
+    return unAuthenticated?.call(this);
   }
 
   @override
@@ -1414,36 +1573,435 @@ class _$InProgessImpl implements _InProgess {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (inProgress != null) {
-      return inProgress(this);
+    if (unAuthenticated != null) {
+      return unAuthenticated(this);
     }
     return orElse();
   }
 }
 
-abstract class _InProgess implements AuthenticationState {
-  factory _InProgess(
-      {required final UserType userType,
-      required final String phone,
-      required final int attempt}) = _$InProgessImpl;
+abstract class _UnAuthenticated implements AuthenticationState {
+  const factory _UnAuthenticated() = _$UnAuthenticatedImpl;
+}
 
-  UserType get userType;
-  String get phone;
-  int get attempt;
+/// @nodoc
+abstract class _$$UserNeedsProfileDetailsImplCopyWith<$Res> {
+  factory _$$UserNeedsProfileDetailsImplCopyWith(
+          _$UserNeedsProfileDetailsImpl value,
+          $Res Function(_$UserNeedsProfileDetailsImpl) then) =
+      __$$UserNeedsProfileDetailsImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel user, String authToken});
+
+  $UserModelCopyWith<$Res> get user;
+}
+
+/// @nodoc
+class __$$UserNeedsProfileDetailsImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res,
+        _$UserNeedsProfileDetailsImpl>
+    implements _$$UserNeedsProfileDetailsImplCopyWith<$Res> {
+  __$$UserNeedsProfileDetailsImplCopyWithImpl(
+      _$UserNeedsProfileDetailsImpl _value,
+      $Res Function(_$UserNeedsProfileDetailsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? authToken = null,
+  }) {
+    return _then(_$UserNeedsProfileDetailsImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      authToken: null == authToken
+          ? _value.authToken
+          : authToken // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$UserNeedsProfileDetailsImpl implements _UserNeedsProfileDetails {
+  const _$UserNeedsProfileDetailsImpl(
+      {required this.user, required this.authToken});
+
+  @override
+  final UserModel user;
+  @override
+  final String authToken;
+
+  @override
+  String toString() {
+    return 'AuthenticationState.userNeedsProfileDetails(user: $user, authToken: $authToken)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserNeedsProfileDetailsImpl &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.authToken, authToken) ||
+                other.authToken == authToken));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, user, authToken);
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$InProgessImplCopyWith<_$InProgessImpl> get copyWith =>
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserNeedsProfileDetailsImplCopyWith<_$UserNeedsProfileDetailsImpl>
+      get copyWith => __$$UserNeedsProfileDetailsImplCopyWithImpl<
+          _$UserNeedsProfileDetailsImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() checking,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
+    required TResult Function(UserModel user, String authToken)
+        userAuthenticated,
+    required TResult Function() loggedOut,
+    required TResult Function(String message) error,
+  }) {
+    return userNeedsProfileDetails(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? checking,
+    TResult? Function()? unAuthenticated,
+    TResult? Function(UserModel user, String authToken)?
+        userNeedsProfileDetails,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
+  }) {
+    return userNeedsProfileDetails?.call(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? checking,
+    TResult Function()? unAuthenticated,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
+    TResult Function(UserModel user, String authToken)? userLoggedIn,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (userNeedsProfileDetails != null) {
+      return userNeedsProfileDetails(user, authToken);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Checking value) checking,
+    required TResult Function(_UnAuthenticated value) unAuthenticated,
+    required TResult Function(_UserNeedsProfileDetails value)
+        userNeedsProfileDetails,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
+  }) {
+    return userNeedsProfileDetails(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Checking value)? checking,
+    TResult? Function(_UnAuthenticated value)? unAuthenticated,
+    TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
+  }) {
+    return userNeedsProfileDetails?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Checking value)? checking,
+    TResult Function(_UnAuthenticated value)? unAuthenticated,
+    TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (userNeedsProfileDetails != null) {
+      return userNeedsProfileDetails(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UserNeedsProfileDetails implements AuthenticationState {
+  const factory _UserNeedsProfileDetails(
+      {required final UserModel user,
+      required final String authToken}) = _$UserNeedsProfileDetailsImpl;
+
+  UserModel get user;
+  String get authToken;
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserNeedsProfileDetailsImplCopyWith<_$UserNeedsProfileDetailsImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UserLoggedInImplCopyWith<$Res> {
+  factory _$$UserLoggedInImplCopyWith(
+          _$UserLoggedInImpl value, $Res Function(_$UserLoggedInImpl) then) =
+      __$$UserLoggedInImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel user, String authToken});
+
+  $UserModelCopyWith<$Res> get user;
+}
+
+/// @nodoc
+class __$$UserLoggedInImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res, _$UserLoggedInImpl>
+    implements _$$UserLoggedInImplCopyWith<$Res> {
+  __$$UserLoggedInImplCopyWithImpl(
+      _$UserLoggedInImpl _value, $Res Function(_$UserLoggedInImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? authToken = null,
+  }) {
+    return _then(_$UserLoggedInImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      authToken: null == authToken
+          ? _value.authToken
+          : authToken // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$UserLoggedInImpl implements _UserLoggedIn {
+  const _$UserLoggedInImpl({required this.user, required this.authToken});
+
+  @override
+  final UserModel user;
+  @override
+  final String authToken;
+
+  @override
+  String toString() {
+    return 'AuthenticationState.userLoggedIn(user: $user, authToken: $authToken)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserLoggedInImpl &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.authToken, authToken) ||
+                other.authToken == authToken));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, user, authToken);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserLoggedInImplCopyWith<_$UserLoggedInImpl> get copyWith =>
+      __$$UserLoggedInImplCopyWithImpl<_$UserLoggedInImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() checking,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
+    required TResult Function(UserModel user, String authToken)
+        userAuthenticated,
+    required TResult Function() loggedOut,
+    required TResult Function(String message) error,
+  }) {
+    return userLoggedIn(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? checking,
+    TResult? Function()? unAuthenticated,
+    TResult? Function(UserModel user, String authToken)?
+        userNeedsProfileDetails,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
+  }) {
+    return userLoggedIn?.call(user, authToken);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? checking,
+    TResult Function()? unAuthenticated,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
+    TResult Function(UserModel user, String authToken)? userLoggedIn,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (userLoggedIn != null) {
+      return userLoggedIn(user, authToken);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Checking value) checking,
+    required TResult Function(_UnAuthenticated value) unAuthenticated,
+    required TResult Function(_UserNeedsProfileDetails value)
+        userNeedsProfileDetails,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
+  }) {
+    return userLoggedIn(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Checking value)? checking,
+    TResult? Function(_UnAuthenticated value)? unAuthenticated,
+    TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
+  }) {
+    return userLoggedIn?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Checking value)? checking,
+    TResult Function(_UnAuthenticated value)? unAuthenticated,
+    TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (userLoggedIn != null) {
+      return userLoggedIn(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UserLoggedIn implements AuthenticationState {
+  const factory _UserLoggedIn(
+      {required final UserModel user,
+      required final String authToken}) = _$UserLoggedInImpl;
+
+  UserModel get user;
+  String get authToken;
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserLoggedInImplCopyWith<_$UserLoggedInImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1500,7 +2058,7 @@ class __$$UserAuthenticatedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$UserAuthenticatedImpl implements _UserAuthenticated {
-  _$UserAuthenticatedImpl({required this.user, required this.authToken});
+  const _$UserAuthenticatedImpl({required this.user, required this.authToken});
 
   @override
   final UserModel user;
@@ -1539,16 +2097,14 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
     return userAuthenticated(user, authToken);
   }
@@ -1558,14 +2114,13 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
     return userAuthenticated?.call(user, authToken);
   }
@@ -1575,14 +2130,12 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (userAuthenticated != null) {
@@ -1596,14 +2149,13 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
     return userAuthenticated(this);
   }
@@ -1613,13 +2165,12 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
     return userAuthenticated?.call(this);
   }
@@ -1629,13 +2180,12 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
     if (userAuthenticated != null) {
@@ -1646,7 +2196,7 @@ class _$UserAuthenticatedImpl implements _UserAuthenticated {
 }
 
 abstract class _UserAuthenticated implements AuthenticationState {
-  factory _UserAuthenticated(
+  const factory _UserAuthenticated(
       {required final UserModel user,
       required final String authToken}) = _$UserAuthenticatedImpl;
 
@@ -1658,159 +2208,6 @@ abstract class _UserAuthenticated implements AuthenticationState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserAuthenticatedImplCopyWith<_$UserAuthenticatedImpl> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$UnAuthenticatedImplCopyWith<$Res> {
-  factory _$$UnAuthenticatedImplCopyWith(_$UnAuthenticatedImpl value,
-          $Res Function(_$UnAuthenticatedImpl) then) =
-      __$$UnAuthenticatedImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$UnAuthenticatedImplCopyWithImpl<$Res>
-    extends _$AuthenticationStateCopyWithImpl<$Res, _$UnAuthenticatedImpl>
-    implements _$$UnAuthenticatedImplCopyWith<$Res> {
-  __$$UnAuthenticatedImplCopyWithImpl(
-      _$UnAuthenticatedImpl _value, $Res Function(_$UnAuthenticatedImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$UnAuthenticatedImpl implements _UnAuthenticated {
-  _$UnAuthenticatedImpl();
-
-  @override
-  String toString() {
-    return 'AuthenticationState.unAuthenticated()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UnAuthenticatedImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
-    required TResult Function(UserModel user, String authToken)
-        userAuthenticated,
-    required TResult Function() unAuthenticated,
-    required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
-  }) {
-    return unAuthenticated();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
-    TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
-  }) {
-    return unAuthenticated?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
-    TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
-    TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (unAuthenticated != null) {
-      return unAuthenticated();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
-    required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
-    required TResult Function(_UserNeedsProfileDetails value)
-        userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
-  }) {
-    return unAuthenticated(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
-    TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
-    TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
-  }) {
-    return unAuthenticated?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
-    TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
-    TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (unAuthenticated != null) {
-      return unAuthenticated(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _UnAuthenticated implements AuthenticationState {
-  factory _UnAuthenticated() = _$UnAuthenticatedImpl;
 }
 
 /// @nodoc
@@ -1835,7 +2232,7 @@ class __$$LoggedOutImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoggedOutImpl implements _LoggedOut {
-  _$LoggedOutImpl();
+  const _$LoggedOutImpl();
 
   @override
   String toString() {
@@ -1856,16 +2253,14 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
     return loggedOut();
   }
@@ -1875,14 +2270,13 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
     return loggedOut?.call();
   }
@@ -1892,14 +2286,12 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loggedOut != null) {
@@ -1913,14 +2305,13 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
     return loggedOut(this);
   }
@@ -1930,13 +2321,12 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
     return loggedOut?.call(this);
   }
@@ -1946,13 +2336,12 @@ class _$LoggedOutImpl implements _LoggedOut {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
     if (loggedOut != null) {
@@ -1963,26 +2352,24 @@ class _$LoggedOutImpl implements _LoggedOut {
 }
 
 abstract class _LoggedOut implements AuthenticationState {
-  factory _LoggedOut() = _$LoggedOutImpl;
+  const factory _LoggedOut() = _$LoggedOutImpl;
 }
 
 /// @nodoc
-abstract class _$$UserLoggedInImplCopyWith<$Res> {
-  factory _$$UserLoggedInImplCopyWith(
-          _$UserLoggedInImpl value, $Res Function(_$UserLoggedInImpl) then) =
-      __$$UserLoggedInImplCopyWithImpl<$Res>;
+abstract class _$$ErrorImplCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({UserModel user, String authToken});
-
-  $UserModelCopyWith<$Res> get user;
+  $Res call({String message});
 }
 
 /// @nodoc
-class __$$UserLoggedInImplCopyWithImpl<$Res>
-    extends _$AuthenticationStateCopyWithImpl<$Res, _$UserLoggedInImpl>
-    implements _$$UserLoggedInImplCopyWith<$Res> {
-  __$$UserLoggedInImplCopyWithImpl(
-      _$UserLoggedInImpl _value, $Res Function(_$UserLoggedInImpl) _then)
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of AuthenticationState
@@ -1990,85 +2377,64 @@ class __$$UserLoggedInImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? user = null,
-    Object? authToken = null,
+    Object? message = null,
   }) {
-    return _then(_$UserLoggedInImpl(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as UserModel,
-      authToken: null == authToken
-          ? _value.authToken
-          : authToken // ignore: cast_nullable_to_non_nullable
+    return _then(_$ErrorImpl(
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
               as String,
     ));
-  }
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserModelCopyWith<$Res> get user {
-    return $UserModelCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value));
-    });
   }
 }
 
 /// @nodoc
 
-class _$UserLoggedInImpl implements _UserLoggedIn {
-  _$UserLoggedInImpl({required this.user, required this.authToken});
+class _$ErrorImpl implements _Error {
+  const _$ErrorImpl(this.message);
 
   @override
-  final UserModel user;
-  @override
-  final String authToken;
+  final String message;
 
   @override
   String toString() {
-    return 'AuthenticationState.userLoggedIn(user: $user, authToken: $authToken)';
+    return 'AuthenticationState.error(message: $message)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserLoggedInImpl &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.authToken, authToken) ||
-                other.authToken == authToken));
+            other is _$ErrorImpl &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, user, authToken);
+  int get hashCode => Object.hash(runtimeType, message);
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$UserLoggedInImplCopyWith<_$UserLoggedInImpl> get copyWith =>
-      __$$UserLoggedInImplCopyWithImpl<_$UserLoggedInImpl>(this, _$identity);
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
+    required TResult Function() unAuthenticated,
+    required TResult Function(UserModel user, String authToken)
+        userNeedsProfileDetails,
+    required TResult Function(UserModel user, String authToken) userLoggedIn,
     required TResult Function(UserModel user, String authToken)
         userAuthenticated,
-    required TResult Function() unAuthenticated,
     required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
+    required TResult Function(String message) error,
   }) {
-    return userLoggedIn(user, authToken);
+    return error(message);
   }
 
   @override
@@ -2076,16 +2442,15 @@ class _$UserLoggedInImpl implements _UserLoggedIn {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
     TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
+    TResult? Function(UserModel user, String authToken)?
         userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
+    TResult? Function(UserModel user, String authToken)? userLoggedIn,
+    TResult? Function(UserModel user, String authToken)? userAuthenticated,
+    TResult? Function()? loggedOut,
+    TResult? Function(String message)? error,
   }) {
-    return userLoggedIn?.call(user, authToken);
+    return error?.call(message);
   }
 
   @override
@@ -2093,18 +2458,16 @@ class _$UserLoggedInImpl implements _UserLoggedIn {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
     TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
+    TResult Function(UserModel user, String authToken)? userNeedsProfileDetails,
     TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
+    TResult Function(UserModel user, String authToken)? userAuthenticated,
+    TResult Function()? loggedOut,
+    TResult Function(String message)? error,
     required TResult orElse(),
   }) {
-    if (userLoggedIn != null) {
-      return userLoggedIn(user, authToken);
+    if (error != null) {
+      return error(message);
     }
     return orElse();
   }
@@ -2114,16 +2477,15 @@ class _$UserLoggedInImpl implements _UserLoggedIn {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
     required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
     required TResult Function(_UserNeedsProfileDetails value)
         userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
+    required TResult Function(_UserLoggedIn value) userLoggedIn,
+    required TResult Function(_UserAuthenticated value) userAuthenticated,
+    required TResult Function(_LoggedOut value) loggedOut,
+    required TResult Function(_Error value) error,
   }) {
-    return userLoggedIn(this);
+    return error(this);
   }
 
   @override
@@ -2131,15 +2493,14 @@ class _$UserLoggedInImpl implements _UserLoggedIn {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
     TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
     TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult? Function(_UserLoggedIn value)? userLoggedIn,
+    TResult? Function(_UserAuthenticated value)? userAuthenticated,
+    TResult? Function(_LoggedOut value)? loggedOut,
+    TResult? Function(_Error value)? error,
   }) {
-    return userLoggedIn?.call(this);
+    return error?.call(this);
   }
 
   @override
@@ -2147,404 +2508,29 @@ class _$UserLoggedInImpl implements _UserLoggedIn {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
     TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
     TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
+    TResult Function(_UserLoggedIn value)? userLoggedIn,
+    TResult Function(_UserAuthenticated value)? userAuthenticated,
+    TResult Function(_LoggedOut value)? loggedOut,
+    TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (userLoggedIn != null) {
-      return userLoggedIn(this);
+    if (error != null) {
+      return error(this);
     }
     return orElse();
   }
 }
 
-abstract class _UserLoggedIn implements AuthenticationState {
-  factory _UserLoggedIn(
-      {required final UserModel user,
-      required final String authToken}) = _$UserLoggedInImpl;
+abstract class _Error implements AuthenticationState {
+  const factory _Error(final String message) = _$ErrorImpl;
 
-  UserModel get user;
-  String get authToken;
+  String get message;
 
   /// Create a copy of AuthenticationState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserLoggedInImplCopyWith<_$UserLoggedInImpl> get copyWith =>
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$UserNeedsProfileDetailsImplCopyWith<$Res> {
-  factory _$$UserNeedsProfileDetailsImplCopyWith(
-          _$UserNeedsProfileDetailsImpl value,
-          $Res Function(_$UserNeedsProfileDetailsImpl) then) =
-      __$$UserNeedsProfileDetailsImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({UserModel userModel, String authToken});
-
-  $UserModelCopyWith<$Res> get userModel;
-}
-
-/// @nodoc
-class __$$UserNeedsProfileDetailsImplCopyWithImpl<$Res>
-    extends _$AuthenticationStateCopyWithImpl<$Res,
-        _$UserNeedsProfileDetailsImpl>
-    implements _$$UserNeedsProfileDetailsImplCopyWith<$Res> {
-  __$$UserNeedsProfileDetailsImplCopyWithImpl(
-      _$UserNeedsProfileDetailsImpl _value,
-      $Res Function(_$UserNeedsProfileDetailsImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? userModel = null,
-    Object? authToken = null,
-  }) {
-    return _then(_$UserNeedsProfileDetailsImpl(
-      userModel: null == userModel
-          ? _value.userModel
-          : userModel // ignore: cast_nullable_to_non_nullable
-              as UserModel,
-      authToken: null == authToken
-          ? _value.authToken
-          : authToken // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserModelCopyWith<$Res> get userModel {
-    return $UserModelCopyWith<$Res>(_value.userModel, (value) {
-      return _then(_value.copyWith(userModel: value));
-    });
-  }
-}
-
-/// @nodoc
-
-class _$UserNeedsProfileDetailsImpl implements _UserNeedsProfileDetails {
-  _$UserNeedsProfileDetailsImpl(
-      {required this.userModel, required this.authToken});
-
-  @override
-  final UserModel userModel;
-  @override
-  final String authToken;
-
-  @override
-  String toString() {
-    return 'AuthenticationState.userNeedsProfileDetails(userModel: $userModel, authToken: $authToken)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserNeedsProfileDetailsImpl &&
-            (identical(other.userModel, userModel) ||
-                other.userModel == userModel) &&
-            (identical(other.authToken, authToken) ||
-                other.authToken == authToken));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, userModel, authToken);
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserNeedsProfileDetailsImplCopyWith<_$UserNeedsProfileDetailsImpl>
-      get copyWith => __$$UserNeedsProfileDetailsImplCopyWithImpl<
-          _$UserNeedsProfileDetailsImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
-    required TResult Function(UserModel user, String authToken)
-        userAuthenticated,
-    required TResult Function() unAuthenticated,
-    required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
-  }) {
-    return userNeedsProfileDetails(userModel, authToken);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
-    TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
-  }) {
-    return userNeedsProfileDetails?.call(userModel, authToken);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
-    TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
-    TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (userNeedsProfileDetails != null) {
-      return userNeedsProfileDetails(userModel, authToken);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
-    required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
-    required TResult Function(_UserNeedsProfileDetails value)
-        userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
-  }) {
-    return userNeedsProfileDetails(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
-    TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
-    TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
-  }) {
-    return userNeedsProfileDetails?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
-    TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
-    TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (userNeedsProfileDetails != null) {
-      return userNeedsProfileDetails(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _UserNeedsProfileDetails implements AuthenticationState {
-  factory _UserNeedsProfileDetails(
-      {required final UserModel userModel,
-      required final String authToken}) = _$UserNeedsProfileDetailsImpl;
-
-  UserModel get userModel;
-  String get authToken;
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserNeedsProfileDetailsImplCopyWith<_$UserNeedsProfileDetailsImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$UserNeedsOnboardImplCopyWith<$Res> {
-  factory _$$UserNeedsOnboardImplCopyWith(_$UserNeedsOnboardImpl value,
-          $Res Function(_$UserNeedsOnboardImpl) then) =
-      __$$UserNeedsOnboardImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$UserNeedsOnboardImplCopyWithImpl<$Res>
-    extends _$AuthenticationStateCopyWithImpl<$Res, _$UserNeedsOnboardImpl>
-    implements _$$UserNeedsOnboardImplCopyWith<$Res> {
-  __$$UserNeedsOnboardImplCopyWithImpl(_$UserNeedsOnboardImpl _value,
-      $Res Function(_$UserNeedsOnboardImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthenticationState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$UserNeedsOnboardImpl implements _UserNeedsOnboard {
-  _$UserNeedsOnboardImpl();
-
-  @override
-  String toString() {
-    return 'AuthenticationState.userNeedsOnboard()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UserNeedsOnboardImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() checking,
-    required TResult Function(UserType userType, String phone, int attempt)
-        inProgress,
-    required TResult Function(UserModel user, String authToken)
-        userAuthenticated,
-    required TResult Function() unAuthenticated,
-    required TResult Function() loggedOut,
-    required TResult Function(UserModel user, String authToken) userLoggedIn,
-    required TResult Function(UserModel userModel, String authToken)
-        userNeedsProfileDetails,
-    required TResult Function() userNeedsOnboard,
-  }) {
-    return userNeedsOnboard();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? checking,
-    TResult? Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult? Function(UserModel user, String authToken)? userAuthenticated,
-    TResult? Function()? unAuthenticated,
-    TResult? Function()? loggedOut,
-    TResult? Function(UserModel user, String authToken)? userLoggedIn,
-    TResult? Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult? Function()? userNeedsOnboard,
-  }) {
-    return userNeedsOnboard?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? checking,
-    TResult Function(UserType userType, String phone, int attempt)? inProgress,
-    TResult Function(UserModel user, String authToken)? userAuthenticated,
-    TResult Function()? unAuthenticated,
-    TResult Function()? loggedOut,
-    TResult Function(UserModel user, String authToken)? userLoggedIn,
-    TResult Function(UserModel userModel, String authToken)?
-        userNeedsProfileDetails,
-    TResult Function()? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (userNeedsOnboard != null) {
-      return userNeedsOnboard();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Checking value) checking,
-    required TResult Function(_InProgess value) inProgress,
-    required TResult Function(_UserAuthenticated value) userAuthenticated,
-    required TResult Function(_UnAuthenticated value) unAuthenticated,
-    required TResult Function(_LoggedOut value) loggedOut,
-    required TResult Function(_UserLoggedIn value) userLoggedIn,
-    required TResult Function(_UserNeedsProfileDetails value)
-        userNeedsProfileDetails,
-    required TResult Function(_UserNeedsOnboard value) userNeedsOnboard,
-  }) {
-    return userNeedsOnboard(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Checking value)? checking,
-    TResult? Function(_InProgess value)? inProgress,
-    TResult? Function(_UserAuthenticated value)? userAuthenticated,
-    TResult? Function(_UnAuthenticated value)? unAuthenticated,
-    TResult? Function(_LoggedOut value)? loggedOut,
-    TResult? Function(_UserLoggedIn value)? userLoggedIn,
-    TResult? Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult? Function(_UserNeedsOnboard value)? userNeedsOnboard,
-  }) {
-    return userNeedsOnboard?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Checking value)? checking,
-    TResult Function(_InProgess value)? inProgress,
-    TResult Function(_UserAuthenticated value)? userAuthenticated,
-    TResult Function(_UnAuthenticated value)? unAuthenticated,
-    TResult Function(_LoggedOut value)? loggedOut,
-    TResult Function(_UserLoggedIn value)? userLoggedIn,
-    TResult Function(_UserNeedsProfileDetails value)? userNeedsProfileDetails,
-    TResult Function(_UserNeedsOnboard value)? userNeedsOnboard,
-    required TResult orElse(),
-  }) {
-    if (userNeedsOnboard != null) {
-      return userNeedsOnboard(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _UserNeedsOnboard implements AuthenticationState {
-  factory _UserNeedsOnboard() = _$UserNeedsOnboardImpl;
 }

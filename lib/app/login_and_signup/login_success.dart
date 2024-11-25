@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class LoginSuccessSplashScreen extends StatefulWidget {
-  const LoginSuccessSplashScreen({Key? key}) : super(key: key);
+  const LoginSuccessSplashScreen({super.key});
 
   @override
   State<LoginSuccessSplashScreen> createState() =>

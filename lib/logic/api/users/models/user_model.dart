@@ -6,14 +6,15 @@ part 'user_model.g.dart';
 @freezed
 class UserModel with _$UserModel {
   const factory UserModel({
-    required String id,
-    required String? phone,
-    required String? fullName,
-    required String? imageBlurhash,
-    required bool isActive,
+    required int id,
+    required String email,
+    required String username,
     required String? publicUrl,
     required DateTime createdAt,
     required DateTime updatedAt,
+    String? firstName,
+    String? lastName,
+    @Default(false) bool isActive,
   }) = _UserModel;
 
   /// Connect the generated [_$UserModelFromJson] function to the `fromJson`
@@ -22,6 +23,6 @@ class UserModel with _$UserModel {
       _$UserModelFromJson(json);
   const UserModel._();
   bool isProfileComplete() {
-    return fullName != null;
+    return firstName != null;
   }
 }

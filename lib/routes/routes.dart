@@ -46,7 +46,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final isUser = state.pathParameters['isUser']! == 'true';
 
-        return LoginScreen(
+        return const LoginScreen(
           isUser: true,
         );
       },
@@ -54,12 +54,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       name: '/wardrobeScreen',
       path: wardrobeManagementRoute,
-      builder: (BuildContext context, GoRouterState state) => WardrobeScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const WardrobeScreen(),
     ),
     GoRoute(
       name: '/addItemWardrobe',
       path: addItemWardrobeRoute,
-      builder: (BuildContext context, GoRouterState state) => AddItemScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const AddItemScreen(),
     ),
     GoRoute(
       name: '/aiChat',
@@ -94,13 +96,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       name: '/updateUserProfile',
       path: updateUserProfile,
-      builder: (BuildContext context, GoRouterState state) => UserUpdateForm(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const UserUpdateForm(),
     ),
     GoRoute(
       name: '/profileUpdateSuccess',
       path: profileUpdateSuccess,
       builder: (BuildContext context, GoRouterState state) =>
-          ProfileUdpateSuccess(),
+          const ProfileUdpateSuccess(),
     ),
   ],
 );

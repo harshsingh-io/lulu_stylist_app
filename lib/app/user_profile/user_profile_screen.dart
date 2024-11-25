@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart'; // Assuming you're using GoRouter for navigation
 import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
-import 'package:go_router/go_router.dart'; // Assuming you're using GoRouter for navigation
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -28,11 +28,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Loads user data from SharedPreferences
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    String? userDataJson = prefs.getString('userDetails');
+    final userDataJson = prefs.getString('userDetails');
 
     if (userDataJson != null && userDataJson.isNotEmpty) {
-      Map<String, dynamic> userData =
-          json.decode(userDataJson) as Map<String, dynamic>;
+      final userData = json.decode(userDataJson) as Map<String, dynamic>;
       setState(() {
         user = UserUpdateRequestModel.fromJson(userData);
         isLoading = false;
@@ -56,7 +55,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     } catch (e) {
       // Handle logout error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error logging out. Please try again.')),
+        const SnackBar(content: Text('Error logging out. Please try again.')),
       );
     }
   }
@@ -67,21 +66,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Logout'),
-          content: Text('Are you sure you want to logout from your account?'),
+          title: const Text('Logout'),
+          content:
+              const Text('Are you sure you want to logout from your account?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel',
-                  style: TextStyle(color: LuluBrandColor.brandPrimary)),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: LuluBrandColor.brandPrimary),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _logout();
               },
-              child: Text('Logout',
-                  style: TextStyle(color: LuluBrandColor.brandRed)),
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: LuluBrandColor.brandRed),
+              ),
             ),
           ],
         );
@@ -93,7 +97,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   ImageProvider _getProfileImageProvider(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
       // If no image selected, show placeholder asset image
-      return AssetImage('assets/images/default.jpg');
+      return const AssetImage('assets/images/default.jpg');
     } else if (imagePath.startsWith('assets/')) {
       // If imagePath starts with 'assets/', load as asset
       return AssetImage(imagePath);
@@ -104,7 +108,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         return FileImage(file);
       } else {
         // If file doesn't exist, show placeholder
-        return AssetImage('assets/images/default.jpg');
+        return const AssetImage('assets/images/default.jpg');
       }
     }
   }
@@ -117,7 +121,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         backgroundColor: Colors.grey[300],
         backgroundImage: _getProfileImageProvider(user!.profileImagePath),
         child: user!.profileImagePath == null || user!.profileImagePath!.isEmpty
-            ? Icon(
+            ? const Icon(
                 Icons.person,
                 size: 60,
                 color: Colors.white,
@@ -135,17 +139,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 _getSectionIcon(title),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: LuluBrandColor.brandPrimary,
@@ -153,7 +157,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             content,
           ],
         ),
@@ -165,15 +169,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Icon _getSectionIcon(String title) {
     switch (title) {
       case 'User Details':
-        return Icon(Icons.person, color: LuluBrandColor.brandPrimary);
+        return const Icon(Icons.person, color: LuluBrandColor.brandPrimary);
       case 'Body Measurements':
-        return Icon(Icons.straighten, color: LuluBrandColor.brandPrimary);
+        return const Icon(Icons.straighten, color: LuluBrandColor.brandPrimary);
       case 'Style Preferences':
-        return Icon(Icons.style, color: LuluBrandColor.brandPrimary);
+        return const Icon(Icons.style, color: LuluBrandColor.brandPrimary);
       case 'User Preferences':
-        return Icon(Icons.settings, color: LuluBrandColor.brandPrimary);
+        return const Icon(Icons.settings, color: LuluBrandColor.brandPrimary);
       default:
-        return Icon(Icons.info, color: LuluBrandColor.brandPrimary);
+        return const Icon(Icons.info, color: LuluBrandColor.brandPrimary);
     }
   }
 
@@ -199,7 +203,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Builds the body measurements section
   Widget _buildBodyMeasurements() {
     final bodyMeasurements = user!.userDetails.bodyMeasurements;
-    if (bodyMeasurements == null) return SizedBox.shrink();
+    if (bodyMeasurements == null) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,23 +219,35 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Builds the style preferences section
   Widget _buildStylePreferences() {
     final stylePreferences = user!.userDetails.stylePreferences;
-    if (stylePreferences == null) return SizedBox.shrink();
+    if (stylePreferences == null) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildDetailRow(
-            'Favorite Colors', stylePreferences.favoriteColors.join(', ')),
+          'Favorite Colors',
+          stylePreferences.favoriteColors.join(', '),
+        ),
         _buildDetailRow(
-            'Preferred Brands', stylePreferences.preferredBrands.join(', ')),
+          'Preferred Brands',
+          stylePreferences.preferredBrands.join(', '),
+        ),
         _buildDetailRow(
-            'Lifestyle Choices', stylePreferences.lifestyleChoices.join(', ')),
-        _buildDetailRow('Budget',
-            'Min - \$${stylePreferences.budget.min}, Max - \$${stylePreferences.budget.max}'),
+          'Lifestyle Choices',
+          stylePreferences.lifestyleChoices.join(', '),
+        ),
         _buildDetailRow(
-            'Shopping Frequency', stylePreferences.shoppingHabits.frequency),
-        _buildDetailRow('Preferred Retailers',
-            stylePreferences.shoppingHabits.preferredRetailers.join(', ')),
+          'Budget',
+          'Min - \$${stylePreferences.budget.min}, Max - \$${stylePreferences.budget.max}',
+        ),
+        _buildDetailRow(
+          'Shopping Frequency',
+          stylePreferences.shoppingHabits.frequency,
+        ),
+        _buildDetailRow(
+          'Preferred Retailers',
+          stylePreferences.shoppingHabits.preferredRetailers.join(', '),
+        ),
       ],
     );
   }
@@ -241,10 +257,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow('Receive Notifications',
-            user!.preferences.receiveNotifications ? "Yes" : "No"),
-        _buildDetailRow('Allow Data Sharing',
-            user!.preferences.allowDataSharing ? "Yes" : "No"),
+        _buildDetailRow(
+          'Receive Notifications',
+          user!.preferences.receiveNotifications ? 'Yes' : 'No',
+        ),
+        _buildDetailRow(
+          'Allow Data Sharing',
+          user!.preferences.allowDataSharing ? 'Yes' : 'No',
+        ),
       ],
     );
   }
@@ -252,14 +272,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Builds a single detail row with label and value
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: RichText(
         text: TextSpan(
           style: DefaultTextStyle.of(context).style.copyWith(fontSize: 16),
           children: [
             TextSpan(
               text: '$label: ',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             TextSpan(text: value),
           ],
@@ -275,11 +295,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         // Navigate to edit profile screen
         GoRouter.of(context).go('/edit-profile');
       },
-      child: Icon(
+      backgroundColor: LuluBrandColor.brandPrimary,
+      child: const Icon(
         Icons.edit,
         color: Colors.white,
       ),
-      backgroundColor: LuluBrandColor.brandPrimary,
     );
   }
 
@@ -287,58 +307,70 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'User Profile',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: LuluBrandColor.brandPrimary,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Logout',
             onPressed: _confirmLogout,
           ),
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : user == null
-              ? Center(
+              ? const Center(
                   child: Text(
                     'No user data available.',
                     style: TextStyle(fontSize: 18),
                   ),
                 )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildUserProfilePicture(),
-                      SizedBox(height: 24.0),
+                      const SizedBox(height: 24),
                       _buildSectionCard('User Details', _buildUserDetails()),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16),
                       _buildSectionCard(
-                          'Body Measurements', _buildBodyMeasurements()),
-                      SizedBox(height: 16.0),
+                        'Body Measurements',
+                        _buildBodyMeasurements(),
+                      ),
+                      const SizedBox(height: 16),
                       _buildSectionCard(
-                          'Style Preferences', _buildStylePreferences()),
-                      SizedBox(height: 16.0),
+                        'Style Preferences',
+                        _buildStylePreferences(),
+                      ),
+                      const SizedBox(height: 16),
                       _buildSectionCard(
-                          'User Preferences', _buildUserPreferences()),
-                      SizedBox(height: 24.0),
+                        'User Preferences',
+                        _buildUserPreferences(),
+                      ),
+                      const SizedBox(height: 24),
                       Center(
                         child: ElevatedButton.icon(
                           onPressed: () {
                             // Navigate to edit profile screen
                             GoRouter.of(context).go('/edit-profile');
                           },
-                          icon: Icon(Icons.edit),
-                          label: Text('Edit Profile'),
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Edit Profile'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: LuluBrandColor.brandPrimary,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            textStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

@@ -20,14 +20,15 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
-  String get id => throw _privateConstructorUsedError;
-  String? get phone => throw _privateConstructorUsedError;
-  String? get fullName => throw _privateConstructorUsedError;
-  String? get imageBlurhash => throw _privateConstructorUsedError;
-  bool get isActive => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
   String? get publicUrl => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
+  String? get firstName => throw _privateConstructorUsedError;
+  String? get lastName => throw _privateConstructorUsedError;
+  bool get isActive => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,14 +46,15 @@ abstract class $UserModelCopyWith<$Res> {
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
   $Res call(
-      {String id,
-      String? phone,
-      String? fullName,
-      String? imageBlurhash,
-      bool isActive,
+      {int id,
+      String email,
+      String username,
       String? publicUrl,
       DateTime createdAt,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      String? firstName,
+      String? lastName,
+      bool isActive});
 }
 
 /// @nodoc
@@ -71,35 +73,28 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   @override
   $Res call({
     Object? id = null,
-    Object? phone = freezed,
-    Object? fullName = freezed,
-    Object? imageBlurhash = freezed,
-    Object? isActive = null,
+    Object? email = null,
+    Object? username = null,
     Object? publicUrl = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? isActive = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fullName: freezed == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageBlurhash: freezed == imageBlurhash
-          ? _value.imageBlurhash
-          : imageBlurhash // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
       publicUrl: freezed == publicUrl
           ? _value.publicUrl
           : publicUrl // ignore: cast_nullable_to_non_nullable
@@ -112,6 +107,18 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -125,14 +132,15 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String? phone,
-      String? fullName,
-      String? imageBlurhash,
-      bool isActive,
+      {int id,
+      String email,
+      String username,
       String? publicUrl,
       DateTime createdAt,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      String? firstName,
+      String? lastName,
+      bool isActive});
 }
 
 /// @nodoc
@@ -149,35 +157,28 @@ class __$$UserModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? phone = freezed,
-    Object? fullName = freezed,
-    Object? imageBlurhash = freezed,
-    Object? isActive = null,
+    Object? email = null,
+    Object? username = null,
     Object? publicUrl = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? isActive = null,
   }) {
     return _then(_$UserModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fullName: freezed == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageBlurhash: freezed == imageBlurhash
-          ? _value.imageBlurhash
-          : imageBlurhash // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
       publicUrl: freezed == publicUrl
           ? _value.publicUrl
           : publicUrl // ignore: cast_nullable_to_non_nullable
@@ -190,6 +191,18 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -199,38 +212,42 @@ class __$$UserModelImplCopyWithImpl<$Res>
 class _$UserModelImpl extends _UserModel {
   const _$UserModelImpl(
       {required this.id,
-      required this.phone,
-      required this.fullName,
-      required this.imageBlurhash,
-      required this.isActive,
+      required this.email,
+      required this.username,
       required this.publicUrl,
       required this.createdAt,
-      required this.updatedAt})
+      required this.updatedAt,
+      this.firstName,
+      this.lastName,
+      this.isActive = false})
       : super._();
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
   @override
-  final String id;
+  final int id;
   @override
-  final String? phone;
+  final String email;
   @override
-  final String? fullName;
-  @override
-  final String? imageBlurhash;
-  @override
-  final bool isActive;
+  final String username;
   @override
   final String? publicUrl;
   @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
+  @override
+  final String? firstName;
+  @override
+  final String? lastName;
+  @override
+  @JsonKey()
+  final bool isActive;
 
   @override
   String toString() {
-    return 'UserModel(id: $id, phone: $phone, fullName: $fullName, imageBlurhash: $imageBlurhash, isActive: $isActive, publicUrl: $publicUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserModel(id: $id, email: $email, username: $username, publicUrl: $publicUrl, createdAt: $createdAt, updatedAt: $updatedAt, firstName: $firstName, lastName: $lastName, isActive: $isActive)';
   }
 
   @override
@@ -239,25 +256,27 @@ class _$UserModelImpl extends _UserModel {
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.fullName, fullName) ||
-                other.fullName == fullName) &&
-            (identical(other.imageBlurhash, imageBlurhash) ||
-                other.imageBlurhash == imageBlurhash) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
             (identical(other.publicUrl, publicUrl) ||
                 other.publicUrl == publicUrl) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, phone, fullName,
-      imageBlurhash, isActive, publicUrl, createdAt, updatedAt);
+  int get hashCode => Object.hash(runtimeType, id, email, username, publicUrl,
+      createdAt, updatedAt, firstName, lastName, isActive);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -277,35 +296,38 @@ class _$UserModelImpl extends _UserModel {
 
 abstract class _UserModel extends UserModel {
   const factory _UserModel(
-      {required final String id,
-      required final String? phone,
-      required final String? fullName,
-      required final String? imageBlurhash,
-      required final bool isActive,
+      {required final int id,
+      required final String email,
+      required final String username,
       required final String? publicUrl,
       required final DateTime createdAt,
-      required final DateTime updatedAt}) = _$UserModelImpl;
+      required final DateTime updatedAt,
+      final String? firstName,
+      final String? lastName,
+      final bool isActive}) = _$UserModelImpl;
   const _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
 
   @override
-  String get id;
+  int get id;
   @override
-  String? get phone;
+  String get email;
   @override
-  String? get fullName;
-  @override
-  String? get imageBlurhash;
-  @override
-  bool get isActive;
+  String get username;
   @override
   String? get publicUrl;
   @override
   DateTime get createdAt;
   @override
   DateTime get updatedAt;
+  @override
+  String? get firstName;
+  @override
+  String? get lastName;
+  @override
+  bool get isActive;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.

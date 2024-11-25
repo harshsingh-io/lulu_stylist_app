@@ -22,10 +22,10 @@ UserUpdateRequestModel _$UserUpdateRequestModelFromJson(
 /// @nodoc
 mixin _$UserUpdateRequestModel {
   String get userId => throw _privateConstructorUsedError;
-  String? get profileImagePath => throw _privateConstructorUsedError;
   UserDetails get userDetails => throw _privateConstructorUsedError;
   List<Item> get wardrobeItems => throw _privateConstructorUsedError;
   UserPreferences get preferences => throw _privateConstructorUsedError;
+  String? get profileImagePath => throw _privateConstructorUsedError;
 
   /// Serializes this UserUpdateRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,10 +45,10 @@ abstract class $UserUpdateRequestModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String userId,
-      String? profileImagePath,
       UserDetails userDetails,
       List<Item> wardrobeItems,
-      UserPreferences preferences});
+      UserPreferences preferences,
+      String? profileImagePath});
 
   $UserDetailsCopyWith<$Res> get userDetails;
   $UserPreferencesCopyWith<$Res> get preferences;
@@ -71,20 +71,16 @@ class _$UserUpdateRequestModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? userId = null,
-    Object? profileImagePath = freezed,
     Object? userDetails = null,
     Object? wardrobeItems = null,
     Object? preferences = null,
+    Object? profileImagePath = freezed,
   }) {
     return _then(_value.copyWith(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      profileImagePath: freezed == profileImagePath
-          ? _value.profileImagePath
-          : profileImagePath // ignore: cast_nullable_to_non_nullable
-              as String?,
       userDetails: null == userDetails
           ? _value.userDetails
           : userDetails // ignore: cast_nullable_to_non_nullable
@@ -97,6 +93,10 @@ class _$UserUpdateRequestModelCopyWithImpl<$Res,
           ? _value.preferences
           : preferences // ignore: cast_nullable_to_non_nullable
               as UserPreferences,
+      profileImagePath: freezed == profileImagePath
+          ? _value.profileImagePath
+          : profileImagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -132,10 +132,10 @@ abstract class _$$UserUpdateRequestModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String userId,
-      String? profileImagePath,
       UserDetails userDetails,
       List<Item> wardrobeItems,
-      UserPreferences preferences});
+      UserPreferences preferences,
+      String? profileImagePath});
 
   @override
   $UserDetailsCopyWith<$Res> get userDetails;
@@ -159,20 +159,16 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? userId = null,
-    Object? profileImagePath = freezed,
     Object? userDetails = null,
     Object? wardrobeItems = null,
     Object? preferences = null,
+    Object? profileImagePath = freezed,
   }) {
     return _then(_$UserUpdateRequestModelImpl(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      profileImagePath: freezed == profileImagePath
-          ? _value.profileImagePath
-          : profileImagePath // ignore: cast_nullable_to_non_nullable
-              as String?,
       userDetails: null == userDetails
           ? _value.userDetails
           : userDetails // ignore: cast_nullable_to_non_nullable
@@ -185,6 +181,10 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
           ? _value.preferences
           : preferences // ignore: cast_nullable_to_non_nullable
               as UserPreferences,
+      profileImagePath: freezed == profileImagePath
+          ? _value.profileImagePath
+          : profileImagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -194,10 +194,10 @@ class __$$UserUpdateRequestModelImplCopyWithImpl<$Res>
 class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
   const _$UserUpdateRequestModelImpl(
       {required this.userId,
-      this.profileImagePath,
       required this.userDetails,
       required final List<Item> wardrobeItems,
-      required this.preferences})
+      required this.preferences,
+      this.profileImagePath})
       : _wardrobeItems = wardrobeItems;
 
   factory _$UserUpdateRequestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -205,8 +205,6 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
   @override
   final String userId;
-  @override
-  final String? profileImagePath;
   @override
   final UserDetails userDetails;
   final List<Item> _wardrobeItems;
@@ -219,10 +217,12 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
   @override
   final UserPreferences preferences;
+  @override
+  final String? profileImagePath;
 
   @override
   String toString() {
-    return 'UserUpdateRequestModel(userId: $userId, profileImagePath: $profileImagePath, userDetails: $userDetails, wardrobeItems: $wardrobeItems, preferences: $preferences)';
+    return 'UserUpdateRequestModel(userId: $userId, userDetails: $userDetails, wardrobeItems: $wardrobeItems, preferences: $preferences, profileImagePath: $profileImagePath)';
   }
 
   @override
@@ -231,14 +231,14 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
         (other.runtimeType == runtimeType &&
             other is _$UserUpdateRequestModelImpl &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.profileImagePath, profileImagePath) ||
-                other.profileImagePath == profileImagePath) &&
             (identical(other.userDetails, userDetails) ||
                 other.userDetails == userDetails) &&
             const DeepCollectionEquality()
                 .equals(other._wardrobeItems, _wardrobeItems) &&
             (identical(other.preferences, preferences) ||
-                other.preferences == preferences));
+                other.preferences == preferences) &&
+            (identical(other.profileImagePath, profileImagePath) ||
+                other.profileImagePath == profileImagePath));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -246,10 +246,10 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
   int get hashCode => Object.hash(
       runtimeType,
       userId,
-      profileImagePath,
       userDetails,
       const DeepCollectionEquality().hash(_wardrobeItems),
-      preferences);
+      preferences,
+      profileImagePath);
 
   /// Create a copy of UserUpdateRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -270,12 +270,11 @@ class _$UserUpdateRequestModelImpl implements _UserUpdateRequestModel {
 
 abstract class _UserUpdateRequestModel implements UserUpdateRequestModel {
   const factory _UserUpdateRequestModel(
-          {required final String userId,
-          final String? profileImagePath,
-          required final UserDetails userDetails,
-          required final List<Item> wardrobeItems,
-          required final UserPreferences preferences}) =
-      _$UserUpdateRequestModelImpl;
+      {required final String userId,
+      required final UserDetails userDetails,
+      required final List<Item> wardrobeItems,
+      required final UserPreferences preferences,
+      final String? profileImagePath}) = _$UserUpdateRequestModelImpl;
 
   factory _UserUpdateRequestModel.fromJson(Map<String, dynamic> json) =
       _$UserUpdateRequestModelImpl.fromJson;
@@ -283,13 +282,13 @@ abstract class _UserUpdateRequestModel implements UserUpdateRequestModel {
   @override
   String get userId;
   @override
-  String? get profileImagePath;
-  @override
   UserDetails get userDetails;
   @override
   List<Item> get wardrobeItems;
   @override
   UserPreferences get preferences;
+  @override
+  String? get profileImagePath;
 
   /// Create a copy of UserUpdateRequestModel
   /// with the given fields replaced by the non-null parameter values.
