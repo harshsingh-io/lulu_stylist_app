@@ -1,91 +1,187 @@
-import 'dart:convert';
+// lib/repositories/auth_repository.dart
+import 'dart:async';
 
-import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_device_token_model.dart';
+import 'package:lulu_stylist_app/logic/api/auth/authentication_inceptor.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/user_api.dart';
-import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
-
-Logger log = Logger(
-  printer: PrettyPrinter(),
-);
 
 class AuthRepository {
   AuthRepository({
-    required this.userApi,
-  });
+    required String baseUrl,
+    Dio? dioClient,
+    FlutterSecureStorage? secureStorage,
+  })  : dio = dioClient ?? Dio(BaseOptions(baseUrl: baseUrl)),
+        storage = secureStorage ?? const FlutterSecureStorage() {
+    dio.interceptors.add(AuthInterceptor(this, dio));
+  }
+  final Dio dio;
+  final FlutterSecureStorage storage;
+  final _sessionExpiredController = StreamController<void>.broadcast();
 
-  final String _logTag = 'AuthRepository';
-  final authTokenkey = 'authToken';
-  final authUserKey = 'authUser';
-  final expertUserKey = 'expertUser';
+  Stream<void> get sessionExpired => _sessionExpiredController.stream;
 
-  final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
-  final UserApi userApi;
+  // Add these getter methods
+  Future<String?> getAccessToken() => storage.read(key: 'access_token');
+  Future<String?> getRefreshToken() => storage.read(key: 'refresh_token');
 
-  Future<void> logout() async {
-    final userDeviceToken = UserDeviceTokenModel(
-      deviceToken: await AwesomeNotificationsFcm().requestFirebaseAppToken(),
-    );
+  void notifySessionExpired() {
+    _sessionExpiredController.add(null);
+  }
 
-    log.d('Device Token While Logging Out : $userDeviceToken');
-    if (AuthenticationBloc().isAuthUser()) {
-      try {
-        await userApi.logout(userDeviceToken);
-      } catch (e) {
-        log
-          ..e('Error in Logout user : $e')
-          ..e('Device Token is : $userDeviceToken');
+  Future<Either<AuthFailure, TokenPair>> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'username': email,
+        'password': password,
+      });
+
+      final response = await dio.post(
+        '/login',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        final tokenPair =
+            TokenPair.fromJson(response.data as Map<String, dynamic>);
+        await saveTokens(tokenPair);
+        return right(tokenPair);
+      } else {
+        return left(const AuthFailure.serverError());
       }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return left(const AuthFailure.networkError());
+      }
+      if (e.response?.statusCode == 401) {
+        return left(const AuthFailure.invalidCredentials());
+      }
+      return left(AuthFailure.serverError(e.message));
+    } catch (e) {
+      return left(const AuthFailure.serverError());
     }
-    await _storage.delete(key: authTokenkey);
-    await _storage.delete(key: authUserKey);
-    await _storage.delete(key: expertUserKey);
-    /* Logout for deleting the auth token from the backend */
   }
 
-  Future<String?> getAuthToken() async {
-    final authToken = await _storage.read(key: authTokenkey);
-    log.d(_logTag, error: 'Returning the authToken : $authToken');
-    return authToken;
+  Future<Either<AuthFailure, TokenPair>> refreshTokens(
+    String refreshToken,
+  ) async {
+    try {
+      final response = await dio.post(
+        '/refresh',
+        options: Options(
+          headers: {'Authorization': 'Bearer $refreshToken'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final tokenPair =
+            TokenPair.fromJson(response.data as Map<String, dynamic>);
+        await saveTokens(tokenPair);
+        return right(tokenPair);
+      } else {
+        return left(const AuthFailure.tokenExpired());
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return left(const AuthFailure.networkError());
+      }
+      return left(const AuthFailure.tokenExpired());
+    } catch (e) {
+      return left(const AuthFailure.serverError());
+    }
   }
 
-  Future<UserModel?> getAuthUser() async {
-    final data = await _storage.read(key: authUserKey);
-    if (data != null) {
-      final userData = jsonDecode(data);
-      try {
-        final user = UserModel.fromJson(userData as Map<String, dynamic>);
-        log.d(_logTag, error: 'Returning the user : $user');
-        return user;
-      } on Exception catch (e) {
-        // Anything else that is an exception
-        log.e(
-          _logTag,
-          error: 'Exception converting to user:  userString: $data $e',
+  Future<Either<AuthFailure, Unit>> logout() async {
+    try {
+      final accessToken = await getAccessToken();
+      if (accessToken != null) {
+        await dio.post(
+          '/logout',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
         );
       }
+      await clearTokens();
+      return right(unit);
+    } catch (e) {
+      // Still clear tokens even if logout request fails
+      await clearTokens();
+      return left(const AuthFailure.serverError());
     }
-
-    return null;
   }
 
-  Future<String?> setAuthToken(String authToken) async {
-    await _storage.write(key: authTokenkey, value: authToken);
-    return _storage.read(key: authTokenkey);
+  Future<Either<AuthFailure, UserModel>> getCurrentUser() async {
+    try {
+      final accessToken = await getAccessToken();
+      if (accessToken == null) {
+        return left(const AuthFailure.tokenExpired());
+      }
+
+      final response = await dio.get(
+        '/users/me',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return right(UserModel.fromJson(response.data as Map<String, dynamic>));
+      } else {
+        return left(const AuthFailure.serverError());
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        return left(const AuthFailure.tokenExpired());
+      }
+      return left(const AuthFailure.serverError());
+    } catch (e) {
+      return left(const AuthFailure.serverError());
+    }
   }
 
-  Future<UserModel?> setUser(UserModel user) async {
-    await _storage.write(
-      key: authUserKey,
-      value: jsonEncode(user.toJson()),
-    );
-    return getAuthUser();
+  Future<Either<AuthFailure, TokenPair>> getStoredTokens() async {
+    try {
+      final accessToken = await getAccessToken();
+      final refreshToken = await getRefreshToken();
+      final tokenType = await storage.read(key: 'token_type');
+
+      if (accessToken == null || refreshToken == null || tokenType == null) {
+        return left(const AuthFailure.tokenExpired());
+      }
+
+      return right(
+        TokenPair(
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          tokenType: tokenType,
+        ),
+      );
+    } catch (e) {
+      return left(const AuthFailure.serverError());
+    }
+  }
+
+  Future<void> saveTokens(TokenPair tokens) async {
+    await storage.write(key: 'access_token', value: tokens.accessToken);
+    await storage.write(key: 'refresh_token', value: tokens.refreshToken);
+    await storage.write(key: 'token_type', value: tokens.tokenType);
+  }
+
+  Future<void> clearTokens() async {
+    await storage.delete(key: 'access_token');
+    await storage.delete(key: 'refresh_token');
+    await storage.delete(key: 'token_type');
+  }
+
+  void dispose() {
+    _sessionExpiredController.close();
   }
 }

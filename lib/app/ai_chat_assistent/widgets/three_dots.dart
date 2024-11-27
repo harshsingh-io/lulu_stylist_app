@@ -16,8 +16,9 @@ class ThreeDotsState extends State<ThreeDots>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 800))
-      ..addStatusListener((status) {
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _currentIndex++;
           if (_currentIndex == 3) {

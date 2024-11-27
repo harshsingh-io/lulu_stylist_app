@@ -8,10 +8,10 @@ part 'user_update_request_model.g.dart';
 class UserUpdateRequestModel with _$UserUpdateRequestModel {
   const factory UserUpdateRequestModel({
     required String userId,
-    String? profileImagePath,
     required UserDetails userDetails,
     required List<Item> wardrobeItems,
     required UserPreferences preferences,
+    String? profileImagePath,
   }) = _UserUpdateRequestModel;
 
   /// Connect the generated [_$UserUpdateRequestModelFromJson] function to the `fromJson`

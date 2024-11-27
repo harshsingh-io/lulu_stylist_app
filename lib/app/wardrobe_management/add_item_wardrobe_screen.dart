@@ -1,15 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:nanoid/nanoid.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class AddItemScreen extends StatefulWidget {
+  const AddItemScreen({super.key});
+
   @override
   _AddItemScreenState createState() => _AddItemScreenState();
 }
@@ -23,7 +25,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   TextEditingController notesController = TextEditingController();
   TextEditingController tagsController = TextEditingController();
   File? _image;
-  DateTime _createdAt = DateTime.now();
+  final DateTime _createdAt = DateTime.now();
   bool _isFavorite = false;
   Category _selectedCategory = Category.TOP;
 
@@ -31,28 +33,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
   void saveItem() {
     if (_formKey.currentState!.validate()) {
       // Generate a new ID using nanoid
-      String newId = nanoid();
+      final newId = nanoid();
 
       // Parse tags from the comma-separated input
-      List<Tag> parsedTags = tagsController.text
+      final parsedTags = tagsController.text
           .split(',')
           .map((tag) => Tag(id: nanoid(), name: tag.trim()))
           .toList();
 
       // Determine image paths and data
-      String imagePath =
+      final imagePath =
           _image != null ? _image!.path : 'assets/images/default.jpg';
-      String imageData = _image != null
+      final imageData = _image != null
           ? 'base64'
           : 'base64'; // Placeholder for actual base64 encoding
 
       // Create a new Item instance
-      Item newItem = Item(
+      final newItem = Item(
         id: newId,
         name: nameController.text,
         createdAt: DateTime.now(),
         colors: [
-          'Unspecified'
+          'Unspecified',
         ], // You can add a color picker in the form for better input
         brand: brandController.text,
         category: _selectedCategory,
@@ -70,22 +72,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
       switch (_selectedCategory) {
         case Category.TOP:
           tops.add(newItem);
-          break;
         case Category.BOTTOM:
           bottoms.add(newItem);
-          break;
         case Category.INNERWEAR:
           innerWear.add(newItem);
-          break;
         case Category.ACCESSORIES:
           accessories.add(newItem);
-          break;
         case Category.SHOES:
           shoes.add(newItem);
-          break;
         case Category.OTHER:
           otherItems.add(newItem);
-          break;
         default:
           otherItems.add(newItem);
       }
@@ -96,7 +92,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       );
 
       // Navigate back to the previous screen after a short delay to allow the SnackBar to display
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 1), () {
         Navigator.pop(context);
       });
     }
@@ -122,19 +118,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add New Item"),
+        title: const Text('Add New Item'),
         backgroundColor: LuluBrandColor.brandPrimary,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Card(
             elevation: 8,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -152,21 +148,23 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: Colors.grey,
-                                  width: 1,
                                 ),
                               ),
                               child: _image == null
-                                  ? Container(
+                                  ? const SizedBox(
                                       width: double.maxFinite,
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Icon(Icons.add_a_photo,
-                                              size: 50, color: Colors.grey),
+                                          Icon(
+                                            Icons.add_a_photo,
+                                            size: 50,
+                                            color: Colors.grey,
+                                          ),
                                           SizedBox(height: 8),
                                           Text(
-                                            "Tap to add an image",
+                                            'Tap to add an image',
                                             style:
                                                 TextStyle(color: Colors.grey),
                                           ),
@@ -189,7 +187,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                               top: 8,
                               right: 8,
                               child: IconButton(
-                                icon: Icon(Icons.cancel, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.cancel, color: Colors.red),
                                 onPressed: _removeImage,
                                 tooltip: 'Remove Image',
                               ),
@@ -197,7 +196,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: nameController,
                       decoration: InputDecoration(
@@ -209,7 +208,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       validator: (value) =>
                           value!.isEmpty ? 'Please enter a name' : null,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: brandController,
                       decoration: InputDecoration(
@@ -221,7 +220,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       validator: (value) =>
                           value!.isEmpty ? 'Please enter a brand' : null,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     DropdownButtonFormField<Category>(
                       value: _selectedCategory,
                       items: Category.values.map((Category category) {
@@ -242,9 +241,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     SwitchListTile(
-                      title: Text('Favorite'),
+                      title: const Text('Favorite'),
                       value: _isFavorite,
                       onChanged: (bool value) {
                         setState(() {
@@ -253,7 +252,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       },
                       activeColor: LuluBrandColor.brandPrimary,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: priceController,
                       decoration: InputDecoration(
@@ -266,7 +265,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       validator: (value) =>
                           value!.isEmpty ? 'Please enter a price' : null,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: sizeController,
                       decoration: InputDecoration(
@@ -278,7 +277,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       validator: (value) =>
                           value!.isEmpty ? 'Please enter a size' : null,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: notesController,
                       decoration: InputDecoration(
@@ -289,7 +288,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ),
                       maxLines: 3,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: tagsController,
                       decoration: InputDecoration(
@@ -299,17 +298,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: saveItem,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: LuluBrandColor.brandPrimary,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Save',
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),

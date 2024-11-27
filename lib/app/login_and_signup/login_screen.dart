@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
@@ -12,7 +11,7 @@ import 'package:lulu_stylist_app/routes/routes.dart';
 Logger log = Logger(printer: PrettyPrinter());
 
 class LoginScreen extends StatefulWidget with SU {
-  const LoginScreen({super.key, required this.isUser});
+  const LoginScreen({required this.isUser, super.key});
 
   final bool isUser;
 
@@ -60,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     vertical: LuluSpacing.xl.h,
                   ),
                   child: Text(
-                    "Welcome! \n Register to get started",
+                    'Welcome! \n Register to get started',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -76,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                         blurRadius: 5,
                       ),
                     ],
@@ -84,9 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 20),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20),
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.email_outlined),
+                      prefixIcon: const Icon(Icons.email_outlined),
                       hintText: 'Email Address',
                       hintStyle: TextStyle(
                         color: Colors.black.withOpacity(0.5),
@@ -97,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 // Divider Line
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Container(
                     height: 1.5,
                     width: double.infinity,
@@ -111,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                         blurRadius: 5,
                       ),
                     ],
@@ -121,9 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText:
                         !_isPasswordVisible, // This controls the visibility
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 20),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20),
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.lock_outline),
+                      prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isPasswordVisible
@@ -163,37 +162,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSignIn() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Email and password cannot be empty",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: LuluBrandColor.brandRed,
-        textColor: Colors.white,
-      );
+      // Fluttertoast.showToast(
+      //   msg: 'Email and password cannot be empty',
+      //   toastLength: Toast.LENGTH_SHORT,
+      //   gravity: ToastGravity.TOP,
+      //   backgroundColor: LuluBrandColor.brandRed,
+      //   textColor: Colors.white,
+      // );
       return;
     }
 
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-      // Show the splash screen after login success
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginSuccessSplashScreen(),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      log.e('Login failed with error ${e.message}');
-      Fluttertoast.showToast(
-        msg: e.message ?? "Login failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: LuluBrandColor.brandRed,
-        textColor: Colors.white,
-      );
-    }
+    // try {
+    // final userCredential =
+    //     await FirebaseAuth.instance.signInWithEmailAndPassword(
+    //   email: emailController.text.trim(),
+    //   password: passwordController.text.trim(),
+    // );
+    // Show the splash screen after login success
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const LoginSuccessSplashScreen(),
+      ),
+    );
+    // } on FirebaseAuthException catch (e) {
+    //   log.e('Login failed with error ${e.message}');
+    //   Fluttertoast.showToast(
+    //     msg: e.message ?? 'Login failed',
+    //     toastLength: Toast.LENGTH_SHORT,
+    //     gravity: ToastGravity.TOP,
+    //     backgroundColor: LuluBrandColor.brandRed,
+    //     textColor: Colors.white,
+    //   );
+    // }
   }
 }

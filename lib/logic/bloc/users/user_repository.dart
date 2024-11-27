@@ -48,12 +48,7 @@ class UserRepository {
     //   }
     // }
 
-    if (updateUserModelRequest != null) {
-      final response = await _api.updateUser(updateUserModelRequest);
-      return response;
-    } else {
-      final response = await _api.updateUser(updateUserModelRequest);
-      return response;
-    }
+    final response = await _api.updateUser(updateUserModelRequest);
+    return response;
   }
 }

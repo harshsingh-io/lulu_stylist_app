@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lulu_stylist_app/lulu_design_system/core/sa_typography.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
+import 'package:lulu_stylist_app/lulu_design_system/core/sa_typography.dart';
 import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_app_bar_theme.dart';
 import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_bottom_nav_bar.dart';
 import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_card_theme.dart';

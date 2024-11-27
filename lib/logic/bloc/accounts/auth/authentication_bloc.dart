@@ -1,74 +1,162 @@
-import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
+// lib/logic/bloc/accounts/auth/authentication_bloc.dart
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
-import 'package:lulu_stylist_app/logic/api/devices/devices_api.dart';
-import 'package:lulu_stylist_app/logic/api/devices/models/user_add_device.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_type.dart';
-import 'package:lulu_stylist_app/logic/api/users/user_api.dart';
+import 'package:lulu_stylist_app/logic/api_base.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
-import 'package:lulu_stylist_app/logic/bloc/networks/network_bloc.dart';
 import 'package:lulu_stylist_app/logic/dio_factory.dart';
+
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 part 'authentication_bloc.freezed.dart';
 
-Logger log = Logger(
-  printer: PrettyPrinter(),
-);
+Logger log = Logger(printer: PrettyPrinter());
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  factory AuthenticationBloc() {
-    return _instance;
-  }
-  AuthenticationBloc._internal() : super(_Initial()) {
+  AuthenticationBloc()
+      : _authRepository = AuthRepository(
+          baseUrl: apiBase,
+          dioClient: DioFactory().create(),
+        ),
+        super(const AuthenticationState.initial()) {
     on<_CheckExisting>(_checkExisting);
-    on<_NewUserLogin>(_userLoggedIn);
-    on<_UserProfileUpdated>(_userProfileUpdate);
-    on<_Logout>(_logout);
+    on<_NewUserLogin>(_handleNewUserLogin);
+    on<_CompleteProfile>(_handleCompleteProfile);
+    on<_AuthenticateUser>(_handleUserAuthenticated);
+    on<_LogoutRequested>(_handleLogout);
+    on<_SessionExpired>(_handleSessionExpired);
   }
 
-  final String _logTag = 'LoginBloc';
+  final AuthRepository _authRepository;
+  final String _logTag = 'AuthenticationBloc';
 
-  static final AuthenticationBloc _instance = AuthenticationBloc._internal();
-  final _authRepository = AuthRepository(
-    userApi: UserApi(DioFactory().create()),
-  );
-
-  Future<void> _logout(
-    _Logout event,
+  Future<void> _checkExisting(
+    _CheckExisting event,
     Emitter<AuthenticationState> emit,
   ) async {
     try {
-      await _authRepository.logout();
-      /* Login for updating the device token to the backend */
-      emit(AuthenticationState.loggedOut());
-      add(const AuthenticationEvent.checkExisting());
-    } on Exception catch (error, stackTrace) {
-      log.e(_logTag, error: 'Caught an exception  $error     $stackTrace');
+      emit(const AuthenticationState.checking());
+
+      final tokenResult = await _authRepository.getStoredTokens();
+      tokenResult.fold(
+        (failure) => emit(const AuthenticationState.unAuthenticated()),
+        (tokens) async {
+          try {
+            final userResult = await _authRepository.getCurrentUser();
+            await userResult.fold(
+              (failure) async {
+                if (failure is TokenExpired) {
+                  final refreshResult = await _authRepository.refreshTokens(
+                    tokens.refreshToken,
+                  );
+                  await refreshResult.fold(
+                    (failure) {
+                      log.w(
+                        '$_logTag Token refresh failed',
+                        error: failure,
+                      );
+                      emit(const AuthenticationState.unAuthenticated());
+                    },
+                    (newTokens) async {
+                      final newUserResult =
+                          await _authRepository.getCurrentUser();
+                      newUserResult.fold(
+                        (failure) {
+                          log.e(
+                            '$_logTag Get user failed after token refresh',
+                            error: failure,
+                          );
+                          emit(const AuthenticationState.unAuthenticated());
+                        },
+                        (user) {
+                          if (!user.isProfileComplete()) {
+                            emit(
+                              AuthenticationState.userNeedsProfileDetails(
+                                user: user,
+                                authToken: newTokens.accessToken,
+                              ),
+                            );
+                          } else {
+                            emit(
+                              AuthenticationState.userLoggedIn(
+                                user: user,
+                                authToken: newTokens.accessToken,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  emit(const AuthenticationState.unAuthenticated());
+                }
+              },
+              (user) {
+                if (!user.isProfileComplete()) {
+                  emit(
+                    AuthenticationState.userNeedsProfileDetails(
+                      user: user,
+                      authToken: tokens.accessToken,
+                    ),
+                  );
+                } else {
+                  emit(
+                    AuthenticationState.userLoggedIn(
+                      user: user,
+                      authToken: tokens.accessToken,
+                    ),
+                  );
+                }
+              },
+            );
+          } catch (e, stackTrace) {
+            log.e(
+              '$_logTag Check auth status failed',
+              error: e,
+              stackTrace: stackTrace,
+            );
+            emit(const AuthenticationState.unAuthenticated());
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      log.e(
+        '$_logTag Check existing failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      emit(const AuthenticationState.unAuthenticated());
     }
   }
 
-  Future<void> _userLoggedIn(
+  Future<void> _handleNewUserLogin(
     _NewUserLogin event,
     Emitter<AuthenticationState> emit,
   ) async {
     try {
-      log.d('Auth token for user is : ${event.authToken}');
-      await _authRepository.setAuthToken(event.authToken);
-      await _authRepository.setUser(event.user);
-      final user = await _authRepository.userApi.getMe();
+      emit(const AuthenticationState.checking());
 
-      if (user.isProfileComplete() == false) {
+      await _authRepository.saveTokens(
+        TokenPair(
+          accessToken: event.authToken,
+          refreshToken: event.authToken,
+          tokenType: 'bearer',
+        ),
+      );
+
+      if (!event.user.isProfileComplete()) {
         emit(
           AuthenticationState.userNeedsProfileDetails(
-            userModel: event.user,
+            user: event.user,
             authToken: event.authToken,
           ),
         );
-      } else if (event.user.isProfileComplete() == true) {
+      } else {
         emit(
           AuthenticationState.userLoggedIn(
             user: event.user,
@@ -76,126 +164,72 @@ class AuthenticationBloc
           ),
         );
       }
-    } on Exception catch (error, stackTrace) {
-      log.e(_logTag, error: 'Caught an exception  $error     $stackTrace');
+    } catch (e, stackTrace) {
+      log.e(
+        '$_logTag New user login failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      emit(AuthenticationState.error(e.toString()));
     }
   }
 
-  Future<void> _checkExisting(
-    _CheckExisting event,
+  Future<void> _handleCompleteProfile(
+    _CompleteProfile event,
     Emitter<AuthenticationState> emit,
   ) async {
-    try {
-      final authToken = await _authRepository.getAuthToken();
-      final authUser = await _authRepository.getAuthUser();
-      var isOnline = false;
-      NetworkBloc().state.maybeWhen(
-            success: () {
-              isOnline = true;
-            },
-            failure: () {
-              isOnline = false;
-            },
-            orElse: () {},
-          );
-
-      if (!isOnline && authToken != null && authUser != null) {
-        emit(
-          AuthenticationState.userNeedsProfileDetails(
-            userModel: authUser,
-            authToken: authToken,
-          ),
-        );
-      } else if (authToken != null && authUser != null) {
-        final user = await _authRepository.userApi.getMe();
-        if (user.isProfileComplete() == false) {
-          emit(
-            AuthenticationState.userNeedsProfileDetails(
-              userModel: authUser,
-              authToken: authToken,
-            ),
-          );
-        } else if (authUser.isProfileComplete()) {
-          emit(
-            AuthenticationState.userAuthenticated(
-              user: authUser,
-              authToken: authToken,
-            ),
-          );
-        }
-      } else {
-        emit(AuthenticationState.unAuthenticated());
-      }
-    } on Exception catch (error, stackTrace) {
-      log.e(_logTag, error: 'Caught an exception  $error     $stackTrace');
-      emit(AuthenticationState.unAuthenticated());
-    }
-  }
-
-  Future<void> _userProfileUpdate(
-    _UserProfileUpdated event,
-    Emitter<AuthenticationState> emit,
-  ) async {
-    await _authRepository.setUser(event.userModel);
-    final authToken = await _authRepository.getAuthToken();
-
-    if (event.userModel.isProfileComplete() == false) {
-      emit(
-        AuthenticationState.userNeedsProfileDetails(
-          userModel: event.userModel,
-          authToken: authToken!,
-        ),
-      );
-    } else if (event.userModel.isProfileComplete() == true &&
-        event.userModel.isActive) {
-      emit(
-        AuthenticationState.userLoggedIn(
-          user: event.userModel,
-          authToken: authToken!,
-        ),
-      );
-    }
-  }
-
-  Future<void> setDeviceForNotification() async {
-    // final firebaseToken = NotificationController();
-    final token = await AwesomeNotificationsFcm().requestFirebaseAppToken();
-    final userAddDevice = UserAddDevice(
-      deviceToken: token,
-      platform: 'android',
+    emit(
+      AuthenticationState.userLoggedIn(
+        user: event.user,
+        authToken: event.authToken,
+      ),
     );
+  }
 
-    final deviceAddApi = DeviceAddApi(DioFactory().create());
+  Future<void> _handleUserAuthenticated(
+    _AuthenticateUser event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    emit(
+      AuthenticationState.userAuthenticated(
+        user: event.user,
+        authToken: event.authToken,
+      ),
+    );
+  }
 
+  Future<void> _handleLogout(
+    _LogoutRequested event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     try {
-      log.d(
-        'Firebase Token from setDeviceForNotification : $token',
-      );
+      emit(const AuthenticationState.checking());
 
-      await deviceAddApi.addDevice(userAddDevice);
-      log.d(
-        'Device Token added from setDeviceNotification is $userAddDevice',
+      final result = await _authRepository.logout();
+      result.fold(
+        (failure) {
+          log.e('$_logTag Logout failed', error: failure);
+          emit(const AuthenticationState.loggedOut());
+        },
+        (_) => emit(const AuthenticationState.loggedOut()),
       );
-    } catch (e) {
-      log
-        ..e(
-          'Firebase Token from setDeviceForNotification : $token',
-        )
-        ..e(
-          'Error is from setDeviceNotification is :   $e',
-        );
+    } catch (e, stackTrace) {
+      log.e(
+        '$_logTag Logout failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      // Still emit logged out even on error
+      emit(const AuthenticationState.loggedOut());
     }
   }
 
-  bool isAuthenticated() {
-    return state.isAuthenticated;
-  }
-
-  bool isAuthUser() {
-    return state.isAuthUser;
-  }
-
-  UserModel? authUser() {
-    return state.authUser;
+  Future<void> _handleSessionExpired(
+    _SessionExpired event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    log.w('$_logTag Session expired');
+    await _authRepository.clearTokens();
+    emit(const AuthenticationState.unAuthenticated());
   }
 }

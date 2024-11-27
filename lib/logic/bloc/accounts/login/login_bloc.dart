@@ -1,4 +1,4 @@
-import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
+// import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -62,10 +62,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(const LoginState.inProgress());
 
     try {
-      final notifController = NotificationController();
-      log.d(
-        'Firebase Token from login bloc is : ${notifController.firebaseToken}',
-      );
+      // final notifController = NotificationController();
+      // log.d(
+      //   'Firebase Token from login bloc is : ${notifController.firebaseToken}',
+      // );
 
       if (event.userType == UserType.user) {
         final loggedInUser = await _userApi.loginUser(
@@ -109,27 +109,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> setDeviceForNotification() async {
-    final token = await AwesomeNotificationsFcm().requestFirebaseAppToken();
-    final userAddDevice = UserAddDevice(
-      deviceToken: token,
-      platform: 'android',
-    );
+    // final token = await AwesomeNotificationsFcm().requestFirebaseAppToken();
+    // final userAddDevice = UserAddDevice(
+    //   deviceToken: token,
+    //   platform: 'android',
+    // );
 
-    final deviceAddApi = DeviceAddApi(DioFactory().create());
+    // final deviceAddApi = DeviceAddApi(DioFactory().create());
 
-    try {
-      log.w(
-        'Firebase Token from setDeviceForNotification : $token',
-      );
+    // try {
+    //   log.w(
+    //     'Firebase Token from setDeviceForNotification : $token',
+    //   );
 
-      await deviceAddApi.addDevice(userAddDevice);
-      log.d(
-        'Device Token added from setDeviceNotification is',
-      );
-    } catch (e) {
-      log.e(
-        'Firebase Token from setDeviceForNotification : $token and Error is : $e',
-      );
-    }
+    //   await deviceAddApi.addDevice(userAddDevice);
+    //   log.d(
+    //     'Device Token added from setDeviceNotification is',
+    //   );
+    // } catch (e) {
+    //   log.e(
+    //     'Firebase Token from setDeviceForNotification : $token and Error is : $e',
+    //   );
+    // }
   }
 }

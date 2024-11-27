@@ -10,7 +10,6 @@ _$UserUpdateRequestModelImpl _$$UserUpdateRequestModelImplFromJson(
         Map<String, dynamic> json) =>
     _$UserUpdateRequestModelImpl(
       userId: json['userId'] as String,
-      profileImagePath: json['profileImagePath'] as String?,
       userDetails:
           UserDetails.fromJson(json['userDetails'] as Map<String, dynamic>),
       wardrobeItems: (json['wardrobeItems'] as List<dynamic>)
@@ -18,16 +17,17 @@ _$UserUpdateRequestModelImpl _$$UserUpdateRequestModelImplFromJson(
           .toList(),
       preferences:
           UserPreferences.fromJson(json['preferences'] as Map<String, dynamic>),
+      profileImagePath: json['profileImagePath'] as String?,
     );
 
 Map<String, dynamic> _$$UserUpdateRequestModelImplToJson(
         _$UserUpdateRequestModelImpl instance) =>
     <String, dynamic>{
       'userId': instance.userId,
-      'profileImagePath': instance.profileImagePath,
       'userDetails': instance.userDetails,
       'wardrobeItems': instance.wardrobeItems,
       'preferences': instance.preferences,
+      'profileImagePath': instance.profileImagePath,
     };
 
 _$UserDetailsImpl _$$UserDetailsImplFromJson(Map<String, dynamic> json) =>

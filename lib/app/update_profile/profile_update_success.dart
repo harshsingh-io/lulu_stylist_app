@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
 class ProfileUdpateSuccess extends StatefulWidget {
-  const ProfileUdpateSuccess({Key? key}) : super(key: key);
+  const ProfileUdpateSuccess({super.key});
 
   @override
   State<ProfileUdpateSuccess> createState() => _ProfileUdpateSuccessState();

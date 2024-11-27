@@ -1,12 +1,15 @@
+import 'dart:io'; // Import File
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
-import 'dart:io'; // Import File
 
 class WardrobeScreen extends StatefulWidget {
+  const WardrobeScreen({super.key});
+
   @override
   _WardrobeScreenState createState() => _WardrobeScreenState();
 }
@@ -36,7 +39,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8), // Adjust the radius as needed
@@ -51,14 +54,14 @@ class _WardrobeScreenState extends State<WardrobeScreen>
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: Text(
                       item.name,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text('${item.brand} - ${item.size}'),
                   ),
                 ],
@@ -73,7 +76,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     // item.isFavorite = !item.isFavorite;
                   });
                 },
-              )
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -112,11 +115,13 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     return Scaffold(
       backgroundColor: LuluBrandColor.brandWhite,
       appBar: AppBar(
-        title: const Text('Wardrobe',
-            style: TextStyle(color: LuluBrandColor.brandWhite)),
+        title: const Text(
+          'Wardrobe',
+          style: TextStyle(color: LuluBrandColor.brandWhite),
+        ),
         backgroundColor: LuluBrandColor.brandPrimary,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(130.0), // Adjust the height here
+          preferredSize: const Size.fromHeight(130), // Adjust the height here
           child: Column(
             children: [
               Container(
@@ -125,14 +130,17 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     const EdgeInsets.all(16), // Padding around the search bar
                 child: TextField(
                   style: const TextStyle(
-                      color: LuluBrandColor.brandWhite), // Text color
+                    color: LuluBrandColor.brandWhite,
+                  ), // Text color
                   decoration: InputDecoration(
                     hintText: 'Search by name or tag',
                     hintStyle: TextStyle(
-                        color: LuluBrandColor.brandWhite
-                            .withOpacity(0.5)), // Hint text color
-                    prefixIcon: const Icon(Icons.search,
-                        color: LuluBrandColor.brandWhite), // Search icon color
+                      color: LuluBrandColor.brandWhite.withOpacity(0.5),
+                    ), // Hint text color
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: LuluBrandColor.brandWhite,
+                    ), // Search icon color
                     filled: true,
                     fillColor: LuluBrandColor
                         .brandPrimary, // Fill color same as background
@@ -150,7 +158,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(
-                          color: LuluBrandColor.brandWhite, width: 2),
+                        color: LuluBrandColor.brandWhite,
+                        width: 2,
+                      ),
                     ),
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -190,8 +200,8 @@ class _WardrobeScreenState extends State<WardrobeScreen>
           // After returning, refresh the UI to show the new item
           setState(() {});
         },
-        child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
         backgroundColor: LuluBrandColor.brandPrimary,
+        child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
       ),
       body: TabBarView(
         controller: _tabController,
@@ -212,7 +222,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: (1 / 1.5),
+        childAspectRatio: 1 / 1.5,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {

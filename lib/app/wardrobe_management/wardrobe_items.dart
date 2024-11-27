@@ -20,7 +20,7 @@ final List<Item> tops = [
     size: 'M',
     tags: [
       Tag(id: nanoid(), name: 'casual'),
-      Tag(id: nanoid(), name: 'summer')
+      Tag(id: nanoid(), name: 'summer'),
     ],
   ),
   Item(
@@ -39,7 +39,7 @@ final List<Item> tops = [
     size: 'S',
     tags: [
       Tag(id: nanoid(), name: 'elegant'),
-      Tag(id: nanoid(), name: 'office')
+      Tag(id: nanoid(), name: 'office'),
     ],
   ),
   Item(
@@ -106,7 +106,7 @@ final List<Item> tops = [
     size: 'M',
     tags: [
       Tag(id: nanoid(), name: 'luxury'),
-      Tag(id: nanoid(), name: 'elegant')
+      Tag(id: nanoid(), name: 'elegant'),
     ],
   ),
   Item(
@@ -141,7 +141,7 @@ final List<Item> tops = [
     size: 'M',
     tags: [
       Tag(id: nanoid(), name: 'casual'),
-      Tag(id: nanoid(), name: 'autumn')
+      Tag(id: nanoid(), name: 'autumn'),
     ],
   ),
   Item(
@@ -160,7 +160,7 @@ final List<Item> tops = [
     size: 'S',
     tags: [
       Tag(id: nanoid(), name: 'evening'),
-      Tag(id: nanoid(), name: 'luxury')
+      Tag(id: nanoid(), name: 'luxury'),
     ],
   ),
   Item(
@@ -179,7 +179,7 @@ final List<Item> tops = [
     size: 'M',
     tags: [
       Tag(id: nanoid(), name: 'all-season'),
-      Tag(id: nanoid(), name: 'durable')
+      Tag(id: nanoid(), name: 'durable'),
     ],
   ),
 ];

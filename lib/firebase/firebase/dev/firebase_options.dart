@@ -2,7 +2,7 @@
 // ignore_for_file: lines_longer_than_80_chars, avoid_classes_with_only_static_members
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '741913925040',
     projectId: 'superastro-50bf5',
     storageBucket: 'superastro-50bf5.appspot.com',
-    iosClientId: '741913925040-mj2j50r7m47hgoses1ctd0aoimht6tf5.apps.googleusercontent.com',
+    iosClientId:
+        '741913925040-mj2j50r7m47hgoses1ctd0aoimht6tf5.apps.googleusercontent.com',
     iosBundleId: 'com.thesuperastro.superastro-app.dev',
   );
 }

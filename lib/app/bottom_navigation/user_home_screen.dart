@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 1), () {
-      NotificationUtils.requireUserNotificationPermissions(context);
+      // NotificationUtils.requireUserNotificationPermissions(context);
     });
 
     if (!kIsWeb && Platform.isIOS) {
@@ -213,9 +213,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const AiChatScreen();
       case 2:
-        return WardrobeScreen();
+        return const WardrobeScreen();
       case 3:
-        return UserProfileScreen();
+        return const UserProfileScreen();
       default:
         return const Placeholder();
     }

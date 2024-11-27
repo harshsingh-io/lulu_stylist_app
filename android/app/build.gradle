@@ -2,7 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
+    id 'com.google.gms.google-services'
 }
 
 // Defining properties right after plugins
@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.persistventures.lulustylist.lulu_stylist_app"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -115,10 +115,11 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20"
-    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    implementation platform('com.google.firebase:firebase-bom:33.6.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation "androidx.work:work-runtime:2.8.1"
     implementation "androidx.work:work-runtime-ktx:2.8.1"
+    implementation 'androidx.glance:glance-appwidget:1.0.0'
     constraints {
         implementation("androidx.work:work-runtime") { version { strictly '2.8.1' } }
         implementation("androidx.work:work-runtime-ktx") { version { strictly '2.8.1' } }

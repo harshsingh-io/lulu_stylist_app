@@ -31,7 +31,7 @@ class AiChatScreenState extends State<AiChatScreen> {
 
   bool _streamDone = false;
 
-  List<ChatMessage> _messageList = [];
+  final List<ChatMessage> _messageList = [];
 
   final ChatUser _currentUser =
       ChatUser(id: '1', firstName: 'Abhishek', lastName: 'Verma');
@@ -59,11 +59,10 @@ class AiChatScreenState extends State<AiChatScreen> {
 
   Future<Map<String, dynamic>> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    String? userDataJson = prefs.getString('userDetails');
+    final userDataJson = prefs.getString('userDetails');
 
     if (userDataJson != null) {
-      Map<String, dynamic> userData =
-          json.decode(userDataJson) as Map<String, dynamic>;
+      final userData = json.decode(userDataJson) as Map<String, dynamic>;
 
       log.t('User Data: $userData');
       return userData;
@@ -75,13 +74,13 @@ class AiChatScreenState extends State<AiChatScreen> {
 
   List<Item> _loadWardrobeData() {
     // Assuming you have access to the wardrobe items in your code
-    List<Item> wardrobeItems = [
+    final wardrobeItems = <Item>[
       ...tops,
       ...bottoms,
       ...shoes,
       ...accessories,
       ...innerWear,
-      ...otherItems
+      ...otherItems,
     ];
 
     log.t('Wardrobe Items: $wardrobeItems');
@@ -89,9 +88,11 @@ class AiChatScreenState extends State<AiChatScreen> {
   }
 
   String _prepareContext(
-      Map<String, dynamic> userData, List<Item> wardrobeItems) {
+    Map<String, dynamic> userData,
+    List<Item> wardrobeItems,
+  ) {
     // Extract necessary user details
-    String userDetails = 'User Profile:\n';
+    var userDetails = 'User Profile:\n';
     userDetails += 'Name: ${userData['userDetails']['name']}\n';
     userDetails += 'Age: ${userData['userDetails']['age']}\n';
     userDetails += 'Gender: ${userData['userDetails']['gender']}\n';
@@ -101,14 +102,14 @@ class AiChatScreenState extends State<AiChatScreen> {
     // Add more details as needed
 
     // Summarize wardrobe items
-    String wardrobeSummary = 'Wardrobe Items:\n';
-    for (var item in wardrobeItems) {
+    var wardrobeSummary = 'Wardrobe Items:\n';
+    for (final item in wardrobeItems) {
       wardrobeSummary +=
           '- ${item.name} (${item.category.name}): ${item.colors.join(', ')}\n';
     }
 
     // Combine user details and wardrobe summary based on selected context
-    String context = '';
+    var context = '';
 
     if (_selectedContext == 'wardrobe_items') {
       context += '$wardrobeSummary\n';
@@ -133,17 +134,18 @@ class AiChatScreenState extends State<AiChatScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Clear Chat'),
-          content: Text('Are you sure you want to clear the chat history?'),
+          title: const Text('Clear Chat'),
+          content:
+              const Text('Are you sure you want to clear the chat history?'),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
               },
             ),
             TextButton(
-              child: Text('Clear'),
+              child: const Text('Clear'),
               onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
                 _clearChat(); // Call the method to clear chat
@@ -169,7 +171,7 @@ class AiChatScreenState extends State<AiChatScreen> {
       backgroundColor: LuluBrandColor.brandWhite,
       appBar: AppBar(
         title: const Text(
-          "Lulu AI Stylist",
+          'Lulu AI Stylist',
           style: TextStyle(
             color: LuluBrandColor.brandWhite,
             fontWeight: FontWeight.bold,
@@ -179,18 +181,16 @@ class AiChatScreenState extends State<AiChatScreen> {
         backgroundColor: LuluBrandColor.brandPrimary,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_sweep),
+            icon: const Icon(Icons.delete_sweep),
             tooltip: 'Clear Chat',
             color: LuluBrandColor.brandRed,
             onPressed: _isLoading ? null : _confirmClearChat,
           ),
           // Optional: Add a settings or context switch button
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.white),
+            icon: const Icon(Icons.settings, color: Colors.white),
             tooltip: 'Change Context',
-            onPressed: () {
-              _showChangeContextDialog();
-            },
+            onPressed: _showChangeContextDialog,
           ),
         ],
       ),
@@ -218,7 +218,7 @@ class AiChatScreenState extends State<AiChatScreen> {
                       height: 200,
                       fit: BoxFit.contain,
                     ),
-                    Text(
+                    const Text(
                       'What can I help with?',
                       style: TextStyle(
                         fontSize: 32,
@@ -226,7 +226,7 @@ class AiChatScreenState extends State<AiChatScreen> {
                         color: LuluBrandColor.brandBlack,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildContextPills(),
                   ],
                 ),
@@ -241,17 +241,16 @@ class AiChatScreenState extends State<AiChatScreen> {
   // Build Context Pills for Selection
   Widget _buildContextPills() {
     return Wrap(
-      spacing: 10.0,
-      runSpacing: 10.0,
+      spacing: 10,
+      runSpacing: 10,
       alignment: WrapAlignment.center,
-      children:
-          _availableContexts.map((item) => _buildContextPill(item)).toList(),
+      children: _availableContexts.map(_buildContextPill).toList(),
     );
   }
 
   // Build Individual Context Pill
   Widget _buildContextPill(Map<String, String> item) {
-    bool isSelected = _selectedContext == item['contextKey'];
+    final isSelected = _selectedContext == item['contextKey'];
 
     return GestureDetector(
       onTap: () {
@@ -270,7 +269,7 @@ class AiChatScreenState extends State<AiChatScreen> {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected
               ? LuluBrandColor.brandPrimary
@@ -279,7 +278,7 @@ class AiChatScreenState extends State<AiChatScreen> {
         ),
         child: Text(
           item['label']!,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
@@ -297,8 +296,8 @@ class AiChatScreenState extends State<AiChatScreen> {
             reverse: true, // To display the latest messages at the bottom
             itemCount: _messageList.length,
             itemBuilder: (context, index) {
-              ChatMessage message = _messageList[index];
-              bool isCurrentUser = message.user.id == _currentUser.id;
+              final message = _messageList[index];
+              final isCurrentUser = message.user.id == _currentUser.id;
 
               return Container(
                 key:
@@ -306,7 +305,8 @@ class AiChatScreenState extends State<AiChatScreen> {
                 alignment: isCurrentUser
                     ? Alignment.centerRight
                     : Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
                   crossAxisAlignment: isCurrentUser
                       ? CrossAxisAlignment.end
@@ -321,7 +321,7 @@ class AiChatScreenState extends State<AiChatScreen> {
                             : Colors.grey[300],
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       child: MarkdownBody(
                         data: message.text,
                         styleSheet: MarkdownStyleSheet(
@@ -338,13 +338,13 @@ class AiChatScreenState extends State<AiChatScreen> {
           ),
         ),
         if (_isLoading)
-          Padding(
-            padding: EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8),
             child: CircularProgressIndicator(),
           ),
-        Divider(height: 1),
+        const Divider(height: 1),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           color: Colors.white,
           child: Row(
             children: [
@@ -352,12 +352,12 @@ class AiChatScreenState extends State<AiChatScreen> {
               //   icon: Icon(Icons.image),
               //   onPressed: _sendImageMessage,
               // ),
-              SizedBox(
+              const SizedBox(
                 width: 6,
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: TextField(
                     controller: _textController,
                     maxLines: 20, // Maximum lines the TextField can expand to
@@ -366,21 +366,20 @@ class AiChatScreenState extends State<AiChatScreen> {
                       hintText: 'Type a message',
                       border: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(16.0), // Rounded borders
-                        borderSide: BorderSide(
+                            BorderRadius.circular(16), // Rounded borders
+                        borderSide: const BorderSide(
                           color: LuluBrandColor.brandPrimary, // Border color
                         ),
                       ),
-                      contentPadding: EdgeInsets.all(12.0), // Padding inside
+                      contentPadding:
+                          const EdgeInsets.all(12), // Padding inside
                     ),
-                    onSubmitted: (value) {
-                      _handleSubmitted(value);
-                    },
+                    onSubmitted: _handleSubmitted,
                   ),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.send),
+                icon: const Icon(Icons.send),
                 color: LuluBrandColor.brandPrimary,
                 onPressed: () {
                   _handleSubmitted(_textController.text);
@@ -398,7 +397,7 @@ class AiChatScreenState extends State<AiChatScreen> {
     // Optionally, you can send an initial message or just transition to chat
     setState(() {
       // For example, send a welcome message based on contexts
-      ChatMessage welcomeMessage = ChatMessage(
+      final welcomeMessage = ChatMessage(
         user: _chatGPTUser,
         createdAt: DateTime.now(),
         text:
@@ -413,13 +412,13 @@ class AiChatScreenState extends State<AiChatScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String? tempSelectedContext = _selectedContext;
+        var tempSelectedContext = _selectedContext;
         return AlertDialog(
-          title: Text('Select Context'),
+          title: const Text('Select Context'),
           content: SingleChildScrollView(
             child: Column(
               children: _availableContexts.map((item) {
-                bool isSelected = tempSelectedContext == item['contextKey'];
+                final isSelected = tempSelectedContext == item['contextKey'];
                 return RadioListTile<String>(
                   title: Text(item['label']!),
                   value: item['contextKey']!,
@@ -435,13 +434,13 @@ class AiChatScreenState extends State<AiChatScreen> {
           ),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
               },
             ),
             TextButton(
-              child: Text('Apply'),
+              child: const Text('Apply'),
               onPressed: () {
                 setState(() {
                   _selectedContext = tempSelectedContext;
@@ -464,7 +463,7 @@ class AiChatScreenState extends State<AiChatScreen> {
 
     _textController.clear();
 
-    ChatMessage message = ChatMessage(
+    final message = ChatMessage(
       user: _currentUser,
       createdAt: DateTime.now(),
       text: text,
@@ -480,17 +479,17 @@ class AiChatScreenState extends State<AiChatScreen> {
       _streamDone = false; // Reset the stream completion flag
     });
 
-    String question = message.text;
+    final question = message.text;
 
     // Retrieve user data and wardrobe data
-    Map<String, dynamic> userData = await _loadUserData();
-    List<Item> wardrobeItems = _loadWardrobeData();
+    final userData = await _loadUserData();
+    final wardrobeItems = _loadWardrobeData();
 
     // Prepare context
-    String context = _prepareContext(userData, wardrobeItems);
+    final context = _prepareContext(userData, wardrobeItems);
 
     // Construct the prompt with instructions
-    String prompt = '''
+    final prompt = '''
 You are a friendly and helpful assistant specializing in fashion and personal styling. When responding to the user, please:
 
 1. Greet the user warmly.
@@ -534,7 +533,7 @@ Assistant:
           {
             'role': 'system',
             'content':
-                'You are a friendly and helpful assistant specializing in fashion and personal styling.'
+                'You are a friendly and helpful assistant specializing in fashion and personal styling.',
           },
           {'role': 'user', 'content': prompt},
         ],
@@ -550,96 +549,101 @@ Assistant:
         streamedResponse.stream
             .transform(utf8.decoder)
             .transform(const LineSplitter())
-            .listen((line) {
-          if (line.isEmpty) return;
-          if (line.startsWith('data: ')) {
-            final data = line.substring(6);
-            if (data == '[DONE]') {
-              setState(() {
-                _isLoading = false;
-                _streamDone = true; // Mark stream as done
-              });
-              client.close();
-              return;
-            }
-
-            try {
-              final jsonData = json.decode(data) as Map<String, dynamic>;
-
-              if (jsonData.containsKey('error')) {
-                // Handle API errors gracefully
-                final error = jsonData['error'];
-                log.e('OpenAI API Error: $error');
+            .listen(
+          (line) {
+            if (line.isEmpty) return;
+            if (line.startsWith('data: ')) {
+              final data = line.substring(6);
+              if (data == '[DONE]') {
                 setState(() {
-                  if (botMessage != null) {
-                    botMessage!.text =
-                        'Sorry, I encountered an error while processing your request.';
-                  }
                   _isLoading = false;
+                  _streamDone = true; // Mark stream as done
                 });
                 client.close();
                 return;
               }
 
-              final choices = jsonData['choices'];
-              if (choices is List && choices.isNotEmpty) {
-                final delta = choices[0]['delta'];
-                if (delta is Map<String, dynamic> &&
-                    delta.containsKey('content')) {
-                  String content = delta['content'] as String;
+              try {
+                final jsonData = json.decode(data) as Map<String, dynamic>;
+
+                if (jsonData.containsKey('error')) {
+                  // Handle API errors gracefully
+                  final error = jsonData['error'];
+                  log.e('OpenAI API Error: $error');
                   setState(() {
                     if (botMessage != null) {
-                      botMessage!.text += content;
+                      botMessage!.text =
+                          'Sorry, I encountered an error while processing your request.';
                     }
+                    _isLoading = false;
                   });
-                } else if (delta is Map<String, dynamic> && delta.isEmpty) {
-                  // Empty delta received, possibly end of message
-                  log.w('Received empty delta.');
-                } else {
-                  log.e('Unexpected delta format: $delta');
-                  log.e('Full JSON Data: $jsonData'); // Log entire JSON data
+                  client.close();
+                  return;
                 }
-              } else {
-                log.e('Invalid choices format: $choices');
-              }
-            } catch (e) {
-              log.e('Error parsing stream data: $e');
-            }
-          }
-        }, onDone: () {
-          setState(() {
-            _isLoading = false;
-            _streamDone = true; // Mark stream as done
-          });
-          client.close();
-        }, onError: (e) {
-          log.e('Stream Error: $e');
-          if (_streamDone) {
-            // Ignore the error as the stream was closed normally
-            log.w('Stream closed normally after [DONE]');
-          } else {
-            setState(() {
-              if (botMessage != null) {
-                botMessage!.text =
-                    'Sorry, something went wrong. Please try again later.';
-              }
-              _isLoading = false;
-            });
 
-            // Retry logic only if not already retried 3 times
-            if (retryCount < 3) {
-              log.w('Retrying... Attempt ${retryCount + 1}');
-              Future.delayed(Duration(seconds: 2), () {
-                _sendMessage(message, retryCount: retryCount + 1);
-              });
+                final choices = jsonData['choices'];
+                if (choices is List && choices.isNotEmpty) {
+                  final delta = choices[0]['delta'];
+                  if (delta is Map<String, dynamic> &&
+                      delta.containsKey('content')) {
+                    final content = delta['content'] as String;
+                    setState(() {
+                      if (botMessage != null) {
+                        botMessage!.text += content;
+                      }
+                    });
+                  } else if (delta is Map<String, dynamic> && delta.isEmpty) {
+                    // Empty delta received, possibly end of message
+                    log.w('Received empty delta.');
+                  } else {
+                    log.e('Unexpected delta format: $delta');
+                    log.e('Full JSON Data: $jsonData'); // Log entire JSON data
+                  }
+                } else {
+                  log.e('Invalid choices format: $choices');
+                }
+              } catch (e) {
+                log.e('Error parsing stream data: $e');
+              }
             }
-          }
-          client.close();
-        });
+          },
+          onDone: () {
+            setState(() {
+              _isLoading = false;
+              _streamDone = true; // Mark stream as done
+            });
+            client.close();
+          },
+          onError: (e) {
+            log.e('Stream Error: $e');
+            if (_streamDone) {
+              // Ignore the error as the stream was closed normally
+              log.w('Stream closed normally after [DONE]');
+            } else {
+              setState(() {
+                if (botMessage != null) {
+                  botMessage!.text =
+                      'Sorry, something went wrong. Please try again later.';
+                }
+                _isLoading = false;
+              });
+
+              // Retry logic only if not already retried 3 times
+              if (retryCount < 3) {
+                log.w('Retrying... Attempt ${retryCount + 1}');
+                Future.delayed(const Duration(seconds: 2), () {
+                  _sendMessage(message, retryCount: retryCount + 1);
+                });
+              }
+            }
+            client.close();
+          },
+        );
       } else {
         // Handle non-200 responses
         log.e(
-            'OpenAI API Error: ${streamedResponse.statusCode} ${streamedResponse.reasonPhrase}');
+          'OpenAI API Error: ${streamedResponse.statusCode} ${streamedResponse.reasonPhrase}',
+        );
         setState(() {
           if (botMessage != null) {
             botMessage!.text =
@@ -651,7 +655,7 @@ Assistant:
         // Retry logic only if not already retried 3 times
         if (retryCount < 3) {
           log.w('Retrying... Attempt ${retryCount + 1}');
-          await Future.delayed(Duration(seconds: 2));
+          await Future.delayed(const Duration(seconds: 2));
           await _sendMessage(message, retryCount: retryCount + 1);
         }
       }
@@ -668,7 +672,7 @@ Assistant:
       // Retry logic only if not already retried 3 times
       if (retryCount < 3) {
         log.w('Retrying... Attempt ${retryCount + 1}');
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         await _sendMessage(message, retryCount: retryCount + 1);
       }
     }
@@ -695,44 +699,41 @@ Assistant:
 
 // Define custom classes since DashChat is no longer used
 class ChatMessage extends Equatable {
-  final ChatUser user;
-  final DateTime createdAt;
-  String text; // Made mutable to update the text
-  final List<ChatMedia>? medias;
-
   ChatMessage({
     required this.user,
     required this.createdAt,
     required this.text,
     this.medias,
   });
+  final ChatUser user;
+  final DateTime createdAt;
+  String text; // Made mutable to update the text
+  final List<ChatMedia>? medias;
 
   @override
   List<Object?> get props => [user.id, createdAt];
 }
 
 class ChatUser {
-  final String id;
-  final String firstName;
-  final String lastName;
-
   ChatUser({
     required this.id,
     required this.firstName,
     required this.lastName,
   });
+  final String id;
+  final String firstName;
+  final String lastName;
 }
 
 class ChatMedia {
-  final String url;
-  final String fileName;
-  final MediaType type;
-
   ChatMedia({
     required this.url,
     required this.fileName,
     required this.type,
   });
+  final String url;
+  final String fileName;
+  final MediaType type;
 }
 
 enum MediaType { image, video, file }
