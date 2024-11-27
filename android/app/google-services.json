@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "245933817534",
-    "project_id": "lulu-stylist-app",
-    "storage_bucket": "lulu-stylist-app.appspot.com"
+    "project_number": "38213899622",
+    "project_id": "aifashion-app",
+    "storage_bucket": "aifashion-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:245933817534:android:aec3afdcaf9eac79e3e8ef",
+        "mobilesdk_app_id": "1:38213899622:android:001c2f286f728b419a64a7",
         "android_client_info": {
           "package_name": "com.persistventures.lulustylist.lulu_stylist_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDnJipbkbowuReTxw7V_TCvwFITjQEtVow"
+          "current_key": "AIzaSyCQGspuGPbfrmPWpHfKzDD0M44vtYEhCl8"
         }
       ],
       "services": {

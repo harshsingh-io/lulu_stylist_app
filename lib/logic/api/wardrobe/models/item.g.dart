@@ -33,7 +33,7 @@ Map<String, dynamic> _$$ItemImplToJson(_$ItemImpl instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'colors': instance.colors,
       'brand': instance.brand,
-      'category': _$CategoryEnumMap[instance.category]!,
+      'category': _$CategoryEnumMap[instance.category],
       'isFavorite': instance.isFavorite,
       'price': instance.price,
       'userId': instance.userId,

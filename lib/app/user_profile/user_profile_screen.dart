@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // Assuming you're using GoRouter for navigation
 import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
@@ -46,7 +45,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   /// Handles Firebase logout and navigates to Onboarding screen
   Future<void> _logout() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      // await FirebaseAuth.instance.signOut();
       // Optionally, clear SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('userDetails');

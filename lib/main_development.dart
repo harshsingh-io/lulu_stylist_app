@@ -12,7 +12,7 @@ import 'package:lulu_stylist_app/app/app.dart';
 import 'package:lulu_stylist_app/bootstrap.dart';
 import 'package:lulu_stylist_app/lulu_design_system/sa_bloc_observer.dart';
 import 'package:lulu_stylist_app/notification/notification_controller.dart';
-import 'package:workmanager/workmanager.dart';
+// import 'package:workmanager/workmanager.dart';
 
 // Toggle this to cause an async error to be thrown during initialization
 // and to test that runZonedGuarded() catches the error
@@ -32,7 +32,7 @@ String _installationId = 'Unknown';
 void main() {
   bootstrap(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Workmanager().initialize(callbackDispatcher);
+    // await Workmanager().initialize(callbackDispatcher);
     await HomeWidget.setAppGroupId('group.lulu_stylist_app');
     // await HomeWidget.registerBackgroundCallback(backgroundCallback);
     // await Firebase.initializeApp(
@@ -40,9 +40,9 @@ void main() {
     // );
 
     // Awesome notifications
-    await NotificationController.initializeLocalNotifications(debug: true);
-    await NotificationController.initializeRemoteNotifications(debug: true);
-    await NotificationController.getInitialNotificationAction();
+    // await NotificationController.initializeLocalNotifications(debug: true);
+    // await NotificationController.initializeRemoteNotifications(debug: true);
+    // await NotificationController.getInitialNotificationAction();
 
     // if (await didLaunchFromHomeWidget()) {
     //   log.d(

@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 1), () {
-      NotificationUtils.requireUserNotificationPermissions(context);
+      // NotificationUtils.requireUserNotificationPermissions(context);
     });
 
     if (!kIsWeb && Platform.isIOS) {

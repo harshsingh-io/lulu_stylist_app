@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
@@ -163,37 +162,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSignIn() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: 'Email and password cannot be empty',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: LuluBrandColor.brandRed,
-        textColor: Colors.white,
-      );
+      // Fluttertoast.showToast(
+      //   msg: 'Email and password cannot be empty',
+      //   toastLength: Toast.LENGTH_SHORT,
+      //   gravity: ToastGravity.TOP,
+      //   backgroundColor: LuluBrandColor.brandRed,
+      //   textColor: Colors.white,
+      // );
       return;
     }
 
-    try {
-      final userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-      // Show the splash screen after login success
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginSuccessSplashScreen(),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      log.e('Login failed with error ${e.message}');
-      Fluttertoast.showToast(
-        msg: e.message ?? 'Login failed',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: LuluBrandColor.brandRed,
-        textColor: Colors.white,
-      );
-    }
+    // try {
+    // final userCredential =
+    //     await FirebaseAuth.instance.signInWithEmailAndPassword(
+    //   email: emailController.text.trim(),
+    //   password: passwordController.text.trim(),
+    // );
+    // Show the splash screen after login success
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const LoginSuccessSplashScreen(),
+      ),
+    );
+    // } on FirebaseAuthException catch (e) {
+    //   log.e('Login failed with error ${e.message}');
+    //   Fluttertoast.showToast(
+    //     msg: e.message ?? 'Login failed',
+    //     toastLength: Toast.LENGTH_SHORT,
+    //     gravity: ToastGravity.TOP,
+    //     backgroundColor: LuluBrandColor.brandRed,
+    //     textColor: Colors.white,
+    //   );
+    // }
   }
 }
