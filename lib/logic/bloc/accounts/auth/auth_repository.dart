@@ -4,27 +4,34 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:lulu_stylist_app/logic/api/auth/api/auth_api.dart';
 import 'package:lulu_stylist_app/logic/api/auth/authentication_inceptor.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/user_register_model.dart';
+import 'package:lulu_stylist_app/logic/api/common/models/login_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
 
 class AuthRepository {
   AuthRepository({
     required String baseUrl,
     Dio? dioClient,
     FlutterSecureStorage? secureStorage,
+    AuthApi? authApi,
   })  : dio = dioClient ?? Dio(BaseOptions(baseUrl: baseUrl)),
-        storage = secureStorage ?? const FlutterSecureStorage() {
+        storage = secureStorage ?? const FlutterSecureStorage(),
+        _authApi = authApi ??
+            AuthApi(dioClient ?? Dio(BaseOptions(baseUrl: baseUrl))) {
     dio.interceptors.add(AuthInterceptor(this, dio));
   }
+
   final Dio dio;
   final FlutterSecureStorage storage;
+  final AuthApi _authApi;
   final _sessionExpiredController = StreamController<void>.broadcast();
 
   Stream<void> get sessionExpired => _sessionExpiredController.stream;
 
-  // Add these getter methods
   Future<String?> getAccessToken() => storage.read(key: 'access_token');
   Future<String?> getRefreshToken() => storage.read(key: 'refresh_token');
 
@@ -37,27 +44,23 @@ class AuthRepository {
     required String password,
   }) async {
     try {
-      final formData = FormData.fromMap({
-        'username': email,
-        'password': password,
-      });
-
-      final response = await dio.post(
-        '/login',
-        data: formData,
+      final response = await _authApi.loginUser(
+        email,
+        password,
       );
 
-      if (response.statusCode == 200) {
-        final tokenPair =
-            TokenPair.fromJson(response.data as Map<String, dynamic>);
+      if (response.accessToken.isNotEmpty && response.refreshToken.isNotEmpty) {
+        final tokenPair = TokenPair(
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+          tokenType: response.tokenType,
+        );
         await saveTokens(tokenPair);
         return right(tokenPair);
-      } else {
-        return left(const AuthFailure.serverError());
       }
+      return left(const AuthFailure.serverError("Invalid token response"));
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout) {
+      if (e.type == DioExceptionType.connectionTimeout) {
         return left(const AuthFailure.networkError());
       }
       if (e.response?.statusCode == 401) {
@@ -65,29 +68,23 @@ class AuthRepository {
       }
       return left(AuthFailure.serverError(e.message));
     } catch (e) {
-      return left(const AuthFailure.serverError());
+      return left(AuthFailure.serverError(e.toString()));
     }
   }
 
   Future<Either<AuthFailure, TokenPair>> refreshTokens(
-    String refreshToken,
-  ) async {
+      String refreshToken) async {
     try {
-      final response = await dio.post(
-        '/refresh',
-        options: Options(
-          headers: {'Authorization': 'Bearer $refreshToken'},
-        ),
+      final response = await _authApi.refreshToken(refreshToken);
+
+      final tokenPair = TokenPair(
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        tokenType: response.tokenType,
       );
 
-      if (response.statusCode == 200) {
-        final tokenPair =
-            TokenPair.fromJson(response.data as Map<String, dynamic>);
-        await saveTokens(tokenPair);
-        return right(tokenPair);
-      } else {
-        return left(const AuthFailure.tokenExpired());
-      }
+      await saveTokens(tokenPair);
+      return right(tokenPair);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
         return left(const AuthFailure.networkError());
@@ -100,19 +97,10 @@ class AuthRepository {
 
   Future<Either<AuthFailure, Unit>> logout() async {
     try {
-      final accessToken = await getAccessToken();
-      if (accessToken != null) {
-        await dio.post(
-          '/logout',
-          options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
-          ),
-        );
-      }
+      await _authApi.logout();
       await clearTokens();
       return right(unit);
     } catch (e) {
-      // Still clear tokens even if logout request fails
       await clearTokens();
       return left(const AuthFailure.serverError());
     }
@@ -133,7 +121,11 @@ class AuthRepository {
       );
 
       if (response.statusCode == 200) {
-        return right(UserModel.fromJson(response.data as Map<String, dynamic>));
+        return right(
+          UserModel.fromJson(
+            response.data as Map<String, dynamic>,
+          ),
+        );
       } else {
         return left(const AuthFailure.serverError());
       }
@@ -183,5 +175,47 @@ class AuthRepository {
 
   void dispose() {
     _sessionExpiredController.close();
+  }
+
+  Future<Either<AuthFailure, UserModel>> register({
+    required String email,
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final registerRequest = UserRegisterModel(
+        email: email,
+        username: username,
+        password: password,
+      );
+
+      // Register the user and get the response
+      final userResponse = await _authApi.registerUser(registerRequest);
+
+      // After successful registration, login the user
+      final loginResult = await login(
+        email: email,
+        password: password,
+      );
+
+      return loginResult.fold(
+        (failure) => left(failure),
+        (tokens) async {
+          await saveTokens(tokens);
+          return right(userResponse);
+        },
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return left(const AuthFailure.networkError());
+      }
+      if (e.response?.statusCode == 400 &&
+          e.response?.data['detail'] == 'Email already registered') {
+        return left(const AuthFailure.serverError('Email already registered'));
+      }
+      return left(AuthFailure.serverError(e.message));
+    } catch (e) {
+      return left(const AuthFailure.serverError());
+    }
   }
 }

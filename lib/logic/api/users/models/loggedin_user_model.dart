@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
 
 part 'loggedin_user_model.freezed.dart';
 part 'loggedin_user_model.g.dart';

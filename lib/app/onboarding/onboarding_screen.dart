@@ -41,19 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () {
-                    // GoRouter.of(context).pushNamed(
-                    //   loginScreen,
-                    //   pathParameters: {
-                    //     'isUser': 'true',
-                    //   },
-                    // );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(
-                          isUser: true,
-                        ),
-                      ),
-                    );
+                    GoRouter.of(context).pushNamed(signUpRoute);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: LuluBrandColor.brandPrimary,
@@ -68,7 +56,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(
+                      loginScreen,
+                      pathParameters: {
+                        'isUser': 'true',
+                      },
+                    );
+                  },
                   child: const Text(
                     'I already have an account',
                     style: TextStyle(

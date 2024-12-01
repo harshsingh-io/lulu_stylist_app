@@ -16,9 +16,12 @@ class _LoginSuccessSplashScreenState extends State<LoginSuccessSplashScreen> {
   void initState() {
     super.initState();
     // Navigate to the main screen after a delay of 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      GoRouter.of(context).pushReplacementNamed(updateUserProfile);
-    });
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+        GoRouter.of(context).pushReplacementNamed(updateUserProfile);
+      },
+    );
   }
 
   @override

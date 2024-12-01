@@ -5,19 +5,19 @@ part 'user_update_request_model.freezed.dart';
 part 'user_update_request_model.g.dart';
 
 @freezed
-class UserUpdateRequestModel with _$UserUpdateRequestModel {
-  const factory UserUpdateRequestModel({
+class UserModel with _$UserModel {
+  const factory UserModel({
     required String userId,
     required UserDetails userDetails,
     required List<Item> wardrobeItems,
     required UserPreferences preferences,
     String? profileImagePath,
-  }) = _UserUpdateRequestModel;
+  }) = _UserModel;
 
-  /// Connect the generated [_$UserUpdateRequestModelFromJson] function to the `fromJson`
+  /// Connect the generated [_$UserModelFromJson] function to the `fromJson`
   /// factory.
-  factory UserUpdateRequestModel.fromJson(Map<String, dynamic> json) =>
-      _$UserUpdateRequestModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 }
 
 @freezed
