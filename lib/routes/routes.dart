@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/ai_chat_assistent/ai_chat_screen.dart';
 import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
 import 'package:lulu_stylist_app/app/login_and_signup/login_screen.dart';
+import 'package:lulu_stylist_app/app/login_and_signup/login_success.dart';
 import 'package:lulu_stylist_app/app/login_and_signup/sign_up_screen.dart';
 import 'package:lulu_stylist_app/app/onboarding/onboarding_screen.dart';
 import 'package:lulu_stylist_app/app/settings/setting_screen.dart';
@@ -13,6 +14,7 @@ import 'package:lulu_stylist_app/app/user_profile/user_profile_screen.dart';
 import 'package:lulu_stylist_app/app/view/app.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/add_item_wardrobe_screen.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_mangement_screen.dart';
+export 'routes.dart';
 
 // routes.dart
 const String homeRoute = '/';
@@ -31,7 +33,7 @@ const String profileUpdateSuccess = '/profileUpdateSuccess';
 
 Logger log = Logger(printer: PrettyPrinter());
 
-final GoRouter router = GoRouter(
+final router = GoRouter(
   navigatorKey: App.globalNavigatorKey,
   initialLocation: '/',
   routes: [
@@ -52,56 +54,56 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-      name: '/wardrobeScreen',
-      path: wardrobeManagementRoute,
+      path: '/wardrobeScreen',
+      name: wardrobeManagementRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const WardrobeScreen(),
     ),
     GoRoute(
-      name: '/addItemWardrobe',
-      path: addItemWardrobeRoute,
+      path: '/addItemWardrobe',
+      name: addItemWardrobeRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const AddItemScreen(),
     ),
     GoRoute(
-      name: '/aiChat',
-      path: aiChatRoute,
+      path: '/aiChat',
+      name: aiChatRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const AiChatScreen(),
     ),
     GoRoute(
-      name: '/signUp',
-      path: signUpRoute,
+      path: '/sign-up',
+      name: signUpRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const UserSignUpScreen(),
     ),
     GoRoute(
-      name: '/onboarding',
-      path: onboardingRoute,
+      path: '/onboarding',
+      name: onboardingRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const OnboardingScreen(),
     ),
     GoRoute(
-      name: '/settings',
-      path: settingsRoute,
+      path: '/settings',
+      name: settingsRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const SettingScreen(),
     ),
     GoRoute(
-      name: '/userProfile',
-      path: userProfileRoute,
+      path: '/userProfile',
+      name: userProfileRoute,
       builder: (BuildContext context, GoRouterState state) =>
           const UserProfileScreen(),
     ),
     GoRoute(
-      name: '/updateUserProfile',
-      path: updateUserProfile,
+      path: '/updateUserProfile',
+      name: updateUserProfile,
       builder: (BuildContext context, GoRouterState state) =>
           const UserUpdateForm(),
     ),
     GoRoute(
-      name: '/profileUpdateSuccess',
-      path: profileUpdateSuccess,
+      path: '/profileUpdateSuccess',
+      name: profileUpdateSuccess,
       builder: (BuildContext context, GoRouterState state) =>
           const ProfileUdpateSuccess(),
     ),

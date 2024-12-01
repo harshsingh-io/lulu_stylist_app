@@ -7,21 +7,16 @@ class LoginState with _$LoginState {
 
   const factory LoginState.loginStarted({
     required UserType userType,
-    required String phone,
+    required String email,
     required int attempts,
   }) = _LoginStarted;
 
-  const factory LoginState.verificationStarted({
-    required UserType userType,
-    required String phone,
-    required int attempts,
-  }) = _VerificationStarted;
-
   const factory LoginState.loginUserSuccess({
     required String authToken,
-    required UserType userType,
+    required String refreshToken,
     required UserModel user,
-  }) = _LoginUserSucces;
+    required UserType userType,
+  }) = _LoginUserSuccess;
 
   const factory LoginState.error(String message) = _LoginError;
 }

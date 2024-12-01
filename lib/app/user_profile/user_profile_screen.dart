@@ -15,7 +15,7 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  UserUpdateRequestModel? user;
+  UserModel? user;
   bool isLoading = true;
 
   @override
@@ -32,7 +32,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     if (userDataJson != null && userDataJson.isNotEmpty) {
       final userData = json.decode(userDataJson) as Map<String, dynamic>;
       setState(() {
-        user = UserUpdateRequestModel.fromJson(userData);
+        user = UserModel.fromJson(userData);
         isLoading = false;
       });
     } else {

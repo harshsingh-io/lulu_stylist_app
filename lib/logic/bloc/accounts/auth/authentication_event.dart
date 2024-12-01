@@ -23,4 +23,15 @@ class AuthenticationEvent with _$AuthenticationEvent {
   const factory AuthenticationEvent.logoutRequested() = _LogoutRequested;
 
   const factory AuthenticationEvent.sessionExpired() = _SessionExpired;
+
+  const factory AuthenticationEvent.register({
+    required String email,
+    required String username,
+    required String password,
+  }) = _Register;
+
+  const factory AuthenticationEvent.login({
+    required String email,
+    required String password,
+  }) = _Login;
 }

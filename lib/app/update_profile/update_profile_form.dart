@@ -853,7 +853,7 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     log.i('Saving form data...');
     final prefs = await SharedPreferences.getInstance();
 
-    final userUpdateRequest = UserUpdateRequestModel(
+    final userUpdateRequest = UserModel(
       userId: 'unique_user_id', // Replace with actual user ID
       userDetails: UserDetails(
         name: userName,

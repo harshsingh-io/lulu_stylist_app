@@ -4,14 +4,13 @@ part of 'login_bloc.dart';
 class LoginEvent with _$LoginEvent {
   const factory LoginEvent.startLogin({
     required UserType userType,
-    required String phone,
+    required String email,
     required int attempts,
   }) = _StartLogin;
 
   const factory LoginEvent.verifyLogin({
     required UserType userType,
-    required String phone,
-    required String otp,
-    required int attempts,
+    required String email,
+    required String password,
   }) = _VerifyLogin;
 }

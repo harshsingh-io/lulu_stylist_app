@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
 import 'package:lulu_stylist_app/logic/api_base.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
 import 'package:lulu_stylist_app/logic/dio_factory.dart';
@@ -29,6 +29,8 @@ class AuthenticationBloc
     on<_AuthenticateUser>(_handleUserAuthenticated);
     on<_LogoutRequested>(_handleLogout);
     on<_SessionExpired>(_handleSessionExpired);
+    on<_Register>(_handleRegister);
+    on<_Login>(_handleLogin);
   }
 
   final AuthRepository _authRepository;
@@ -73,7 +75,7 @@ class AuthenticationBloc
                           emit(const AuthenticationState.unAuthenticated());
                         },
                         (user) {
-                          if (!user.isProfileComplete()) {
+                          if (user.userDetails == null) {
                             emit(
                               AuthenticationState.userNeedsProfileDetails(
                                 user: user,
@@ -97,7 +99,7 @@ class AuthenticationBloc
                 }
               },
               (user) {
-                if (!user.isProfileComplete()) {
+                if (user.userDetails == null) {
                   emit(
                     AuthenticationState.userNeedsProfileDetails(
                       user: user,
@@ -149,7 +151,7 @@ class AuthenticationBloc
         ),
       );
 
-      if (!event.user.isProfileComplete()) {
+      if (event.user.userDetails == null) {
         emit(
           AuthenticationState.userNeedsProfileDetails(
             user: event.user,
@@ -231,5 +233,81 @@ class AuthenticationBloc
     log.w('$_logTag Session expired');
     await _authRepository.clearTokens();
     emit(const AuthenticationState.unAuthenticated());
+  }
+
+  Future<void> _handleRegister(
+    _Register event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    try {
+      emit(const AuthenticationState.checking());
+
+      final result = await _authRepository.register(
+        email: event.email,
+        username: event.username,
+        password: event.password,
+      );
+
+      result.fold(
+        (failure) {
+          log.e('$_logTag Registration failed', error: failure);
+          emit(AuthenticationState.error(failure.toString()));
+        },
+        (user) {
+          emit(
+            AuthenticationState.userNeedsProfileDetails(
+              user: user,
+              authToken: '',
+            ),
+          );
+        },
+      );
+    } catch (e, stackTrace) {
+      log.e(
+        '$_logTag Registration failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      emit(AuthenticationState.error(e.toString()));
+    }
+  }
+
+  Future<void> _handleLogin(
+    _Login event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    try {
+      emit(const AuthenticationState.checking());
+
+      final loginResult = await _authRepository.login(
+        email: event.email,
+        password: event.password,
+      );
+
+      await loginResult.fold(
+        (failure) {
+          final errorMessage = failure.when(
+            tokenExpired: () => 'Session expired',
+            serverError: (message) => message ?? 'Login failed',
+            networkError: () => 'Network error',
+            invalidCredentials: () => 'Invalid credentials',
+          );
+          emit(AuthenticationState.error(errorMessage));
+        },
+        (tokens) async {
+          final userResult = await _authRepository.getCurrentUser();
+          userResult.fold(
+            (failure) => emit(
+                const AuthenticationState.error("Failed to get user details")),
+            (user) => emit(AuthenticationState.userLoggedIn(
+              user: user,
+              authToken: tokens.accessToken,
+            )),
+          );
+        },
+      );
+    } catch (e) {
+      emit(const AuthenticationState.error("An unexpected error occurred"));
+    }
   }
 }

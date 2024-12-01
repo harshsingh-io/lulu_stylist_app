@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/l10n/l10n.dart';
+import 'package:lulu_stylist_app/logic/api_base.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/login/login_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/mqtt/mqtt_bloc.dart';
@@ -35,13 +37,53 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
   Locale? _appLocale;
+  late final AuthRepository _authRepository;
+  late final AuthenticationBloc _authBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _authRepository = AuthRepository(baseUrl: apiBase);
+    _authBloc = AuthenticationBloc()
+      ..add(const AuthenticationEvent.checkExisting());
+
+    // Listen for session expiry
+    _authRepository.sessionExpired.listen((_) {
+      _authBloc.add(const AuthenticationEvent.sessionExpired());
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _authBloc.close();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Check token validity when app comes to foreground
+      _authBloc.add(const AuthenticationEvent.checkExisting());
+    }
+  }
 
   void setLocale(Locale locale) {
     setState(() {
       _appLocale = locale;
     });
+  }
+
+  void _showErrorSnackBar(String message) {
+    App.scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -53,101 +95,117 @@ class _AppState extends State<App> {
       builder: (_, child) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider<AuthenticationBloc>(
-              create: (context) => AuthenticationBloc()
-                ..add(const AuthenticationEvent.checkExisting()),
-            ),
+            BlocProvider<AuthenticationBloc>.value(value: _authBloc),
             BlocProvider<LoginBloc>(
-              create: (context) => LoginBloc(),
+              create: (context) => LoginBloc(_authRepository),
             ),
             BlocProvider<NetworkBloc>(
               create: (context) =>
                   NetworkBloc()..add(const NetworkEvent.observer()),
             ),
           ],
-          child: BlocListener<NetworkBloc, NetworkState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                failure: () {
-                  App.scaffoldMessengerKey.currentState?.showSnackBar(
-                    const SnackBar(content: Text('No internet connection')),
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<NetworkBloc, NetworkState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    failure: () {
+                      App.scaffoldMessengerKey.currentState?.showSnackBar(
+                        const SnackBar(content: Text('No internet connection')),
+                      );
+                    },
+                    success: () {
+                      App.scaffoldMessengerKey.currentState?.showSnackBar(
+                        const SnackBar(content: Text('Connected to internet')),
+                      );
+                    },
+                    orElse: () {},
                   );
                 },
-                success: () {
-                  App.scaffoldMessengerKey.currentState?.showSnackBar(
-                    const SnackBar(content: Text('Connected to internet')),
+              ),
+              BlocListener<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    loginUserSuccess:
+                        (authToken, refreshToken, user, userType) {
+                      _authBloc.add(
+                        AuthenticationEvent.newUserLogin(
+                          authToken: authToken,
+                          user: user,
+                        ),
+                      );
+                    },
+                    error: (message) {
+                      _showErrorSnackBar(message);
+                    },
+                    orElse: () {},
                   );
                 },
-                orElse: () {},
-              );
-            },
-            child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                  initial: () {
-                    // Initial state, can show splash screen
-                  },
-                  checking: () {
-                    // Show loading indicator if needed
-                  },
-                  unAuthenticated: () {
-                    GoRouter.of(App.globalNavigatorKey.currentContext!)
-                        .pushReplacementNamed(onboardingRoute);
-                  },
-                  userNeedsProfileDetails: (user, authToken) {
-                    GoRouter.of(App.globalNavigatorKey.currentContext!)
-                        .pushReplacementNamed('profile_update', extra: user);
-                  },
-                  userLoggedIn: (user, authToken) {
-                    GoRouter.of(App.globalNavigatorKey.currentContext!)
-                        .pushReplacementNamed(homeRoute, extra: user);
-                  },
-                  userAuthenticated: (user, authToken) {
-                    GoRouter.of(App.globalNavigatorKey.currentContext!)
-                        .pushReplacementNamed(homeRoute, extra: user);
-                  },
-                  loggedOut: () {
-                    GoRouter.of(App.globalNavigatorKey.currentContext!)
-                        .pushReplacementNamed(onboardingRoute);
-                  },
-                  error: (message) {
-                    App.scaffoldMessengerKey.currentState?.showSnackBar(
-                      SnackBar(content: Text(message)),
-                    );
-                  },
-                  orElse: () {},
-                );
+              ),
+              BlocListener<AuthenticationBloc, AuthenticationState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    initial: () {
+                      // Handle initial state if needed
+                    },
+                    checking: () {
+                      // Show loading indicator if needed
+                    },
+                    unAuthenticated: () {
+                      GoRouter.of(App.globalNavigatorKey.currentContext!)
+                          .pushReplacementNamed(onboardingRoute);
+                    },
+                    userNeedsProfileDetails: (user, authToken) {
+                      GoRouter.of(App.globalNavigatorKey.currentContext!)
+                          .pushReplacementNamed('profile_update', extra: user);
+                    },
+                    userLoggedIn: (user, authToken) {
+                      GoRouter.of(App.globalNavigatorKey.currentContext!)
+                          .pushReplacementNamed(homeRoute, extra: user);
+                    },
+                    userAuthenticated: (user, authToken) {
+                      GoRouter.of(App.globalNavigatorKey.currentContext!)
+                          .pushReplacementNamed(homeRoute, extra: user);
+                    },
+                    loggedOut: () {
+                      GoRouter.of(App.globalNavigatorKey.currentContext!)
+                          .pushReplacementNamed(onboardingRoute);
+                    },
+                    error: (message) {
+                      _showErrorSnackBar(message);
+                    },
+                    orElse: () {},
+                  );
+                },
+              ),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+              scaffoldMessengerKey: App.scaffoldMessengerKey,
+              supportedLocales: const [
+                Locale('en'),
+                Locale('hi'),
+              ],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              localeResolutionCallback: (locale, supportedLocales) {
+                for (final supportedLocale in supportedLocales) {
+                  if (locale != null &&
+                      supportedLocale.languageCode == locale.languageCode) {
+                    return supportedLocale;
+                  }
+                }
+                return supportedLocales.first;
               },
-              builder: (context, state) {
-                return MaterialApp.router(
-                  routerConfig: router,
-                  scaffoldMessengerKey: App.scaffoldMessengerKey,
-                  supportedLocales: const [
-                    Locale('en'),
-                    Locale('hi'),
-                  ],
-                  localizationsDelegates: const [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                  ],
-                  localeResolutionCallback: (locale, supportedLocales) {
-                    for (final supportedLocale in supportedLocales) {
-                      if (locale != null &&
-                          supportedLocale.languageCode == locale.languageCode) {
-                        return supportedLocale;
-                      }
-                    }
-                    return supportedLocales.first;
-                  },
-                  locale: _appLocale,
-                  title: 'Lulu',
-                  theme: ThemeData(
-                    useMaterial3: true,
-                    appBarTheme: LuluAppBarTheme.appBarLightThemeData,
-                  ),
-                );
-              },
+              locale: _appLocale,
+              title: 'Lulu',
+              theme: ThemeData(
+                useMaterial3: true,
+                appBarTheme: LuluAppBarTheme.appBarLightThemeData,
+              ),
             ),
           ),
         );

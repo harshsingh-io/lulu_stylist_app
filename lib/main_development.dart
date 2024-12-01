@@ -10,6 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/app.dart';
 import 'package:lulu_stylist_app/bootstrap.dart';
+import 'package:lulu_stylist_app/firebase/firebase/stg/firebase_options.dart';
 import 'package:lulu_stylist_app/lulu_design_system/sa_bloc_observer.dart';
 import 'package:lulu_stylist_app/notification/notification_controller.dart';
 // import 'package:workmanager/workmanager.dart';
@@ -32,39 +33,22 @@ String _installationId = 'Unknown';
 void main() {
   bootstrap(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // await Workmanager().initialize(callbackDispatcher);
     await HomeWidget.setAppGroupId('group.lulu_stylist_app');
-    // await HomeWidget.registerBackgroundCallback(backgroundCallback);
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-
-    // Awesome notifications
-    // await NotificationController.initializeLocalNotifications(debug: true);
-    // await NotificationController.initializeRemoteNotifications(debug: true);
-    // await NotificationController.getInitialNotificationAction();
-
-    // if (await didLaunchFromHomeWidget()) {
-    //   log.d(
-    //     'Launched from home widget',
-    //   );
-    // }
-
+    await Firebase.initializeApp();
+    // Configure Crashlytics
     FlutterError.onError = (errorDetails) {
-      // If you wish to record a "non-fatal" exception, please use `FirebaseCrashlytics.instance.recordFlutterError` instead
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
+
     PlatformDispatcher.instance.onError = (error, stack) {
-      // If you wish to record a "non-fatal" exception, please remove the "fatal" parameter
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
 
     Bloc.observer = SABlocObserver();
-    // runApp( const App());
+
     return initializeDateFormatting().then(
       (_) => const App(),
     );
-    // return const App();
   });
 }
