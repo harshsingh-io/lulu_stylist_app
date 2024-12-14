@@ -4,12 +4,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 
-part 'item.freezed.dart';
-part 'item.g.dart';
+part 'wardrobe_item.freezed.dart';
+part 'wardrobe_item.g.dart';
 
 @freezed
-class Item with _$Item {
-  const factory Item({
+class WardrobeItem with _$WardrobeItem {
+  const factory WardrobeItem({
     required String id,
     required String name,
     required DateTime createdAt,
@@ -24,10 +24,11 @@ class Item with _$Item {
     required String notes,
     required String size,
     required List<Tag> tags,
-  }) = _Item;
+  }) = _WardrobeItem;
 
   /// Connect the generated [_$UserModelFromJson] function to the `fromJson`
   /// factory.
-  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
-  const Item._();
+  factory WardrobeItem.fromJson(Map<String, dynamic> json) =>
+      _$WardrobeItemFromJson(json);
+  const WardrobeItem._();
 }

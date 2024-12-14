@@ -4,13 +4,17 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/logic/api/auth/api/auth_api.dart';
 import 'package:lulu_stylist_app/logic/api/auth/authentication_inceptor.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
+import 'package:lulu_stylist_app/logic/api/auth/model/auth_token_model.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/user_register_model.dart';
 import 'package:lulu_stylist_app/logic/api/common/models/login_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+
+Logger log = Logger(printer: PrettyPrinter());
 
 class AuthRepository {
   AuthRepository({
@@ -35,30 +39,20 @@ class AuthRepository {
   Future<String?> getAccessToken() => storage.read(key: 'access_token');
   Future<String?> getRefreshToken() => storage.read(key: 'refresh_token');
 
-  void notifySessionExpired() {
-    _sessionExpiredController.add(null);
-  }
+  void notifySessionExpired() => _sessionExpiredController.add(null);
 
-  Future<Either<AuthFailure, TokenPair>> login({
+  Future<Either<AuthFailure, AuthTokenModel>> login({
     required String email,
     required String password,
   }) async {
     try {
-      final response = await _authApi.loginUser(
-        email,
-        password,
-      );
+      final response = await _authApi.loginUser(email, password);
 
-      if (response.accessToken.isNotEmpty && response.refreshToken.isNotEmpty) {
-        final tokenPair = TokenPair(
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
-          tokenType: response.tokenType,
-        );
-        await saveTokens(tokenPair);
-        return right(tokenPair);
+      if (AuthApi.validateTokenResponse(response)) {
+        await saveTokens(response);
+        return right(response);
       }
-      return left(const AuthFailure.serverError("Invalid token response"));
+      return left(const AuthFailure.serverError('Invalid token response'));
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
         return left(const AuthFailure.networkError());
@@ -66,25 +60,18 @@ class AuthRepository {
       if (e.response?.statusCode == 401) {
         return left(const AuthFailure.invalidCredentials());
       }
-      return left(AuthFailure.serverError(e.message));
+      return left(AuthFailure.serverError(AuthApi.getErrorMessage(e)));
     } catch (e) {
       return left(AuthFailure.serverError(e.toString()));
     }
   }
 
-  Future<Either<AuthFailure, TokenPair>> refreshTokens(
+  Future<Either<AuthFailure, AuthTokenModel>> refreshTokens(
       String refreshToken) async {
     try {
       final response = await _authApi.refreshToken(refreshToken);
-
-      final tokenPair = TokenPair(
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-        tokenType: response.tokenType,
-      );
-
-      await saveTokens(tokenPair);
-      return right(tokenPair);
+      await saveTokens(response);
+      return right(response);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
         return left(const AuthFailure.networkError());
@@ -113,22 +100,10 @@ class AuthRepository {
         return left(const AuthFailure.tokenExpired());
       }
 
-      final response = await dio.get(
-        '/users/me',
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
+      final user = await _authApi.getCurrentUser(
+        AuthApi.formatBearerToken(accessToken),
       );
-
-      if (response.statusCode == 200) {
-        return right(
-          UserModel.fromJson(
-            response.data as Map<String, dynamic>,
-          ),
-        );
-      } else {
-        return left(const AuthFailure.serverError());
-      }
+      return right(user);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         return left(const AuthFailure.tokenExpired());
@@ -139,7 +114,7 @@ class AuthRepository {
     }
   }
 
-  Future<Either<AuthFailure, TokenPair>> getStoredTokens() async {
+  Future<Either<AuthFailure, AuthTokenModel>> getStoredTokens() async {
     try {
       final accessToken = await getAccessToken();
       final refreshToken = await getRefreshToken();
@@ -150,7 +125,7 @@ class AuthRepository {
       }
 
       return right(
-        TokenPair(
+        AuthTokenModel(
           accessToken: accessToken,
           refreshToken: refreshToken,
           tokenType: tokenType,
@@ -161,7 +136,7 @@ class AuthRepository {
     }
   }
 
-  Future<void> saveTokens(TokenPair tokens) async {
+  Future<void> saveTokens(AuthTokenModel tokens) async {
     await storage.write(key: 'access_token', value: tokens.accessToken);
     await storage.write(key: 'refresh_token', value: tokens.refreshToken);
     await storage.write(key: 'token_type', value: tokens.tokenType);

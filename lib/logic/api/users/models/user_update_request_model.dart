@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 
 part 'user_update_request_model.freezed.dart';
 part 'user_update_request_model.g.dart';
@@ -9,7 +9,7 @@ class UserModel with _$UserModel {
   const factory UserModel({
     required String userId,
     required UserDetails userDetails,
-    required List<Item> wardrobeItems,
+    required List<WardrobeItem> wardrobeItems,
     required UserPreferences preferences,
     String? profileImagePath,
   }) = _UserModel;

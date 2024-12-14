@@ -1,10 +1,10 @@
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 import 'package:nanoid/nanoid.dart';
 
-final List<Item> tops = [
-  Item(
+final List<WardrobeItem> tops = [
+  WardrobeItem(
     id: nanoid(),
     name: 'V-neck T-shirt',
     createdAt: DateTime.now(),
@@ -23,7 +23,7 @@ final List<Item> tops = [
       Tag(id: nanoid(), name: 'summer'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Silk Blouse',
     createdAt: DateTime.now(),
@@ -42,7 +42,7 @@ final List<Item> tops = [
       Tag(id: nanoid(), name: 'office'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Crop Top',
     createdAt: DateTime.now(),
@@ -58,7 +58,7 @@ final List<Item> tops = [
     size: 'M',
     tags: [Tag(id: nanoid(), name: 'party'), Tag(id: nanoid(), name: 'summer')],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sweater',
     createdAt: DateTime.now(),
@@ -74,7 +74,7 @@ final List<Item> tops = [
     size: 'L',
     tags: [Tag(id: nanoid(), name: 'winter'), Tag(id: nanoid(), name: 'warm')],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Tank Top',
     createdAt: DateTime.now(),
@@ -90,7 +90,7 @@ final List<Item> tops = [
     size: 'S',
     tags: [Tag(id: nanoid(), name: 'sport'), Tag(id: nanoid(), name: 'gym')],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Lace Top',
     createdAt: DateTime.now(),
@@ -109,7 +109,7 @@ final List<Item> tops = [
       Tag(id: nanoid(), name: 'elegant'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Hoodie',
     createdAt: DateTime.now(),
@@ -125,7 +125,7 @@ final List<Item> tops = [
     size: 'L',
     tags: [Tag(id: nanoid(), name: 'casual'), Tag(id: nanoid(), name: 'sport')],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Flannel Shirt',
     createdAt: DateTime.now(),
@@ -144,7 +144,7 @@ final List<Item> tops = [
       Tag(id: nanoid(), name: 'autumn'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Wrap Top',
     createdAt: DateTime.now(),
@@ -163,7 +163,7 @@ final List<Item> tops = [
       Tag(id: nanoid(), name: 'luxury'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Denim Jacket',
     createdAt: DateTime.now(),
@@ -184,8 +184,8 @@ final List<Item> tops = [
   ),
 ];
 
-final List<Item> bottoms = [
-  Item(
+final List<WardrobeItem> bottoms = [
+  WardrobeItem(
     id: nanoid(),
     name: 'Slim Jeans',
     createdAt: DateTime.now(),
@@ -204,7 +204,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'all-season'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Mini Skirt',
     createdAt: DateTime.now(),
@@ -223,7 +223,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'summer'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Cargo Pants',
     createdAt: DateTime.now(),
@@ -242,7 +242,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'outdoor'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Palazzo Pants',
     createdAt: DateTime.now(),
@@ -261,7 +261,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'flowy'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Leggings',
     createdAt: DateTime.now(),
@@ -280,7 +280,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'stretch'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Pencil Skirt',
     createdAt: DateTime.now(),
@@ -299,7 +299,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'formal'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Chinos',
     createdAt: DateTime.now(),
@@ -318,7 +318,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'comfort'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Yoga Pants',
     createdAt: DateTime.now(),
@@ -337,7 +337,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'flexible'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Shorts',
     createdAt: DateTime.now(),
@@ -356,7 +356,7 @@ final List<Item> bottoms = [
       Tag(id: nanoid(), name: 'casual'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Formal Trousers',
     createdAt: DateTime.now(),
@@ -377,8 +377,8 @@ final List<Item> bottoms = [
   ),
 ];
 
-final List<Item> shoes = [
-  Item(
+final List<WardrobeItem> shoes = [
+  WardrobeItem(
     id: nanoid(),
     name: 'Running Sneakers',
     createdAt: DateTime.now(),
@@ -397,7 +397,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'breathable'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'High Heels',
     createdAt: DateTime.now(),
@@ -416,7 +416,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'party'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Boots',
     createdAt: DateTime.now(),
@@ -435,7 +435,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'durable'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Ballet Flats',
     createdAt: DateTime.now(),
@@ -454,7 +454,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'casual'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Running Shoes',
     createdAt: DateTime.now(),
@@ -473,7 +473,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'gym'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sandals',
     createdAt: DateTime.now(),
@@ -492,7 +492,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'beach'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Loafers',
     createdAt: DateTime.now(),
@@ -511,7 +511,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'luxury'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Wedges',
     createdAt: DateTime.now(),
@@ -530,7 +530,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'summer'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Hiking Boots',
     createdAt: DateTime.now(),
@@ -549,7 +549,7 @@ final List<Item> shoes = [
       Tag(id: nanoid(), name: 'durable'),
     ],
   ),
-  // Item(
+  // WardrobeItem(
   //   id: nanoid(),
   //   name: 'Dress Shoes',
   //   createdAt: DateTime.now(),
@@ -570,8 +570,8 @@ final List<Item> shoes = [
   // ),
 ];
 
-final List<Item> accessories = [
-  Item(
+final List<WardrobeItem> accessories = [
+  WardrobeItem(
     id: nanoid(),
     name: 'Leather Handbag',
     createdAt: DateTime.now(),
@@ -590,7 +590,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'elegant'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Silk Scarf',
     createdAt: DateTime.now(),
@@ -609,7 +609,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'versatile'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sunglasses',
     createdAt: DateTime.now(),
@@ -628,7 +628,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'protective'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Gold Necklace',
     createdAt: DateTime.now(),
@@ -647,7 +647,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'elegant'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Watch',
     createdAt: DateTime.now(),
@@ -666,7 +666,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'formal'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Belt',
     createdAt: DateTime.now(),
@@ -685,7 +685,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'functional'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Baseball Cap',
     createdAt: DateTime.now(),
@@ -704,7 +704,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'sport'),
     ],
   ),
-  // Item(
+  // WardrobeItem(
   //   id: nanoid(),
   //   name: 'Backpack',
   //   createdAt: DateTime.now(),
@@ -723,7 +723,7 @@ final List<Item> accessories = [
   //     Tag(id: nanoid(), name: 'durable'),
   //   ],
   // ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Earrings',
     createdAt: DateTime.now(),
@@ -742,7 +742,7 @@ final List<Item> accessories = [
       Tag(id: nanoid(), name: 'casual'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Clutch',
     createdAt: DateTime.now(),
@@ -763,8 +763,8 @@ final List<Item> accessories = [
   ),
 ];
 
-final List<Item> innerWear = [
-  Item(
+final List<WardrobeItem> innerWear = [
+  WardrobeItem(
     id: nanoid(),
     name: 'Lace Bralette',
     createdAt: DateTime.now(),
@@ -783,7 +783,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'lace'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sports Bra',
     createdAt: DateTime.now(),
@@ -802,7 +802,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'sport'),
     ],
   ),
-  // Item(
+  // WardrobeItem(
   //   id: nanoid(),
   //   name: 'Boxer Briefs',
   //   createdAt: DateTime.now(),
@@ -821,7 +821,7 @@ final List<Item> innerWear = [
   //     Tag(id: nanoid(), name: 'basic'),
   //   ],
   // ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Silk Nightgown',
     createdAt: DateTime.now(),
@@ -840,7 +840,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'sleep'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Thermal Underwear',
     createdAt: DateTime.now(),
@@ -859,7 +859,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'thermal'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Cotton Panties',
     createdAt: DateTime.now(),
@@ -878,7 +878,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'comfort'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Shapewear Bodysuit',
     createdAt: DateTime.now(),
@@ -897,7 +897,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'slim'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Long Johns',
     createdAt: DateTime.now(),
@@ -916,7 +916,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'base layer'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Mesh Bra',
     createdAt: DateTime.now(),
@@ -935,7 +935,7 @@ final List<Item> innerWear = [
       Tag(id: nanoid(), name: 'light'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Lingerie Set',
     createdAt: DateTime.now(),
@@ -956,8 +956,8 @@ final List<Item> innerWear = [
   ),
 ];
 
-final List<Item> otherItems = [
-  Item(
+final List<WardrobeItem> otherItems = [
+  WardrobeItem(
     id: nanoid(),
     name: 'Yoga Mat',
     createdAt: DateTime.now(),
@@ -976,7 +976,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'non-slip'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Gym Bag',
     createdAt: DateTime.now(),
@@ -995,7 +995,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'durable'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Water Bottle',
     createdAt: DateTime.now(),
@@ -1014,7 +1014,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'thermal'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Umbrella',
     createdAt: DateTime.now(),
@@ -1033,7 +1033,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'compact'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sewing Kit',
     createdAt: DateTime.now(),
@@ -1052,7 +1052,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'portable'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Travel Pillow',
     createdAt: DateTime.now(),
@@ -1072,7 +1072,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'comfort'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Sunscreen',
     createdAt: DateTime.now(),
@@ -1092,7 +1092,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'water-resistant'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Notebook',
     createdAt: DateTime.now(),
@@ -1111,7 +1111,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'durable'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Makeup Kit',
     createdAt: DateTime.now(),
@@ -1130,7 +1130,7 @@ final List<Item> otherItems = [
       Tag(id: nanoid(), name: 'all-in-one'),
     ],
   ),
-  Item(
+  WardrobeItem(
     id: nanoid(),
     name: 'Hair Dryer',
     createdAt: DateTime.now(),

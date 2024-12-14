@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 
 part 'look.freezed.dart';
 part 'look.g.dart';
@@ -11,7 +11,7 @@ part 'look.g.dart';
 class Look with _$Look {
   const factory Look({
     required String id,
-    required List<Item> items,
+    required List<WardrobeItem> items,
     required String name,
     required String description,
     required String lookImageData,

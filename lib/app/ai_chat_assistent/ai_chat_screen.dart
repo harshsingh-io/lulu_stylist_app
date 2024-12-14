@@ -10,7 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,9 +72,9 @@ class AiChatScreenState extends State<AiChatScreen> {
     }
   }
 
-  List<Item> _loadWardrobeData() {
+  List<WardrobeItem> _loadWardrobeData() {
     // Assuming you have access to the wardrobe items in your code
-    final wardrobeItems = <Item>[
+    final wardrobeItems = <WardrobeItem>[
       ...tops,
       ...bottoms,
       ...shoes,
@@ -89,7 +89,7 @@ class AiChatScreenState extends State<AiChatScreen> {
 
   String _prepareContext(
     Map<String, dynamic> userData,
-    List<Item> wardrobeItems,
+    List<WardrobeItem> wardrobeItems,
   ) {
     // Extract necessary user details
     var userDetails = 'User Profile:\n';

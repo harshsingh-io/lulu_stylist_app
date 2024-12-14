@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:nanoid/nanoid.dart';
@@ -49,7 +49,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           : 'base64'; // Placeholder for actual base64 encoding
 
       // Create a new Item instance
-      final newItem = Item(
+      final newItem = WardrobeItem(
         id: newId,
         name: nameController.text,
         createdAt: DateTime.now(),
