@@ -11,6 +11,9 @@ class TokenPair with _$TokenPair {
     @JsonKey(name: 'token_type') required String tokenType,
   }) = _TokenPair;
 
-  factory TokenPair.fromJson(Map<String, dynamic> json) =>
-      _$TokenPairFromJson(json);
+  factory TokenPair.fromJson(Map<String, dynamic> json) => _$TokenPairFromJson({
+        'access_token': json['access_token']?.toString() ?? '',
+        'refresh_token': json['refresh_token']?.toString() ?? '',
+        'token_type': json['token_type']?.toString() ?? 'bearer',
+      });
 }

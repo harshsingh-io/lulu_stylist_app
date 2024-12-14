@@ -3,7 +3,7 @@ import 'dart:io'; // Import File
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/item.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
@@ -30,7 +30,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     super.dispose();
   }
 
-  Widget buildItemCard(Item item) {
+  Widget buildItemCard(WardrobeItem WardrobeItem) {
     return Card(
       color: LuluBrandColor.brandWhite,
       margin: const EdgeInsets.all(8),
@@ -44,7 +44,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8), // Adjust the radius as needed
                 ),
-                child: _buildImage(item.imageLocalPath),
+                child: _buildImage(WardrobeItem.imageLocalPath),
               ),
             ),
           ),
@@ -56,24 +56,26 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
-                      item.name,
+                      WardrobeItem.name,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('${item.brand} - ${item.size}'),
+                    child: Text('${WardrobeItem.brand} - ${WardrobeItem.size}'),
                   ),
                 ],
               ),
               IconButton(
                 icon: Icon(
-                  item.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: item.isFavorite ? Colors.red : Colors.grey,
+                  WardrobeItem.isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: WardrobeItem.isFavorite ? Colors.red : Colors.grey,
                 ),
                 onPressed: () {
                   setState(() {
-                    // item.isFavorite = !item.isFavorite;
+                    // WardrobeItem.isFavorite = !WardrobeItem.isFavorite;
                   });
                 },
               ),
@@ -197,7 +199,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
         onPressed: () async {
           // Navigate to AddItemScreen and wait for it to return
           await GoRouter.of(context).pushNamed(addItemWardrobeRoute);
-          // After returning, refresh the UI to show the new item
+          // After returning, refresh the UI to show the new WardrobeItem
           setState(() {});
         },
         backgroundColor: LuluBrandColor.brandPrimary,
@@ -218,7 +220,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
   }
 
   // Function to build the grid view for each category
-  Widget buildGridView(List<Item> items) {
+  Widget buildGridView(List<WardrobeItem> items) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
