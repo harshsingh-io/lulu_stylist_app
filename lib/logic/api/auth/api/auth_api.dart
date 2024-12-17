@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_token_model.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/user_register_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/loggedin_user_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'auth_api.g.dart';

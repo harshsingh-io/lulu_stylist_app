@@ -1,21 +1,24 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 
-part 'user_update_request_model.freezed.dart';
-part 'user_update_request_model.g.dart';
+part 'user_model.freezed.dart';
+part 'user_model.g.dart';
 
 @freezed
 class UserModel with _$UserModel {
   const factory UserModel({
-    required String userId,
-    required UserDetails userDetails,
-    required List<WardrobeItem> wardrobeItems,
-    required UserPreferences preferences,
-    String? profileImagePath,
+    @JsonKey(name: 'id') required String userId,
+    required String email,
+    required String username,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    @JsonKey(name: 'user_details') required UserDetails? userDetails,
+    @JsonKey(name: 'wardrobe_items') required List<WardrobeItem> wardrobeItems,
+    @JsonKey(name: 'user_preferences') required UserPreferences? preferences,
+    @JsonKey(name: 'profile_image_url') String? profileImagePath,
   }) = _UserModel;
 
-  /// Connect the generated [_$UserModelFromJson] function to the `fromJson`
-  /// factory.
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 }
@@ -26,10 +29,11 @@ class UserDetails with _$UserDetails {
     required String name,
     required int age,
     String? gender,
-    String? locationLong,
-    String? locationLat,
-    BodyMeasurements? bodyMeasurements,
-    StylePreferences? stylePreferences,
+    @JsonKey(name: 'location_long') String? locationLong,
+    @JsonKey(name: 'location_lat') String? locationLat,
+    @JsonKey(name: 'body_measurements') BodyMeasurements? bodyMeasurements,
+    @JsonKey(name: 'style_preferences') StylePreferences? stylePreferences,
+    required String id,
   }) = _UserDetails;
 
   factory UserDetails.fromJson(Map<String, dynamic> json) =>
@@ -41,7 +45,8 @@ class BodyMeasurements with _$BodyMeasurements {
   const factory BodyMeasurements({
     required double height,
     required double weight,
-    String? bodyType,
+    @JsonKey(name: 'body_type') String? bodyType,
+    required String id,
   }) = _BodyMeasurements;
 
   factory BodyMeasurements.fromJson(Map<String, dynamic> json) =>
@@ -51,11 +56,12 @@ class BodyMeasurements with _$BodyMeasurements {
 @freezed
 class StylePreferences with _$StylePreferences {
   const factory StylePreferences({
-    required List<String> favoriteColors,
-    required List<String> preferredBrands,
-    required List<String> lifestyleChoices,
+    @JsonKey(name: 'favorite_colors') required List<String> favoriteColors,
+    @JsonKey(name: 'preferred_brands') required List<String> preferredBrands,
+    @JsonKey(name: 'lifestyle_choices') required List<String> lifestyleChoices,
+    required String id,
     required Budget budget,
-    required ShoppingHabits shoppingHabits,
+    @JsonKey(name: 'shopping_habits') required ShoppingHabits shoppingHabits,
   }) = _StylePreferences;
 
   factory StylePreferences.fromJson(Map<String, dynamic> json) =>
@@ -65,8 +71,9 @@ class StylePreferences with _$StylePreferences {
 @freezed
 class Budget with _$Budget {
   const factory Budget({
-    required double min,
-    required double max,
+    @JsonKey(name: 'min_amount') required double min,
+    @JsonKey(name: 'max_amount') required double max,
+    required String id,
   }) = _Budget;
 
   factory Budget.fromJson(Map<String, dynamic> json) => _$BudgetFromJson(json);
@@ -76,7 +83,9 @@ class Budget with _$Budget {
 class ShoppingHabits with _$ShoppingHabits {
   const factory ShoppingHabits({
     required String frequency,
+    @JsonKey(name: 'preferred_retailers')
     required List<String> preferredRetailers,
+    required String id,
   }) = _ShoppingHabits;
 
   factory ShoppingHabits.fromJson(Map<String, dynamic> json) =>
@@ -86,8 +95,9 @@ class ShoppingHabits with _$ShoppingHabits {
 @freezed
 class UserPreferences with _$UserPreferences {
   const factory UserPreferences({
-    required bool receiveNotifications,
-    required bool allowDataSharing,
+    @JsonKey(name: 'receive_notifications') required bool receiveNotifications,
+    @JsonKey(name: 'allow_data_sharing') required bool allowDataSharing,
+    required String id,
   }) = _UserPreferences;
 
   factory UserPreferences.fromJson(Map<String, dynamic> json) =>

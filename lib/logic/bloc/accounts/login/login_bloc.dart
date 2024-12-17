@@ -9,7 +9,7 @@ import 'package:lulu_stylist_app/logic/api/common/models/login_request_model.dar
 import 'package:lulu_stylist_app/logic/api/devices/devices_api.dart';
 import 'package:lulu_stylist_app/logic/api/devices/models/user_add_device.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_type.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/user_api.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';

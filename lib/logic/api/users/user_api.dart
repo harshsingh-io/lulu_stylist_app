@@ -4,7 +4,7 @@ import 'package:lulu_stylist_app/logic/api/users/models/loggedin_user_model.dart
 import 'package:lulu_stylist_app/logic/api/users/models/upload_photo_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_device_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_device_token_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'user_api.g.dart';

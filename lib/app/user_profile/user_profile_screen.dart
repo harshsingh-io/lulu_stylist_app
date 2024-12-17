@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // Assuming you're using GoRouter for navigation
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -185,15 +185,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow('Name', user!.userDetails.name),
-        _buildDetailRow('Age', user!.userDetails.age.toString()),
-        if (user!.userDetails.gender != null)
-          _buildDetailRow('Gender', user!.userDetails.gender!),
-        if (user!.userDetails.locationLat != null &&
-            user!.userDetails.locationLong != null)
+        _buildDetailRow('Name', user!.userDetails!.name),
+        _buildDetailRow('Age', user!.userDetails!.age.toString()),
+        if (user!.userDetails!.gender != null)
+          _buildDetailRow('Gender', user!.userDetails!.gender!),
+        if (user!.userDetails!.locationLat != null &&
+            user!.userDetails!.locationLong != null)
           _buildDetailRow(
             'Location',
-            user!.userDetails.locationLat! + user!.userDetails.locationLong!,
+            user!.userDetails!.locationLat! + user!.userDetails!.locationLong!,
           ),
       ],
     );
@@ -201,7 +201,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   /// Builds the body measurements section
   Widget _buildBodyMeasurements() {
-    final bodyMeasurements = user!.userDetails.bodyMeasurements;
+    final bodyMeasurements = user!.userDetails!.bodyMeasurements;
     if (bodyMeasurements == null) return const SizedBox.shrink();
 
     return Column(
@@ -217,7 +217,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   /// Builds the style preferences section
   Widget _buildStylePreferences() {
-    final stylePreferences = user!.userDetails.stylePreferences;
+    final stylePreferences = user!.userDetails!.stylePreferences;
     if (stylePreferences == null) return const SizedBox.shrink();
 
     return Column(
@@ -258,11 +258,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       children: [
         _buildDetailRow(
           'Receive Notifications',
-          user!.preferences.receiveNotifications ? 'Yes' : 'No',
+          user!.preferences!.receiveNotifications ? 'Yes' : 'No',
         ),
         _buildDetailRow(
           'Allow Data Sharing',
-          user!.preferences.allowDataSharing ? 'Yes' : 'No',
+          user!.preferences!.allowDataSharing ? 'Yes' : 'No',
         ),
       ],
     );
