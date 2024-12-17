@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 import 'package:path/path.dart' as path; // Import for 'path' package
@@ -853,43 +853,43 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     log.i('Saving form data...');
     final prefs = await SharedPreferences.getInstance();
 
-    final userUpdateRequest = UserModel(
-      userId: 'unique_user_id', // Replace with actual user ID
-      userDetails: UserDetails(
-        name: userName,
-        age: userAge,
-        gender: userGender,
-        locationLat: userLocation,
-        locationLong: userLocation,
-        bodyMeasurements: BodyMeasurements(
-          height: heightCm,
-          weight: weight,
-          bodyType: bodyType,
-        ),
-        stylePreferences: StylePreferences(
-          favoriteColors: favoriteColors,
-          preferredBrands: preferredBrands,
-          lifestyleChoices: lifestyleChoices,
-          budget: Budget(min: minBudget, max: maxBudget),
-          shoppingHabits: ShoppingHabits(
-            frequency: shoppingFrequency,
-            preferredRetailers: preferredRetailers,
-          ),
-        ),
-      ),
-      wardrobeItems: [], // Populate based on your logic
-      preferences: UserPreferences(
-        receiveNotifications: receiveNotifications,
-        allowDataSharing: allowDataSharing,
-      ),
-      profileImagePath: profileImagePath, // New Field
-    );
+    // final userUpdateRequest = UserModel(
+    //   userId: 'unique_user_id', // Replace with actual user ID
+    //   userDetails: UserDetails(
+    //     name: userName,
+    //     age: userAge,
+    //     gender: userGender,
+    //     locationLat: userLocation,
+    //     locationLong: userLocation,
+    //     bodyMeasurements: BodyMeasurements(
+    //       height: heightCm,
+    //       weight: weight,
+    //       bodyType: bodyType,
+    //     ),
+    //     stylePreferences: StylePreferences(
+    //       favoriteColors: favoriteColors,
+    //       preferredBrands: preferredBrands,
+    //       lifestyleChoices: lifestyleChoices,
+    //       budget: Budget(min: minBudget, max: maxBudget),
+    //       shoppingHabits: ShoppingHabits(
+    //         frequency: shoppingFrequency,
+    //         preferredRetailers: preferredRetailers,
+    //       ),
+    //     ),
+    //   ),
+    //   wardrobeItems: [], // Populate based on your logic
+    //   preferences: UserPreferences(
+    //     receiveNotifications: receiveNotifications,
+    //     allowDataSharing: allowDataSharing,
+    //   ),
+    //   profileImagePath: profileImagePath, // New Field
+    // );
 
-    final userDataJson = json.encode(userUpdateRequest.toJson());
-    log.d('User data JSON: $userDataJson');
+    // final userDataJson = json.encode(userUpdateRequest.toJson());
+    // log.d('User data JSON: $userDataJson');
 
-    await prefs.setString('userDetails', userDataJson);
-    log.i('User data saved successfully.');
+    // await prefs.setString('userDetails', userDataJson);
+    // log.i('User data saved successfully.');
   }
 
   @override

@@ -14,9 +14,6 @@ part 'wardrobe_bloc.freezed.dart';
 Logger log = Logger(printer: PrettyPrinter());
 
 class WardrobeBloc extends Bloc<WardrobeEvent, WardrobeState> {
-  final WardrobeRepository _repository;
-  final String _logTag = 'WardrobeBloc';
-
   WardrobeBloc({required WardrobeRepository repository})
       : _repository = repository,
         super(const WardrobeState.initial()) {
@@ -28,6 +25,9 @@ class WardrobeBloc extends Bloc<WardrobeEvent, WardrobeState> {
     on<_UploadImage>(_onUploadImage);
     on<_FilterByCategory>(_onFilterByCategory);
   }
+
+  final String _logTag = 'WardrobeBloc';
+  final WardrobeRepository _repository;
 
   Future<void> _onStarted(_Started event, Emitter<WardrobeState> emit) async {
     log.d('$_logTag _onStarted called');

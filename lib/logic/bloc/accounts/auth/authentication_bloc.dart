@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_failure.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/auth_token_model.dart';
 import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_update_request_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api_base.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
 import 'package:lulu_stylist_app/logic/dio_factory.dart';
