@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "245933817534",
+    "project_id": "lulu-stylist-app",
+    "storage_bucket": "lulu-stylist-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245933817534:android:aec3afdcaf9eac79e3e8ef",
+        "android_client_info": {
+          "package_name": "com.persistventures.lulustylist.lulu_stylist_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnJipbkbowuReTxw7V_TCvwFITjQEtVow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245933817534:android:41ea74d383ee10cae3e8ef",
+        "android_client_info": {
+          "package_name": "com.persistventures.lulustylist.lulu_stylist_app.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnJipbkbowuReTxw7V_TCvwFITjQEtVow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245933817534:android:70296e59421fdf2ee3e8ef",
+        "android_client_info": {
+          "package_name": "com.persistventures.lulustylist.lulu_stylist_app.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnJipbkbowuReTxw7V_TCvwFITjQEtVow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
