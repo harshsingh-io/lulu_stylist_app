@@ -1,60 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ThreeDots extends StatefulWidget {
-  const ThreeDots({super.key});
+  final double size;
+  final Color color;
+
+  const ThreeDots({
+    super.key,
+    this.size = 6,
+    this.color = Colors.black54,
+  });
 
   @override
-  ThreeDotsState createState() => ThreeDotsState();
+  State<ThreeDots> createState() => _ThreeDotsState();
 }
 
-class ThreeDotsState extends State<ThreeDots>
+class _ThreeDotsState extends State<ThreeDots>
     with SingleTickerProviderStateMixin {
-  AnimationController? _animationController;
-  int _currentIndex = 0;
+  late AnimationController _controller;
+  late List<Animation<double>> _animations;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _currentIndex++;
-          if (_currentIndex == 3) {
-            _currentIndex = 0;
-          }
-          _animationController!.reset();
-          _animationController!.forward();
-        }
-      });
-    _animationController!.forward();
-  }
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
 
-  @override
-  void dispose() {
-    _animationController!.dispose();
-    super.dispose();
+    _animations = List.generate(3, (index) {
+      return Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve:
+              Interval(index * 0.2, 0.6 + index * 0.2, curve: Curves.easeInOut),
+        ),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController!,
-      builder: (context, child) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return Opacity(
-              opacity: index == _currentIndex ? 1.0 : 0.2,
-              child: const Text(
-                '.',
-                textScaleFactor: 5,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        return AnimatedBuilder(
+          animation: _animations[index],
+          builder: (context, child) {
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 2.w),
+              height: widget.size,
+              width: widget.size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.color.withOpacity(
+                  0.3 + (0.7 * _animations[index].value),
+                ),
               ),
             );
-          }),
+          },
         );
-      },
+      }),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

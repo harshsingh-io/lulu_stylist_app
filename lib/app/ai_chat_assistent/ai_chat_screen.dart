@@ -1,738 +1,535 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:equatable/equatable.dart';
+// ai_chat_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
+import 'package:lulu_stylist_app/app/ai_chat_assistent/widgets/chat_message.dart';
+import 'package:lulu_stylist_app/app/ai_chat_assistent/widgets/three_dots.dart';
+import 'package:lulu_stylist_app/logic/api/chat/models/chat_message.dart';
+import 'package:lulu_stylist_app/logic/api/chat/models/chat_session.dart';
+import 'package:lulu_stylist_app/logic/bloc/chat/bloc/chat_bloc.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-Logger log = Logger(printer: PrettyPrinter());
-
-// Add your OpenAI API key here securely
-const String openAI_API_KEY = 'gpt_token'; // Ensure this is securely managed
+import 'package:lulu_stylist_app/lulu_design_system/core/sa_spacing.dart';
+import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:line_icons/line_icons.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
 
   @override
-  State<AiChatScreen> createState() => AiChatScreenState();
+  State<AiChatScreen> createState() => _AiChatScreenState();
 }
 
-class AiChatScreenState extends State<AiChatScreen> {
-  ChatMessage? botMessage;
+class _AiChatScreenState extends State<AiChatScreen> {
+  final TextEditingController _messageController = TextEditingController();
+  final TextEditingController _sessionNameController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final Logger log = Logger(printer: PrettyPrinter());
 
-  bool _streamDone = false;
+  String? selectedContext;
+  bool isCreatingNewSession = true;
 
-  final List<ChatMessage> _messageList = [];
-
-  final ChatUser _currentUser =
-      ChatUser(id: '1', firstName: 'Abhishek', lastName: 'Verma');
-  final ChatUser _chatGPTUser =
-      ChatUser(id: '2', firstName: 'ChatGPT', lastName: 'OpenAI');
-
-  final TextEditingController _textController = TextEditingController();
-  bool _isLoading = false; // To show loading indicator
-
-  // Manage selected context
-  String? _selectedContext;
-
-  // Define available contexts
-  final List<Map<String, String>> _availableContexts = [
-    {'label': 'Related to Fashion', 'contextKey': 'wardrobe_items'},
-    {'label': 'About you', 'contextKey': 'profile_details'},
-    {'label': 'About Existing Looks & Styles', 'contextKey': 'looks_styles'},
+  final List<Map<String, dynamic>> availableContexts = [
+    {
+      'label': 'Fashion Advice',
+      'contextKey': 'fashion_advice',
+      'options': {
+        'include_style_preferences': true,
+        'include_measurements': false,
+        'include_wardrobe': false,
+        'include_shopping_habits': false,
+      }
+    },
+    {
+      'label': 'Style Recommendations',
+      'contextKey': 'style_recommendations',
+      'options': {
+        'include_style_preferences': true,
+        'include_measurements': true,
+        'include_wardrobe': false,
+        'include_shopping_habits': false,
+      }
+    },
+    {
+      'label': 'Wardrobe Management',
+      'contextKey': 'wardrobe_management',
+      'options': {
+        'include_style_preferences': false,
+        'include_measurements': false,
+        'include_wardrobe': true,
+        'include_shopping_habits': false,
+      }
+    },
+    {
+      'label': 'Outfit Planning',
+      'contextKey': 'outfit_planning',
+      'options': {
+        'include_style_preferences': true,
+        'include_measurements': true,
+        'include_wardrobe': true,
+        'include_shopping_habits': true,
+      }
+    },
   ];
 
   @override
   void initState() {
     super.initState();
-    // Initializations if needed
+    context.read<ChatBloc>().add(const ChatEvent.started());
   }
 
-  Future<Map<String, dynamic>> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataJson = prefs.getString('userDetails');
-
-    if (userDataJson != null) {
-      final userData = json.decode(userDataJson) as Map<String, dynamic>;
-
-      log.t('User Data: $userData');
-      return userData;
-    } else {
-      // Handle the case where user data is not available
-      return {};
-    }
+  void _showCreateSessionDialog() {
+    setState(() {
+      selectedContext = null;
+      isCreatingNewSession = true;
+    });
+    context.read<ChatBloc>().add(const ChatEvent.started());
   }
 
-  List<WardrobeItem> _loadWardrobeData() {
-    // Assuming you have access to the wardrobe items in your code
-    final wardrobeItems = <WardrobeItem>[
-      // ...tops,
-      // ...bottoms,
-      // ...shoes,
-      // ...accessories,
-      // ...innerWear,
-      // ...otherItems,
-    ];
-
-    log.t('Wardrobe Items: $wardrobeItems');
-    return wardrobeItems;
-  }
-
-  String _prepareContext(
-    Map<String, dynamic> userData,
-    List<WardrobeItem> wardrobeItems,
-  ) {
-    // Extract necessary user details
-    var userDetails = 'User Profile:\n';
-    userDetails += 'Name: ${userData['userDetails']['name']}\n';
-    userDetails += 'Age: ${userData['userDetails']['age']}\n';
-    userDetails += 'Gender: ${userData['userDetails']['gender']}\n';
-    userDetails += 'Location: ${userData['userDetails']['location']}\n';
-    userDetails +=
-        'Body Type: ${userData['userDetails']['bodyMeasurements']['bodyType']}\n';
-    // Add more details as needed
-
-    // Summarize wardrobe items
-    var wardrobeSummary = 'Wardrobe Items:\n';
-    for (final item in wardrobeItems) {
-      wardrobeSummary +=
-          '- ${item.name} (${item.category.name}): ${item.colors.join(', ')}\n';
-    }
-
-    // Combine user details and wardrobe summary based on selected context
-    var context = '';
-
-    if (_selectedContext == 'wardrobe_items') {
-      context += '$wardrobeSummary\n';
-    }
-
-    if (_selectedContext == 'profile_details') {
-      context += '$userDetails\n';
-    }
-
-    if (_selectedContext == 'looks_styles') {
-      // Add logic to include user's looks and styles
-      context += 'User Looks & Styles:\n';
-      // Example: Add specific details or summaries
-      context += 'User has a preference for casual and formal wear.\n';
-    }
-
-    return context;
-  }
-
-  void _confirmClearChat() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Clear Chat'),
-          content:
-              const Text('Are you sure you want to clear the chat history?'),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Clear'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-                _clearChat(); // Call the method to clear chat
-              },
-            ),
-          ],
+  Widget _buildChatHistoryList(ScrollController controller) {
+    return BlocBuilder<ChatBloc, ChatState>(
+      builder: (context, state) {
+        return state.maybeWhen(
+          sessionsLoaded: (sessions) => ListView.builder(
+            controller: controller,
+            itemCount: sessions.length,
+            itemBuilder: (context, index) {
+              final session = sessions[index];
+              return ListTile(
+                title: Text(session.sessionName ?? 'Chat ${index + 1}'),
+                subtitle: Text(
+                    'Created: ${session.createdAt.toString().substring(0, 16)}'),
+                onTap: () {
+                  context
+                      .read<ChatBloc>()
+                      .add(ChatEvent.loadHistory(session.sessionId));
+                  setState(() {
+                    isCreatingNewSession = false;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
+          orElse: () => const Center(child: CircularProgressIndicator()),
         );
       },
     );
-  }
-
-  void _clearChat() {
-    setState(() {
-      _messageList.clear();
-      _isLoading = false;
-      _selectedContext = null; // Clear selected context
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: LuluBrandColor.brandWhite,
-      appBar: AppBar(
-        title: const Text(
-          'Lulu AI Stylist',
-          style: TextStyle(
-            color: LuluBrandColor.brandWhite,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: LuluBrandColor.brandPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep),
-            tooltip: 'Clear Chat',
-            color: LuluBrandColor.brandRed,
-            onPressed: _isLoading ? null : _confirmClearChat,
-          ),
-          // Optional: Add a settings or context switch button
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            tooltip: 'Change Context',
-            onPressed: _showChangeContextDialog,
-          ),
-        ],
-      ),
-      body: _selectedContext == null
-          ? _buildInitialContextSelection()
-          : _buildChatInterface(),
-    );
-  }
-
-  // Build Initial Context Selection UI
-  Widget _buildInitialContextSelection() {
-    return Container(
-      color: Colors.white, // Match the initial UI background
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/lottie/login_lottie.json',
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.contain,
-                    ),
-                    const Text(
-                      'What can I help with?',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: LuluBrandColor.brandBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildContextPills(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Build Context Pills for Selection
-  Widget _buildContextPills() {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      alignment: WrapAlignment.center,
-      children: _availableContexts.map(_buildContextPill).toList(),
-    );
-  }
-
-  // Build Individual Context Pill
-  Widget _buildContextPill(Map<String, String> item) {
-    final isSelected = _selectedContext == item['contextKey'];
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (isSelected) {
-            _selectedContext = null; // Deselect if already selected
-          } else {
-            _selectedContext = item['contextKey'];
-            // Automatically transition to chat interface
-          }
-        });
-
-        if (!isSelected) {
-          // Automatically initialize chat
-          _initializeChat();
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? LuluBrandColor.brandPrimary
-              : LuluBrandColor.brandGrey300,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Text(
-          item['label']!,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Build Chat Interface
-  Widget _buildChatInterface() {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            reverse: true, // To display the latest messages at the bottom
-            itemCount: _messageList.length,
-            itemBuilder: (context, index) {
-              final message = _messageList[index];
-              final isCurrentUser = message.user.id == _currentUser.id;
-
-              return Container(
-                key:
-                    ValueKey(message.createdAt.toIso8601String()), // Unique key
-                alignment: isCurrentUser
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: isCurrentUser
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    if (message.medias != null && message.medias!.isNotEmpty)
-                      Image.file(File(message.medias!.first.url)),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: isCurrentUser
-                            ? LuluBrandColor.brandPrimary
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: MarkdownBody(
-                        data: message.text,
-                        styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(
-                            color: isCurrentUser ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        if (_isLoading)
-          const Padding(
-            padding: EdgeInsets.all(8),
-            child: CircularProgressIndicator(),
-          ),
-        const Divider(height: 1),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          color: Colors.white,
-          child: Row(
-            children: [
-              // IconButton(
-              //   icon: Icon(Icons.image),
-              //   onPressed: _sendImageMessage,
-              // ),
-              const SizedBox(
-                width: 6,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TextField(
-                    controller: _textController,
-                    maxLines: 20, // Maximum lines the TextField can expand to
-                    minLines: 1, // Minimum lines to start with
-                    decoration: InputDecoration(
-                      hintText: 'Type a message',
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(16), // Rounded borders
-                        borderSide: const BorderSide(
-                          color: LuluBrandColor.brandPrimary, // Border color
-                        ),
-                      ),
-                      contentPadding:
-                          const EdgeInsets.all(12), // Padding inside
-                    ),
-                    onSubmitted: _handleSubmitted,
+    return BlocBuilder<ChatBloc, ChatState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: LuluBrandColor.brandPrimary,
+            title: Text(
+              AppLocalizations.of(context).aiStylist,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
                   ),
+            ),
+            actions: [
+              // Only show these buttons when not creating a new session
+              if (!isCreatingNewSession) ...[
+                IconButton(
+                  icon: const Icon(LineIcons.plusCircle),
+                  onPressed: () => setState(() => isCreatingNewSession = true),
+                  color: Colors.white,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                color: LuluBrandColor.brandPrimary,
-                onPressed: () {
-                  _handleSubmitted(_textController.text);
-                },
-              ),
+                IconButton(
+                  icon: const Icon(LineIcons.history, color: Colors.white),
+                  onPressed: _showChatHistory,
+                ),
+              ],
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  // Initialize Chat after Context Selection
-  void _initializeChat() {
-    // Optionally, you can send an initial message or just transition to chat
-    setState(() {
-      // For example, send a welcome message based on contexts
-      final welcomeMessage = ChatMessage(
-        user: _chatGPTUser,
-        createdAt: DateTime.now(),
-        text:
-            'Hello! How can I assist you today with your selected preference?',
-      );
-      _messageList.insert(0, welcomeMessage);
-    });
-  }
-
-  // Show Dialog to Change Contexts
-  void _showChangeContextDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        var tempSelectedContext = _selectedContext;
-        return AlertDialog(
-          title: const Text('Select Context'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: _availableContexts.map((item) {
-                final isSelected = tempSelectedContext == item['contextKey'];
-                return RadioListTile<String>(
-                  title: Text(item['label']!),
-                  value: item['contextKey']!,
-                  groupValue: tempSelectedContext,
-                  onChanged: (String? value) {
-                    setState(() {
-                      tempSelectedContext = value;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Apply'),
-              onPressed: () {
-                setState(() {
-                  _selectedContext = tempSelectedContext;
-                  _clearChat(); // Optionally clear chat on context change
-                  if (_selectedContext != null) {
-                    _initializeChat();
-                  }
-                });
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-          ],
+          body: isCreatingNewSession
+              ? _buildSessionCreationUI()
+              : _buildChatStateHandler(state),
         );
       },
     );
   }
 
-  void _handleSubmitted(String text) {
-    if (text.trim().isEmpty) return;
+  Widget _buildSessionCreationUI() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        children: [
+          TextField(
+            controller: _sessionNameController,
+            decoration: InputDecoration(
+              labelText: 'Session Name (Optional)',
+              hintText: 'Enter a name for this chat session',
+            ),
+          ),
+          SizedBox(height: 20.h),
+          Text('Select Context:', style: TextStyle(fontSize: 18.sp)),
+          Wrap(
+            spacing: 8.w,
+            children: availableContexts.map((context) {
+              return ChoiceChip(
+                label: Text(context['label'] as String),
+                selected: selectedContext == context['contextKey'],
+                onSelected: (selected) {
+                  setState(() {
+                    selectedContext =
+                        selected ? context['contextKey'] as String : null;
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 20.h),
+          LuluButton.primary(
+            onPressed: selectedContext != null ? _createNewSession : null,
+            label: 'Start Chat',
+          ),
+        ],
+      ),
+    );
+  }
 
-    _textController.clear();
+  void _createNewSession() {
+    if (selectedContext == null) return;
 
-    final message = ChatMessage(
-      user: _currentUser,
-      createdAt: DateTime.now(),
-      text: text,
+    final selectedContextData = availableContexts.firstWhere(
+      (context) => context['contextKey'] == selectedContext,
     );
 
-    _sendMessage(message);
+    final contextOptions = {
+      ...selectedContextData['options'] as Map<String, dynamic>,
+      'context_type': selectedContextData['contextKey'],
+      'session_name': _sessionNameController.text.isNotEmpty
+          ? _sessionNameController.text
+          : selectedContextData['label'],
+    };
+
+    context.read<ChatBloc>().add(ChatEvent.createSession(contextOptions));
+    setState(() => isCreatingNewSession = false);
+    _sessionNameController.clear();
   }
 
-  Future<void> _sendMessage(ChatMessage message, {int retryCount = 0}) async {
-    setState(() {
-      _messageList.insert(0, message);
-      _isLoading = true; // Show loading indicator
-      _streamDone = false; // Reset the stream completion flag
-    });
-
-    final question = message.text;
-
-    // Retrieve user data and wardrobe data
-    final userData = await _loadUserData();
-    final wardrobeItems = _loadWardrobeData();
-
-    // Prepare context
-    final context = _prepareContext(userData, wardrobeItems);
-
-    // Construct the prompt with instructions
-    final prompt = '''
-You are a friendly and helpful assistant specializing in fashion and personal styling. When responding to the user, please:
-
-1. Greet the user warmly.
-2. Provide detailed results based on the provided context.
-3. Offer additional suggestions or recommendations related to the results.
-
-Context:
-$context
-
-User: $question
-Assistant:
-''';
-
-    // Create a placeholder message for the ChatGPT response only if it's the first attempt
-    if (retryCount == 0) {
-      botMessage = ChatMessage(
-        user: _chatGPTUser,
-        createdAt: DateTime.now(),
-        text: '',
-      );
-
-      setState(() {
-        _messageList.insert(0, botMessage!);
-      });
-    }
-
-    try {
-      // Make the API call with streaming
-      final client = http.Client();
-      final request = http.Request(
-        'POST',
-        Uri.parse('https://api.openai.com/v1/chat/completions'),
-      );
-
-      request.headers['Content-Type'] = 'application/json';
-      request.headers['Authorization'] = 'Bearer $openAI_API_KEY';
-
-      request.body = jsonEncode({
-        'model': 'gpt-4', // or 'gpt-3.5-turbo'
-        'messages': [
-          {
-            'role': 'system',
-            'content':
-                'You are a friendly and helpful assistant specializing in fashion and personal styling.',
+  void _showChatHistory() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return BlocBuilder<ChatBloc, ChatState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              sessionsLoaded: (sessions) => ListView.builder(
+                itemCount: sessions.length,
+                itemBuilder: (context, index) {
+                  final session = sessions[index];
+                  return ListTile(
+                    title: Text(session.sessionName ?? 'Chat ${index + 1}'),
+                    subtitle: Text(session.createdAt.toString()),
+                    onTap: () {
+                      context
+                          .read<ChatBloc>()
+                          .add(ChatEvent.loadHistory(session.sessionId));
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+              orElse: () => const Center(child: CircularProgressIndicator()),
+            );
           },
-          {'role': 'user', 'content': prompt},
-        ],
-        'max_tokens': 500, // Adjust as needed
-        'temperature': 0.7, // Adjust for creativity
-        'stream': true, // Enable streaming
-      });
+        );
+      },
+    );
+  }
 
-      final streamedResponse = await client.send(request);
+  Widget _buildChatStateHandler(ChatState state) {
+    return state.maybeWhen(
+      initial: () => const Center(child: Text('Start a new chat session')),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      historyLoaded: (session, isMessageSending) =>
+          _buildChatInterface(session, isMessageSending),
+      error: (failure) => Center(
+        child: Text('Error: ${failure.toString()}'),
+      ),
+      sessionsLoaded: (sessions) => sessions.isEmpty
+          ? const Center(child: Text('No chat sessions found'))
+          : const Center(child: Text('Select a chat session')),
+      orElse: () => const Center(child: Text('Something went wrong')),
+    );
+  }
 
-      if (streamedResponse.statusCode == 200) {
-        // Listen to the stream
-        streamedResponse.stream
-            .transform(utf8.decoder)
-            .transform(const LineSplitter())
-            .listen(
-          (line) {
-            if (line.isEmpty) return;
-            if (line.startsWith('data: ')) {
-              final data = line.substring(6);
-              if (data == '[DONE]') {
-                setState(() {
-                  _isLoading = false;
-                  _streamDone = true; // Mark stream as done
-                });
-                client.close();
-                return;
-              }
-
-              try {
-                final jsonData = json.decode(data) as Map<String, dynamic>;
-
-                if (jsonData.containsKey('error')) {
-                  // Handle API errors gracefully
-                  final error = jsonData['error'];
-                  log.e('OpenAI API Error: $error');
-                  setState(() {
-                    if (botMessage != null) {
-                      botMessage!.text =
-                          'Sorry, I encountered an error while processing your request.';
-                    }
-                    _isLoading = false;
-                  });
-                  client.close();
-                  return;
+  Widget _buildChatInterface(ChatSession session, bool isMessageSending) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFCF2F4),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.only(bottom: 8.h),
+              reverse: false,
+              itemCount: session.messages.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ChatMessageBubble(
+                    message: ChatMessage(
+                      content: "Hey, How may I help you today?",
+                      role: 'assistant',
+                      timestamp: DateTime.now(),
+                    ),
+                    isUser: false,
+                  );
                 }
 
-                final choices = jsonData['choices'];
-                if (choices is List && choices.isNotEmpty) {
-                  final delta = choices[0]['delta'];
-                  if (delta is Map<String, dynamic> &&
-                      delta.containsKey('content')) {
-                    final content = delta['content'] as String;
-                    setState(() {
-                      if (botMessage != null) {
-                        botMessage!.text += content;
+                final messageIndex = index - 1;
+                if (messageIndex >= session.messages.length) {
+                  return const SizedBox.shrink();
+                }
+
+                final message = session.messages[messageIndex];
+                // Skip empty messages or messages without content
+                if (message.content.trim().isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final isUser = message.role == 'user';
+                return ChatMessageBubble(
+                  message: message,
+                  isUser: isUser,
+                );
+              },
+            ),
+          ),
+          if (isMessageSending)
+            Padding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                bottom: 16.h,
+              ),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: ChatLoadingIndicator(),
+              ),
+            ),
+          Container(
+            padding: EdgeInsets.only(
+              left: 16.w,
+              right: 16.w,
+              top: 8.h,
+              bottom: MediaQuery.of(context).viewPadding.bottom + 8.h,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 45.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      textInputAction: TextInputAction.send,
+                      textAlignVertical: TextAlignVertical.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        height: 1.2,
+                      ),
+                      minLines: 1,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        hintText: 'Type a message...',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 14.sp,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 0,
+                        ),
+                        isDense: true,
+                      ),
+                      onSubmitted: (text) {
+                        if (text.trim().isNotEmpty) {
+                          _sendMessage(session.sessionId);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  width: 45.w,
+                  height: 45.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF1E392A),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      LineIcons.paperPlane,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      if (_messageController.text.trim().isNotEmpty) {
+                        _sendMessage(session.sessionId);
                       }
-                    });
-                  } else if (delta is Map<String, dynamic> && delta.isEmpty) {
-                    // Empty delta received, possibly end of message
-                    log.w('Received empty delta.');
-                  } else {
-                    log.e('Unexpected delta format: $delta');
-                    log.e('Full JSON Data: $jsonData'); // Log entire JSON data
-                  }
-                } else {
-                  log.e('Invalid choices format: $choices');
-                }
-              } catch (e) {
-                log.e('Error parsing stream data: $e');
-              }
-            }
-          },
-          onDone: () {
-            setState(() {
-              _isLoading = false;
-              _streamDone = true; // Mark stream as done
-            });
-            client.close();
-          },
-          onError: (e) {
-            log.e('Stream Error: $e');
-            if (_streamDone) {
-              // Ignore the error as the stream was closed normally
-              log.w('Stream closed normally after [DONE]');
-            } else {
-              setState(() {
-                if (botMessage != null) {
-                  botMessage!.text =
-                      'Sorry, something went wrong. Please try again later.';
-                }
-                _isLoading = false;
-              });
-
-              // Retry logic only if not already retried 3 times
-              if (retryCount < 3) {
-                log.w('Retrying... Attempt ${retryCount + 1}');
-                Future.delayed(const Duration(seconds: 2), () {
-                  _sendMessage(message, retryCount: retryCount + 1);
-                });
-              }
-            }
-            client.close();
-          },
-        );
-      } else {
-        // Handle non-200 responses
-        log.e(
-          'OpenAI API Error: ${streamedResponse.statusCode} ${streamedResponse.reasonPhrase}',
-        );
-        setState(() {
-          if (botMessage != null) {
-            botMessage!.text =
-                'Sorry, I encountered an error while processing your request.';
-          }
-          _isLoading = false;
-        });
-
-        // Retry logic only if not already retried 3 times
-        if (retryCount < 3) {
-          log.w('Retrying... Attempt ${retryCount + 1}');
-          await Future.delayed(const Duration(seconds: 2));
-          await _sendMessage(message, retryCount: retryCount + 1);
-        }
-      }
-    } catch (e) {
-      log.e('Exception: $e');
-      setState(() {
-        if (botMessage != null) {
-          botMessage!.text =
-              'Sorry, something went wrong. Please try again later.';
-        }
-        _isLoading = false;
-      });
-
-      // Retry logic only if not already retried 3 times
-      if (retryCount < 3) {
-        log.w('Retrying... Attempt ${retryCount + 1}');
-        await Future.delayed(const Duration(seconds: 2));
-        await _sendMessage(message, retryCount: retryCount + 1);
-      }
-    }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  // Uncomment and implement if you want to handle image messages
-  // void _sendImageMessage() async {
-  //   final ImagePicker imagePicker = ImagePicker();
-  //   final XFile? file =
-  //       await imagePicker.pickImage(source: ImageSource.gallery);
+// Modified _sendMessage method to include auto-scroll
+  void _sendMessage(String sessionId) {
+    if (_messageController.text.trim().isEmpty) return;
 
-  //   if (file != null) {
-  //     ChatMessage chatMessage = ChatMessage(
-  //         user: _currentUser,
-  //         createdAt: DateTime.now(),
-  //         text: "Who is in this picture?",
-  //         medias: [
-  //           ChatMedia(url: file.path, fileName: "", type: MediaType.image)
-  //         ]);
-  //     _sendMessage(chatMessage);
-  //   }
-  // }
-}
+    context.read<ChatBloc>().add(ChatEvent.sendMessage(
+          sessionId,
+          _messageController.text.trim(),
+        ));
 
-// Define custom classes since DashChat is no longer used
-class ChatMessage extends Equatable {
-  ChatMessage({
-    required this.user,
-    required this.createdAt,
-    required this.text,
-    this.medias,
-  });
-  final ChatUser user;
-  final DateTime createdAt;
-  String text; // Made mutable to update the text
-  final List<ChatMedia>? medias;
+    _messageController.clear();
+
+    // Auto-scroll to bottom after sending message
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Widget _buildMessageInput(String sessionId) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 8.h,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 8.h,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end, // Align items to bottom
+        children: [
+          Expanded(
+            child: Container(
+              height: 45.h, // Fixed height
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _messageController,
+                textInputAction: TextInputAction.send,
+                textAlignVertical:
+                    TextAlignVertical.center, // Center text vertically
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  height: 1.2, // Adjust line height
+                ),
+                minLines: 1,
+                maxLines: 1, // Restrict to single line
+                decoration: InputDecoration(
+                  hintText: 'Type a message...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 14.sp,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 0, // Remove vertical padding
+                  ),
+                  isDense: true, // Make the input field more compact
+                ),
+                onSubmitted: (text) {
+                  if (text.trim().isNotEmpty) {
+                    _sendMessage(sessionId);
+                  }
+                },
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Container(
+            width: 45.w, // Match text field height
+            height: 45.w,
+            decoration: const BoxDecoration(
+              color: Color(0xFF1E392A),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                LineIcons.paperPlane,
+                color: Colors.white,
+                size: 20,
+              ),
+              padding: EdgeInsets.zero, // Remove padding from icon
+              onPressed: () {
+                if (_messageController.text.trim().isNotEmpty) {
+                  _sendMessage(sessionId);
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
-  List<Object?> get props => [user.id, createdAt];
+  void dispose() {
+    _messageController.dispose();
+    _sessionNameController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 }
-
-class ChatUser {
-  ChatUser({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-  });
-  final String id;
-  final String firstName;
-  final String lastName;
-}
-
-class ChatMedia {
-  ChatMedia({
-    required this.url,
-    required this.fileName,
-    required this.type,
-  });
-  final String url;
-  final String fileName;
-  final MediaType type;
-}
-
-enum MediaType { image, video, file }
