@@ -1,4 +1,3 @@
-// chat_api.dart
 import 'package:dio/dio.dart';
 import 'package:lulu_stylist_app/logic/api/chat/models/chat_session.dart';
 import 'package:retrofit/retrofit.dart';
@@ -10,24 +9,32 @@ abstract class ChatApi {
   factory ChatApi(Dio dio) = _ChatApi;
 
   @POST('/api/chat/chat/sessions')
-  Future<void> createChatSession(@Body() Map<String, dynamic> options);
+  Future<void> createChatSession(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> options,
+  );
 
   @GET('/api/chat/chat/sessions')
-  Future<List<ChatSession>> getChatSessions();
+  Future<List<ChatSession>> getChatSessions(
+    @Header('Authorization') String token,
+  );
 
   @POST('/api/chat/chat/{sessionId}/message')
   Future<void> sendMessage(
+    @Header('Authorization') String token,
     @Path('sessionId') String sessionId,
     @Query('message') String message,
   );
 
   @GET('/api/chat/chat/{sessionId}')
   Future<ChatSession> getChatHistory(
+    @Header('Authorization') String token,
     @Path('sessionId') String sessionId,
   );
 
   @DELETE('/api/chat/chat/{sessionId}')
-  Future<String> deleteChatSession(
+  Future<void> deleteChatSession(
+    @Header('Authorization') String token,
     @Path('sessionId') String sessionId,
   );
 }

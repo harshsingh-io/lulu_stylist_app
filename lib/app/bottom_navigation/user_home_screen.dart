@@ -14,6 +14,8 @@ import 'package:lulu_stylist_app/app/ai_chat_assistent/ai_chat_screen.dart';
 import 'package:lulu_stylist_app/app/user_profile/user_profile_screen.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_mangement_screen.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/chat/bloc/chat_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/chat/chat_repository.dart';
 import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/wardrobe/wardrobe_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
@@ -62,6 +64,7 @@ class _HomePageState extends State<HomePage> {
             authBloc: context.read<AuthenticationBloc>(),
           ),
         ),
+
         // Add other blocs here if needed
       ],
       child: !kIsWeb && Platform.isIOS
@@ -227,7 +230,13 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const Scaffold();
       case 1:
-        return const AiChatScreen();
+        return BlocProvider<ChatBloc>(
+          create: (context) => ChatBloc(
+            chatRepository: getIt<ChatRepository>(),
+            authBloc: context.read<AuthenticationBloc>(),
+          )..add(const ChatEvent.started()), // Initialize the bloc when created
+          child: const AiChatScreen(),
+        );
       case 2:
         return const WardrobeScreen();
       case 3:
