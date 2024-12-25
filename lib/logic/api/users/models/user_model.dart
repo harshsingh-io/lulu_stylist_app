@@ -7,16 +7,18 @@ part 'user_model.g.dart';
 @freezed
 class UserModel with _$UserModel {
   const factory UserModel({
-    @JsonKey(name: 'id') required String userId,
     required String email,
     required String username,
+    @JsonKey(name: 'id') required String userId,
     @JsonKey(name: 'is_active') required bool isActive,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
-    @JsonKey(name: 'user_details') required UserDetails? userDetails,
-    @JsonKey(name: 'wardrobe_items') required List<WardrobeItem> wardrobeItems,
-    @JsonKey(name: 'user_preferences') required UserPreferences? preferences,
-    @JsonKey(name: 'profile_image_url') String? profileImagePath,
+    @JsonKey(name: 'user_details') UserDetails? userDetails,
+    @JsonKey(name: 'wardrobe_items')
+    @Default([])
+    List<WardrobeItem> wardrobeItems,
+    @JsonKey(name: 'user_preferences') UserPreferences? userPreferences,
+    @JsonKey(name: 'profile_image_url') String? profileImageUrl,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -28,12 +30,14 @@ class UserDetails with _$UserDetails {
   const factory UserDetails({
     required String name,
     required int age,
-    String? gender,
-    @JsonKey(name: 'location_long') String? locationLong,
-    @JsonKey(name: 'location_lat') String? locationLat,
-    @JsonKey(name: 'body_measurements') BodyMeasurements? bodyMeasurements,
-    @JsonKey(name: 'style_preferences') StylePreferences? stylePreferences,
+    required String gender,
+    @JsonKey(name: 'location_long') required String locationLong,
+    @JsonKey(name: 'location_lat') required String locationLat,
     required String id,
+    @JsonKey(name: 'body_measurements')
+    required BodyMeasurements bodyMeasurements,
+    @JsonKey(name: 'style_preferences')
+    required StylePreferences stylePreferences,
   }) = _UserDetails;
 
   factory UserDetails.fromJson(Map<String, dynamic> json) =>
@@ -45,7 +49,7 @@ class BodyMeasurements with _$BodyMeasurements {
   const factory BodyMeasurements({
     required double height,
     required double weight,
-    @JsonKey(name: 'body_type') String? bodyType,
+    @JsonKey(name: 'body_type') required String bodyType,
     required String id,
   }) = _BodyMeasurements;
 
@@ -71,8 +75,8 @@ class StylePreferences with _$StylePreferences {
 @freezed
 class Budget with _$Budget {
   const factory Budget({
-    @JsonKey(name: 'min_amount') required double min,
-    @JsonKey(name: 'max_amount') required double max,
+    @JsonKey(name: 'min_amount') required double minAmount,
+    @JsonKey(name: 'max_amount') required double maxAmount,
     required String id,
   }) = _Budget;
 
@@ -90,6 +94,39 @@ class ShoppingHabits with _$ShoppingHabits {
 
   factory ShoppingHabits.fromJson(Map<String, dynamic> json) =>
       _$ShoppingHabitsFromJson(json);
+}
+
+@freezed
+class WardrobeItem with _$WardrobeItem {
+  const factory WardrobeItem({
+    required String id,
+    @JsonKey(name: 'user_id') required String userId,
+    required String name,
+    required String description,
+    required List<String> colors,
+    required String brand,
+    required String category,
+    @JsonKey(name: 'is_favorite') required bool isFavorite,
+    required double price,
+    required String notes,
+    required String size,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    required List<Tag> tags,
+  }) = _WardrobeItem;
+
+  factory WardrobeItem.fromJson(Map<String, dynamic> json) =>
+      _$WardrobeItemFromJson(json);
+}
+
+@freezed
+class Tag with _$Tag {
+  const factory Tag({
+    required String name,
+    required String id,
+  }) = _Tag;
+
+  factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 }
 
 @freezed

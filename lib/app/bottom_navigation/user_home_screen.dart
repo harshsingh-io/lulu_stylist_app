@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,9 +13,14 @@ import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/ai_chat_assistent/ai_chat_screen.dart';
 import 'package:lulu_stylist_app/app/user_profile/user_profile_screen.dart';
 import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_mangement_screen.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/wardrobe_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/sa_spacing.dart';
 import 'package:lulu_stylist_app/notification/notification_utils.dart';
+import 'package:get_it/get_it.dart';
+import 'package:lulu_stylist_app/utils/injection.dart';
 
 Logger log = Logger(printer: PrettyPrinter());
 
@@ -47,14 +53,24 @@ class _HomePageState extends State<HomePage> {
       // NotificationUtils.requireUserNotificationPermissions(context);
     });
 
-    if (!kIsWeb && Platform.isIOS) {
-      return CupertinoApp(
-        theme: const CupertinoThemeData(brightness: Brightness.light),
-        home: _buildCupertino(context),
-      );
-    }
-
-    return _buildMaterial(context);
+    // Wrap the entire content with MultiBlocProvider
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WardrobeBloc>(
+          create: (context) => WardrobeBloc(
+            repository: getIt<WardrobeRepository>(),
+            authBloc: context.read<AuthenticationBloc>(),
+          ),
+        ),
+        // Add other blocs here if needed
+      ],
+      child: !kIsWeb && Platform.isIOS
+          ? CupertinoApp(
+              theme: const CupertinoThemeData(brightness: Brightness.light),
+              home: _buildCupertino(context),
+            )
+          : _buildMaterial(context),
+    );
   }
 
   Widget _buildCupertino(BuildContext context) {

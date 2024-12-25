@@ -17,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late final Future<LottieComposition> _composition;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -27,6 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _composition = AssetLottie('assets/lottie/login_lottie.json').load();
   }
 
   String? _validateEmail(String? value) {
@@ -92,11 +99,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 120.h),
-                  Lottie.asset(
-                    'assets/lottie/login_lottie.json',
-                    width: 300.h,
-                    height: 300.h,
-                    fit: BoxFit.cover,
+                  FutureBuilder<LottieComposition>(
+                    future: _composition,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      return Lottie(
+                        composition: snapshot.data!,
+                        width: 300.h,
+                        height: 300.h,
+                        fit: BoxFit.cover,
+                        repeat: false,
+                      );
+                    },
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(

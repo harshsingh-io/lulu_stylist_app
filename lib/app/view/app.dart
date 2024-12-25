@@ -10,6 +10,10 @@ import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.da
 import 'package:lulu_stylist_app/logic/bloc/accounts/login/login_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/mqtt/mqtt_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/networks/network_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/wardrobe_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/widgets/sa_app_bar_theme.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
@@ -95,9 +99,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       builder: (_, child) {
         return MultiBlocProvider(
           providers: [
+            BlocProvider<AuthenticationBloc>(
+              create: (context) => _authBloc,
+            ),
             BlocProvider<AuthenticationBloc>.value(value: _authBloc),
             BlocProvider<LoginBloc>(
               create: (context) => LoginBloc(_authRepository),
+            ),
+            BlocProvider<UserBloc>(
+              create: (context) => UserBloc(
+                userRepository: UserRepository(baseUrl: apiBase),
+                authBloc: context.read<AuthenticationBloc>(),
+              ),
             ),
             BlocProvider<NetworkBloc>(
               create: (context) =>

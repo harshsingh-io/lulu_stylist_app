@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lulu_stylist_app/app/bottom_navigation/user_home_screen.dart';
-import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,12 +74,12 @@ class AiChatScreenState extends State<AiChatScreen> {
   List<WardrobeItem> _loadWardrobeData() {
     // Assuming you have access to the wardrobe items in your code
     final wardrobeItems = <WardrobeItem>[
-      ...tops,
-      ...bottoms,
-      ...shoes,
-      ...accessories,
-      ...innerWear,
-      ...otherItems,
+      // ...tops,
+      // ...bottoms,
+      // ...shoes,
+      // ...accessories,
+      // ...innerWear,
+      // ...otherItems,
     ];
 
     log.t('Wardrobe Items: $wardrobeItems');

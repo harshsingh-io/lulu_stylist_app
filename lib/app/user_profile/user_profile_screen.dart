@@ -1,66 +1,33 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // Assuming you're using GoRouter for navigation
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lulu_stylist_app/logic/api_base.dart';
 
-class UserProfileScreen extends StatefulWidget {
+class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
 
   @override
-  _UserProfileScreenState createState() => _UserProfileScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => UserBloc(
+        userRepository: UserRepository(baseUrl: apiBase),
+        authBloc: context.read<AuthenticationBloc>(),
+      )..add(const UserEvent.fetchUserData()),
+      child: const UserProfileView(),
+    );
+  }
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
-  UserModel? user;
-  bool isLoading = true;
+class UserProfileView extends StatelessWidget {
+  const UserProfileView({super.key});
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  /// Loads user data from SharedPreferences
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataJson = prefs.getString('userDetails');
-
-    if (userDataJson != null && userDataJson.isNotEmpty) {
-      final userData = json.decode(userDataJson) as Map<String, dynamic>;
-      setState(() {
-        user = UserModel.fromJson(userData);
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  /// Handles Firebase logout and navigates to Onboarding screen
-  Future<void> _logout() async {
-    try {
-      // await FirebaseAuth.instance.signOut();
-      // Optionally, clear SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('userDetails');
-      // Navigate to Onboarding screen
-      GoRouter.of(context).go('/onboarding');
-    } catch (e) {
-      // Handle logout error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error logging out. Please try again.')),
-      );
-    }
-  }
-
-  /// Confirms logout action with the user
-  void _confirmLogout() {
+  void _confirmLogout(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -79,7 +46,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _logout();
+                context.read<AuthenticationBloc>().add(
+                      const AuthenticationEvent.logoutRequested(),
+                    );
               },
               child: const Text(
                 'Logout',
@@ -92,34 +61,79 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Helper method to determine and return the correct ImageProvider
-  ImageProvider _getProfileImageProvider(String? imagePath) {
-    if (imagePath == null || imagePath.isEmpty) {
-      // If no image selected, show placeholder asset image
-      return const AssetImage('assets/images/default.jpg');
-    } else if (imagePath.startsWith('assets/')) {
-      // If imagePath starts with 'assets/', load as asset
-      return AssetImage(imagePath);
-    } else {
-      // Otherwise, assume it's a local file path
-      final file = File(imagePath);
-      if (file.existsSync()) {
-        return FileImage(file);
-      } else {
-        // If file doesn't exist, show placeholder
-        return const AssetImage('assets/images/default.jpg');
-      }
-    }
+  Widget _buildProfileContent(BuildContext context, UserModel user) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<UserBloc>().add(const UserEvent.fetchUserData());
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildUserProfilePicture(user),
+            const SizedBox(height: 24),
+            if (user.userDetails != null) ...[
+              _buildSectionCard(
+                'User Details',
+                _buildUserDetails(user),
+                Icons.person,
+              ),
+              const SizedBox(height: 16),
+              _buildSectionCard(
+                'Body Measurements',
+                _buildBodyMeasurements(user),
+                Icons.straighten,
+              ),
+              const SizedBox(height: 16),
+              _buildSectionCard(
+                'Style Preferences',
+                _buildStylePreferences(user),
+                Icons.style,
+              ),
+              const SizedBox(height: 16),
+              _buildSectionCard(
+                'User Preferences',
+                _buildUserPreferences(user),
+                Icons.settings,
+              ),
+            ],
+            const SizedBox(height: 24),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () => GoRouter.of(context).push('/edit-profile'),
+                icon: const Icon(Icons.edit),
+                label: const Text('Edit Profile'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: LuluBrandColor.brandPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  /// Builds the user profile picture widget without the camera icon
-  Widget _buildUserProfilePicture() {
+  Widget _buildUserProfilePicture(UserModel user) {
     return Center(
       child: CircleAvatar(
         radius: 60,
         backgroundColor: Colors.grey[300],
-        backgroundImage: _getProfileImageProvider(user!.profileImagePath),
-        child: user!.profileImagePath == null || user!.profileImagePath!.isEmpty
+        backgroundImage: _getProfileImageProvider(user.profileImageUrl),
+        child: user.profileImageUrl == null || user.profileImageUrl!.isEmpty
             ? const Icon(
                 Icons.person,
                 size: 60,
@@ -130,8 +144,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Builds a section card with title and content
-  Widget _buildSectionCard(String title, Widget content) {
+  ImageProvider _getProfileImageProvider(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return const AssetImage('assets/images/default.jpg');
+    } else if (imagePath.startsWith('assets/')) {
+      return AssetImage(imagePath);
+    } else {
+      final file = File(imagePath);
+      if (file.existsSync()) {
+        return FileImage(file);
+      } else {
+        return const AssetImage('assets/images/default.jpg');
+      }
+    }
+  }
+
+  Widget _buildSectionCard(String title, Widget content, IconData icon) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -144,7 +172,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           children: [
             Row(
               children: [
-                _getSectionIcon(title),
+                Icon(icon, color: LuluBrandColor.brandPrimary),
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -164,222 +192,193 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Returns an icon based on the section title
-  Icon _getSectionIcon(String title) {
-    switch (title) {
-      case 'User Details':
-        return const Icon(Icons.person, color: LuluBrandColor.brandPrimary);
-      case 'Body Measurements':
-        return const Icon(Icons.straighten, color: LuluBrandColor.brandPrimary);
-      case 'Style Preferences':
-        return const Icon(Icons.style, color: LuluBrandColor.brandPrimary);
-      case 'User Preferences':
-        return const Icon(Icons.settings, color: LuluBrandColor.brandPrimary);
-      default:
-        return const Icon(Icons.info, color: LuluBrandColor.brandPrimary);
-    }
-  }
-
-  /// Builds the user details section
-  Widget _buildUserDetails() {
+  Widget _buildUserDetails(UserModel user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow('Name', user!.userDetails!.name),
-        _buildDetailRow('Age', user!.userDetails!.age.toString()),
-        if (user!.userDetails!.gender != null)
-          _buildDetailRow('Gender', user!.userDetails!.gender!),
-        if (user!.userDetails!.locationLat != null &&
-            user!.userDetails!.locationLong != null)
-          _buildDetailRow(
-            'Location',
-            user!.userDetails!.locationLat! + user!.userDetails!.locationLong!,
-          ),
+        _buildDetailRow('Name', user.userDetails!.name),
+        _buildDetailRow('Age', user.userDetails!.age.toString()),
+        if (user.userDetails!.gender != null)
+          _buildDetailRow('Gender', user.userDetails!.gender!),
+        if (user.userDetails!.locationLat != null)
+          _buildDetailRow('Location', user.userDetails!.locationLat!),
       ],
     );
   }
 
-  /// Builds the body measurements section
-  Widget _buildBodyMeasurements() {
-    final bodyMeasurements = user!.userDetails!.bodyMeasurements;
-    if (bodyMeasurements == null) return const SizedBox.shrink();
+  Widget _buildBodyMeasurements(UserModel user) {
+    final measurements = user.userDetails!.bodyMeasurements;
+    if (measurements == null) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow('Height', '${bodyMeasurements.height} cm'),
-        _buildDetailRow('Weight', '${bodyMeasurements.weight} kg'),
-        if (bodyMeasurements.bodyType != null)
-          _buildDetailRow('Body Type', bodyMeasurements.bodyType!),
+        _buildDetailRow('Height', '${measurements.height} cm'),
+        _buildDetailRow('Weight', '${measurements.weight} kg'),
+        if (measurements.bodyType != null)
+          _buildDetailRow('Body Type', measurements.bodyType!),
       ],
     );
   }
 
-  /// Builds the style preferences section
-  Widget _buildStylePreferences() {
-    final stylePreferences = user!.userDetails!.stylePreferences;
-    if (stylePreferences == null) return const SizedBox.shrink();
+  Widget _buildStylePreferences(UserModel user) {
+    final preferences = user.userDetails!.stylePreferences;
+    if (preferences == null) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildDetailRow(
           'Favorite Colors',
-          stylePreferences.favoriteColors.join(', '),
+          preferences.favoriteColors.join(', '),
         ),
         _buildDetailRow(
           'Preferred Brands',
-          stylePreferences.preferredBrands.join(', '),
+          preferences.preferredBrands.join(', '),
         ),
         _buildDetailRow(
           'Lifestyle Choices',
-          stylePreferences.lifestyleChoices.join(', '),
+          preferences.lifestyleChoices.join(', '),
         ),
         _buildDetailRow(
           'Budget',
-          'Min - \$${stylePreferences.budget.min}, Max - \$${stylePreferences.budget.max}',
+          'Min - \$${preferences.budget.minAmount}, Max - \$${preferences.budget.maxAmount}',
         ),
         _buildDetailRow(
           'Shopping Frequency',
-          stylePreferences.shoppingHabits.frequency,
+          preferences.shoppingHabits.frequency,
         ),
         _buildDetailRow(
           'Preferred Retailers',
-          stylePreferences.shoppingHabits.preferredRetailers.join(', '),
+          preferences.shoppingHabits.preferredRetailers.join(', '),
         ),
       ],
     );
   }
 
-  /// Builds the user preferences section
-  Widget _buildUserPreferences() {
+  Widget _buildUserPreferences(UserModel user) {
+    if (user.userPreferences == null) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildDetailRow(
           'Receive Notifications',
-          user!.preferences!.receiveNotifications ? 'Yes' : 'No',
+          user.userPreferences!.receiveNotifications ? 'Yes' : 'No',
         ),
         _buildDetailRow(
           'Allow Data Sharing',
-          user!.preferences!.allowDataSharing ? 'Yes' : 'No',
+          user.userPreferences!.allowDataSharing ? 'Yes' : 'No',
         ),
       ],
     );
   }
 
-  /// Builds a single detail row with label and value
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: RichText(
-        text: TextSpan(
-          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 16),
-          children: [
-            TextSpan(
-              text: '$label: ',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
-            TextSpan(text: value),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Builds the floating action button for editing profile
-  Widget _buildEditProfileButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        // Navigate to edit profile screen
-        GoRouter.of(context).go('/edit-profile');
-      },
-      backgroundColor: LuluBrandColor.brandPrimary,
-      child: const Icon(
-        Icons.edit,
-        color: Colors.white,
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'User Profile',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: LuluBrandColor.brandPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Logout',
-            onPressed: _confirmLogout,
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          failure: (message) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+            if (message == 'Session expired') {
+              context.read<AuthenticationBloc>().add(
+                    const AuthenticationEvent.sessionExpired(),
+                  );
+            }
+          },
+          orElse: () {},
+        );
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'User Profile',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: LuluBrandColor.brandPrimary,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout, color: Colors.white),
+                tooltip: 'Logout',
+                onPressed: () => _confirmLogout(context),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : user == null
-              ? const Center(
-                  child: Text(
-                    'No user data available.',
-                    style: TextStyle(fontSize: 18),
+          body: state.maybeWhen(
+            loading: () => const Center(
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
+              ),
+            ),
+            loaded: (userData) => _buildProfileContent(context, userData),
+            failure: (message) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Error: $message',
+                    style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildUserProfilePicture(),
-                      const SizedBox(height: 24),
-                      _buildSectionCard('User Details', _buildUserDetails()),
-                      const SizedBox(height: 16),
-                      _buildSectionCard(
-                        'Body Measurements',
-                        _buildBodyMeasurements(),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildSectionCard(
-                        'Style Preferences',
-                        _buildStylePreferences(),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildSectionCard(
-                        'User Preferences',
-                        _buildUserPreferences(),
-                      ),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Navigate to edit profile screen
-                            GoRouter.of(context).go('/edit-profile');
-                          },
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Edit Profile'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: LuluBrandColor.brandPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context
+                          .read<UserBloc>()
+                          .add(const UserEvent.fetchUserData());
+                    },
+                    child: const Text('Retry'),
                   ),
-                ),
-      floatingActionButton: _buildEditProfileButton(),
+                ],
+              ),
+            ),
+            orElse: () => const Center(
+              child: Text(
+                'No user data available',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => GoRouter.of(context).push('/edit-profile'),
+            backgroundColor: LuluBrandColor.brandPrimary,
+            child: const Icon(Icons.edit, color: Colors.white),
+          ),
+        );
+      },
     );
   }
 }

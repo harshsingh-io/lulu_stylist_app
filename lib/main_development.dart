@@ -13,6 +13,7 @@ import 'package:lulu_stylist_app/bootstrap.dart';
 import 'package:lulu_stylist_app/firebase/firebase/stg/firebase_options.dart';
 import 'package:lulu_stylist_app/lulu_design_system/sa_bloc_observer.dart';
 import 'package:lulu_stylist_app/notification/notification_controller.dart';
+import 'package:lulu_stylist_app/utils/injection.dart';
 // import 'package:workmanager/workmanager.dart';
 
 // Toggle this to cause an async error to be thrown during initialization
@@ -44,6 +45,7 @@ void main() {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
+    await initializeDependencies();
 
     Bloc.observer = SABlocObserver();
 
