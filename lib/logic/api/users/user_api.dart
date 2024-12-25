@@ -1,17 +1,21 @@
 import 'package:dio/dio.dart';
-import 'package:lulu_stylist_app/logic/api/common/models/login_request_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/loggedin_user_model.dart';
+import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/upload_photo_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_device_model.dart';
-import 'package:lulu_stylist_app/logic/api/users/models/user_device_token_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'user_api.g.dart';
 
+// user_api.dart
 @RestApi()
 abstract class UserApi {
   factory UserApi(Dio dio) = _UserApi;
+
+  static String getErrorMessage(DioException e) {
+    final dynamic detail = e.response?.data?['detail'];
+    return detail?.toString() ?? e.message ?? 'Unknown error occurred';
+  }
 
   @GET('/users/devices')
   Future<List<UserDeviceModel>> getDevices();
@@ -33,13 +37,14 @@ abstract class UserApi {
   );
 
   @GET('/api/users/me')
-  Future<UserModel> getMe();
+  Future<UserModel> getMe(@Header('Authorization') String token);
 
   @GET('/users/photo_url')
   Future<UploadPhotoModel> getPhotoUploadUrl();
 
-  @POST('/api/users/me/profile')
+  @PUT('/api/users/me/profile')
   Future<UserModel> updateUser(
-    @Body() UserModel updateUserRequestModel,
+    @Header('Authorization') String token,
+    @Body() UpdateProfileRequestModel updateUserRequestModel,
   );
 }

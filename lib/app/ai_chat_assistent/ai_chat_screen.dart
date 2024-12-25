@@ -75,12 +75,12 @@ class AiChatScreenState extends State<AiChatScreen> {
   List<WardrobeItem> _loadWardrobeData() {
     // Assuming you have access to the wardrobe items in your code
     final wardrobeItems = <WardrobeItem>[
-      ...tops,
-      ...bottoms,
-      ...shoes,
-      ...accessories,
-      ...innerWear,
-      ...otherItems,
+      // ...tops,
+      // ...bottoms,
+      // ...shoes,
+      // ...accessories,
+      // ...innerWear,
+      // ...otherItems,
     ];
 
     log.t('Wardrobe Items: $wardrobeItems');

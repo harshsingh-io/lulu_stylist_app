@@ -1,9 +1,10 @@
-import 'dart:io'; // Import File
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
+import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
 
@@ -11,225 +12,302 @@ class WardrobeScreen extends StatefulWidget {
   const WardrobeScreen({super.key});
 
   @override
-  _WardrobeScreenState createState() => _WardrobeScreenState();
+  State<WardrobeScreen> createState() => _WardrobeScreenState();
 }
 
 class _WardrobeScreenState extends State<WardrobeScreen>
     with SingleTickerProviderStateMixin {
-  TabController? _tabController;
+  late TabController _tabController;
+  Map<Category, List<WardrobeItem>> itemsByCategory = {};
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 6);
+    _tabController = TabController(vsync: this, length: Category.values.length);
+    // Load wardrobe items when screen initializes
+    context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
   }
 
   @override
   void dispose() {
-    _tabController?.dispose();
+    _tabController.dispose();
     super.dispose();
-  }
-
-  Widget buildItemCard(WardrobeItem WardrobeItem) {
-    return Card(
-      color: LuluBrandColor.brandWhite,
-      margin: const EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(8), // Adjust the radius as needed
-                ),
-                child: _buildImage(WardrobeItem.imageLocalPath),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      WardrobeItem.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('${WardrobeItem.brand} - ${WardrobeItem.size}'),
-                  ),
-                ],
-              ),
-              IconButton(
-                icon: Icon(
-                  WardrobeItem.isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: WardrobeItem.isFavorite ? Colors.red : Colors.grey,
-                ),
-                onPressed: () {
-                  setState(() {
-                    // WardrobeItem.isFavorite = !WardrobeItem.isFavorite;
-                  });
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImage(String imagePath) {
-    if (imagePath.startsWith('assets/')) {
-      // Load image from assets
-      return Image.asset(
-        imagePath,
-        fit: BoxFit.cover,
-      );
-    } else {
-      // Assume it's a file path, load image from file
-      final file = File(imagePath);
-      if (file.existsSync()) {
-        return Image.file(
-          file,
-          fit: BoxFit.cover,
-        );
-      } else {
-        // If the file doesn't exist, load a placeholder image
-        return Image.asset(
-          'assets/images/default.jpg', // Ensure you have this placeholder image
-          fit: BoxFit.cover,
-        );
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: LuluBrandColor.brandWhite,
-      appBar: AppBar(
-        title: const Text(
-          'Wardrobe',
-          style: TextStyle(color: LuluBrandColor.brandWhite),
-        ),
-        backgroundColor: LuluBrandColor.brandPrimary,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(130), // Adjust the height here
-          child: Column(
-            children: [
-              Container(
-                color: LuluBrandColor.brandPrimary, // Set the background color
-                padding:
-                    const EdgeInsets.all(16), // Padding around the search bar
-                child: TextField(
-                  style: const TextStyle(
-                    color: LuluBrandColor.brandWhite,
-                  ), // Text color
-                  decoration: InputDecoration(
-                    hintText: 'Search by name or tag',
-                    hintStyle: TextStyle(
-                      color: LuluBrandColor.brandWhite.withOpacity(0.5),
-                    ), // Hint text color
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: LuluBrandColor.brandWhite,
-                    ), // Search icon color
-                    filled: true,
-                    fillColor: LuluBrandColor
-                        .brandPrimary, // Fill color same as background
-                    border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(16), // Rounded corners
-                      borderSide: BorderSide.none, // No border
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: LuluBrandColor.brandWhite,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: LuluBrandColor.brandWhite,
-                        width: 2,
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide:
-                          const BorderSide(color: LuluBrandColor.brandGrey200),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    // Implement search functionality if needed
-                  },
-                ),
-              ),
-              TabBar(
-                isScrollable: true,
-                unselectedLabelColor: LuluBrandColor.blueGrey,
-                indicatorColor: LuluBrandColor.brandWhite,
-                indicatorSize: TabBarIndicatorSize.label,
-                labelColor: LuluBrandColor.brandWhite,
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'TOP'),
-                  Tab(text: 'BOTTOM'),
-                  Tab(text: 'SHOES'),
-                  Tab(text: 'ACCESSORIES'),
-                  Tab(text: 'INNERWEAR'),
-                  Tab(text: 'OTHER'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    return BlocConsumer<WardrobeBloc, WardrobeState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          error: (failure) {
+            failure.maybeWhen(
+              unauthorized: () {
+                context
+                    .read<AuthenticationBloc>()
+                    .add(const AuthenticationEvent.sessionExpired());
+              },
+              serverError: (message) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message ?? 'Server error occurred')),
+                );
+              },
+              networkError: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Network error occurred')),
+                );
+              },
+              orElse: () {},
+            );
+          },
+          loaded: (items, _) {
+            // Group items by category
+            itemsByCategory = groupItemsByCategory(items);
+          },
+          orElse: () {},
+        );
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: LuluBrandColor.brandWhite,
+          appBar: _buildAppBar(),
+          floatingActionButton: _buildFloatingActionButton(),
+          body: _buildBody(state),
+        );
+      },
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      title: const Text(
+        'Wardrobe',
+        style: TextStyle(color: LuluBrandColor.brandWhite),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Navigate to AddItemScreen and wait for it to return
-          await GoRouter.of(context).pushNamed(addItemWardrobeRoute);
-          // After returning, refresh the UI to show the new WardrobeItem
-          setState(() {});
-        },
-        backgroundColor: LuluBrandColor.brandPrimary,
-        child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          buildGridView(tops),
-          buildGridView(bottoms),
-          buildGridView(shoes),
-          buildGridView(accessories),
-          buildGridView(innerWear),
-          buildGridView(otherItems),
-        ],
+      backgroundColor: LuluBrandColor.brandPrimary,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(130),
+        child: Column(
+          children: [
+            _buildSearchBar(),
+            _buildCategoryTabs(),
+          ],
+        ),
       ),
     );
   }
 
-  // Function to build the grid view for each category
-  Widget buildGridView(List<WardrobeItem> items) {
+  Widget _buildSearchBar() {
+    return Container(
+      color: LuluBrandColor.brandPrimary,
+      padding: const EdgeInsets.all(16),
+      child: TextField(
+        style: const TextStyle(color: LuluBrandColor.brandWhite),
+        decoration: InputDecoration(
+          hintText: 'Search by name or tag',
+          hintStyle: TextStyle(
+            color: LuluBrandColor.brandWhite.withOpacity(0.5),
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: LuluBrandColor.brandWhite,
+          ),
+          filled: true,
+          fillColor: LuluBrandColor.brandPrimary,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: LuluBrandColor.brandWhite),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(
+              color: LuluBrandColor.brandWhite,
+              width: 2,
+            ),
+          ),
+        ),
+        onChanged: (value) {
+          // TODO: Implement search functionality
+        },
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs() {
+    return TabBar(
+      isScrollable: true,
+      unselectedLabelColor: LuluBrandColor.blueGrey,
+      indicatorColor: LuluBrandColor.brandWhite,
+      indicatorSize: TabBarIndicatorSize.label,
+      labelColor: LuluBrandColor.brandWhite,
+      controller: _tabController,
+      tabs: Category.values
+          .map((category) => Tab(text: category.toString().split('.').last))
+          .toList(),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () async {
+        final result = await context.pushNamed(
+          addItemWardrobeRoute,
+          extra: context.read<WardrobeBloc>(), // Pass the bloc if needed
+        );
+        if (result == true && mounted) {
+          context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+        }
+      },
+      backgroundColor: LuluBrandColor.brandPrimary,
+      child: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
+    );
+  }
+
+  Widget _buildBody(WardrobeState state) {
+    return state.maybeWhen(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      loaded: (_, __) => TabBarView(
+        controller: _tabController,
+        children: Category.values
+            .map((category) =>
+                _buildCategoryGrid(itemsByCategory[category] ?? []))
+            .toList(),
+      ),
+      error: (failure) => Center(
+        child: Text(failure.maybeWhen(
+          serverError: (message) => message ?? 'Server error',
+          networkError: () => 'Network error',
+          unauthorized: () => 'Session expired',
+          orElse: () => 'Unknown error',
+        )),
+      ),
+      orElse: () => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildCategoryGrid(List<WardrobeItem> items) {
     return GridView.builder(
+      padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 1 / 1.5,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: items.length,
-      itemBuilder: (context, index) {
-        return buildItemCard(items[index]);
-      },
+      itemBuilder: (context, index) => _buildItemCard(items[index]),
     );
+  }
+
+  Widget _buildItemCard(WardrobeItem item) {
+    return GestureDetector(
+      onTap: () {
+        context.pushNamed(
+          wardrobeItemDetailRoute,
+          extra: item,
+        );
+      },
+      child: Card(
+        color: LuluBrandColor.brandWhite,
+        elevation: 2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 3,
+              child: _buildItemImage(item.imageUrl),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${item.brand} - ${item.size}',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '\$${item.price.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: LuluBrandColor.brandPrimary,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            item.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: item.isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            // TODO: Implement favorite toggle functionality
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItemImage(String? imageUrl) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+      child: imageUrl != null
+          ? Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
+            )
+          : _buildPlaceholderImage(),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      color: LuluBrandColor.brandGrey100,
+      child: const Icon(
+        Icons.image,
+        size: 40,
+        color: LuluBrandColor.brandGrey300,
+      ),
+    );
+  }
+
+  Map<Category, List<WardrobeItem>> groupItemsByCategory(
+      List<WardrobeItem> items) {
+    return {
+      for (var category in Category.values)
+        category: items.where((item) => item.category == category).toList()
+    };
   }
 }

@@ -7,6 +7,7 @@ import 'package:lulu_stylist_app/logic/api/auth/model/token_pair.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api_base.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/auth_repository.dart';
+import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
 import 'package:lulu_stylist_app/logic/dio_factory.dart';
 
 part 'authentication_event.dart';
@@ -22,6 +23,7 @@ class AuthenticationBloc
           baseUrl: apiBase,
           dioClient: DioFactory().create(),
         ),
+        _userRepository = UserRepository(baseUrl: apiBase),
         super(const AuthenticationState.initial()) {
     on<_CheckExisting>(_checkExisting);
     on<_NewUserLogin>(_handleNewUserLogin);
@@ -34,6 +36,7 @@ class AuthenticationBloc
   }
 
   final AuthRepository _authRepository;
+  final UserRepository _userRepository;
   final String _logTag = 'AuthenticationBloc';
 
   Future<void> _checkExisting(
@@ -45,7 +48,7 @@ class AuthenticationBloc
       emit(const AuthenticationState.checking());
 
       final tokenResult = await _authRepository.getStoredTokens();
-      tokenResult.fold(
+      await tokenResult.fold(
         (failure) {
           log.w('$_logTag Token retrieval failed', error: failure);
           emit(const AuthenticationState.unAuthenticated());
@@ -53,27 +56,30 @@ class AuthenticationBloc
         (tokens) async {
           log.d('$_logTag Tokens retrieved successfully');
           try {
-            final userResult = await _authRepository.getCurrentUser();
-            userResult.fold(
+            final userResult =
+                await _userRepository.getCurrentUser(tokens.accessToken);
+            await userResult.fold(
               (failure) async {
                 if (failure is TokenExpired) {
                   log.w('$_logTag Token expired, attempting refresh');
                   final refreshResult = await _authRepository.refreshTokens(
                     tokens.refreshToken,
                   );
-                  refreshResult.fold(
+                  await refreshResult.fold(
                     (failure) {
                       log.e('$_logTag Token refresh failed', error: failure);
                       emit(const AuthenticationState.unAuthenticated());
                     },
                     (newTokens) async {
                       log.d('$_logTag Tokens refreshed successfully');
-                      final newUserResult =
-                          await _authRepository.getCurrentUser();
+                      final newUserResult = await _userRepository
+                          .getCurrentUser(tokens.accessToken);
                       newUserResult.fold(
                         (failure) {
-                          log.e('$_logTag Get user failed after token refresh',
-                              error: failure);
+                          log.e(
+                            '$_logTag Get user failed after token refresh',
+                            error: failure,
+                          );
                           emit(const AuthenticationState.unAuthenticated());
                         },
                         (user) {
@@ -120,8 +126,11 @@ class AuthenticationBloc
               },
             );
           } catch (e, stackTrace) {
-            log.e('$_logTag Check auth status failed',
-                error: e, stackTrace: stackTrace);
+            log.e(
+              '$_logTag Check auth status failed',
+              error: e,
+              stackTrace: stackTrace,
+            );
             emit(const AuthenticationState.unAuthenticated());
           }
         },
@@ -137,7 +146,8 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     log.d(
-        '$_logTag _handleNewUserLogin called with email: ${event.user.userId}');
+      '$_logTag _handleNewUserLogin called with email: ${event.user.userId}',
+    );
     try {
       emit(const AuthenticationState.checking());
 
@@ -181,7 +191,8 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     log.d(
-        '$_logTag _handleCompleteProfile called for user: ${event.user.userId}');
+      '$_logTag _handleCompleteProfile called for user: ${event.user.userId}',
+    );
     emit(
       AuthenticationState.userLoggedIn(
         user: event.user,
@@ -195,7 +206,8 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     log.d(
-        '$_logTag _handleUserAuthenticated called for user: ${event.user.userId}');
+      '$_logTag _handleUserAuthenticated called for user: ${event.user.userId}',
+    );
     emit(
       AuthenticationState.userAuthenticated(
         user: event.user,
@@ -288,21 +300,17 @@ class AuthenticationBloc
     log.d('$_logTag _handleLogin called with email: ${event.email}');
 
     try {
-      // Log the checking state
       log.t('$_logTag Emitting checking state');
       emit(const AuthenticationState.checking());
 
-      // Attempt to log in with the credentials
       log.t('$_logTag Attempting login with email: ${event.email}');
       final loginResult = await _authRepository.login(
         email: event.email,
         password: event.password,
       );
 
-      // Handle login result
       await loginResult.fold(
         (failure) {
-          // Log failure case
           final errorMessage = failure.when(
             tokenExpired: () => 'Session expired',
             serverError: (message) => message ?? 'Login failed',
@@ -310,25 +318,20 @@ class AuthenticationBloc
             invalidCredentials: () => 'Invalid credentials',
           );
           log.e('$_logTag Login failed', error: failure);
-
-          // Emit error state with message
-          log.t('$_logTag Emitting error state with message: $errorMessage');
           emit(AuthenticationState.error(errorMessage));
         },
         (tokens) async {
-          // Log successful login and received tokens
           log.t(
-              '$_logTag Login successful, tokens received: ${tokens.accessToken}');
+            '$_logTag Login successful, tokens received: ${tokens.accessToken}',
+          );
 
           try {
-            // Now, fetch current user details
-            log.t('$_logTag Fetching current user details');
-            final userResult = await _authRepository.getCurrentUser();
+            // Use UserRepository instead of getCurrentUser
+            final userResult =
+                await _userRepository.getCurrentUser(tokens.accessToken);
 
-            // Handle user result
             await userResult.fold(
               (failure) {
-                // Log failure case in getting user details
                 final errorMessage = failure.when(
                   tokenExpired: () => 'Session expired',
                   serverError: (message) =>
@@ -337,43 +340,42 @@ class AuthenticationBloc
                   invalidCredentials: () => 'Invalid credentials',
                 );
                 log.e('$_logTag Failed to fetch user details', error: failure);
-
-                // Emit error state with message
-                log.t(
-                    '$_logTag Emitting error state with message: $errorMessage');
                 emit(AuthenticationState.error(errorMessage));
               },
               (user) {
-                // Log user details fetched successfully
                 log.t(
-                    '$_logTag User details fetched successfully: ${user.userId}');
-
-                // Emit the appropriate state based on user details
+                  '$_logTag User details fetched successfully: ${user.userId}',
+                );
                 if (user.userDetails == null) {
                   log.t('$_logTag User needs to complete profile');
-                  emit(AuthenticationState.userNeedsProfileDetails(
-                    user: user,
-                    authToken: tokens.accessToken,
-                  ));
+                  emit(
+                    AuthenticationState.userNeedsProfileDetails(
+                      user: user,
+                      authToken: tokens.accessToken,
+                    ),
+                  );
                 } else {
                   log.t('$_logTag User is logged in');
-                  emit(AuthenticationState.userLoggedIn(
-                    user: user,
-                    authToken: tokens.accessToken,
-                  ));
+                  emit(
+                    AuthenticationState.userLoggedIn(
+                      user: user,
+                      authToken: tokens.accessToken,
+                    ),
+                  );
                 }
               },
             );
           } catch (e) {
-            // Log any unexpected error during user fetch
             log.e('$_logTag Error while fetching user details', error: e);
-            emit(const AuthenticationState.error(
-                'An unexpected error occurred'));
+            emit(
+              const AuthenticationState.error(
+                'An unexpected error occurred',
+              ),
+            );
           }
         },
       );
     } catch (e) {
-      // Log any unexpected errors that occur outside the main flow
       log.e('$_logTag Unexpected error in login flow', error: e);
       emit(const AuthenticationState.error('An unexpected error occurred'));
     }

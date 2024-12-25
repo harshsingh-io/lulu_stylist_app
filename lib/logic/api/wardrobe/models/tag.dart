@@ -10,8 +10,5 @@ class Tag with _$Tag {
     required String name,
   }) = _Tag;
 
-  /// Connect the generated [_$TagFromJson] function to the `fromJson`
-  /// factory.
   factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
-  const Tag._();
 }

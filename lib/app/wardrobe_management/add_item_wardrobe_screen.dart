@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:lulu_stylist_app/app/wardrobe_management/wardrobe_items.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/wardrobe_item.dart';
-import 'package:lulu_stylist_app/logic/api/wardrobe/models/tag.dart';
+import 'package:lulu_stylist_app/logic/api/wardrobe/models/create_wardrobe_item_request.dart';
+import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:nanoid/nanoid.dart';
 
 class AddItemScreen extends StatefulWidget {
   const AddItemScreen({super.key});
@@ -18,308 +15,315 @@ class AddItemScreen extends StatefulWidget {
 
 class _AddItemScreenState extends State<AddItemScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController brandController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController sizeController = TextEditingController();
-  TextEditingController notesController = TextEditingController();
-  TextEditingController tagsController = TextEditingController();
-  File? _image;
-  final DateTime _createdAt = DateTime.now();
-  bool _isFavorite = false;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController sizeController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
+  final TextEditingController tagsController = TextEditingController();
+  final List<String> selectedColors = [];
   Category _selectedCategory = Category.TOP;
+  bool _isFavorite = false;
+  bool _isLoading = false;
+  late final WardrobeBloc _wardrobeBloc;
 
-  final ImagePicker _picker = ImagePicker();
-  void saveItem() {
-    if (_formKey.currentState!.validate()) {
-      // Generate a new ID using nanoid
-      final newId = nanoid();
+  @override
+  void initState() {
+    super.initState();
+    _wardrobeBloc = context.read<WardrobeBloc>();
+  }
 
-      // Parse tags from the comma-separated input
-      final parsedTags = tagsController.text
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    brandController.dispose();
+    priceController.dispose();
+    sizeController.dispose();
+    notesController.dispose();
+    tagsController.dispose();
+    super.dispose();
+  }
+
+  void _addColor(String color) {
+    if (!selectedColors.contains(color)) {
+      setState(() {
+        selectedColors.add(color);
+      });
+    }
+  }
+
+  void _removeColor(String color) {
+    setState(() {
+      selectedColors.remove(color);
+    });
+  }
+
+  Future<void> _saveItem() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (selectedColors.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one color')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Parse tags
+      final tags = tagsController.text
           .split(',')
-          .map((tag) => Tag(id: nanoid(), name: tag.trim()))
+          .where((tag) => tag.trim().isNotEmpty)
+          .map((tag) => tag.trim())
           .toList();
 
-      // Determine image paths and data
-      final imagePath =
-          _image != null ? _image!.path : 'assets/images/default.jpg';
-      final imageData = _image != null
-          ? 'base64'
-          : 'base64'; // Placeholder for actual base64 encoding
-
-      // Create a new Item instance
-      final newItem = WardrobeItem(
-        id: newId,
-        name: nameController.text,
-        createdAt: DateTime.now(),
-        colors: [
-          'Unspecified',
-        ], // You can add a color picker in the form for better input
-        brand: brandController.text,
-        category: _selectedCategory,
+      // Create request
+      final request = CreateWardrobeItemRequest(
+        name: nameController.text.trim(),
+        description: descriptionController.text.trim(),
+        colors: selectedColors,
+        brand: brandController.text.trim(),
+        category: _selectedCategory
+            .toString()
+            .split('.')
+            .last, // Convert enum to string
         isFavorite: _isFavorite,
         price: double.parse(priceController.text),
-        userId: 'user_001', // Replace with actual user ID if available
-        imageLocalPath: imagePath,
-        imageData: imageData,
-        notes: notesController.text,
-        size: sizeController.text,
-        tags: parsedTags,
+        notes: notesController.text.trim(),
+        size: sizeController.text.trim(),
+        tags: tags,
       );
 
-      // Add the new item to the appropriate list
-      switch (_selectedCategory) {
-        case Category.TOP:
-          tops.add(newItem);
-        case Category.BOTTOM:
-          bottoms.add(newItem);
-        case Category.INNERWEAR:
-          innerWear.add(newItem);
-        case Category.ACCESSORIES:
-          accessories.add(newItem);
-        case Category.SHOES:
-          shoes.add(newItem);
-        case Category.OTHER:
-          otherItems.add(newItem);
-        default:
-          otherItems.add(newItem);
-      }
+      // Debug log request
+      print('Request body: ${request.toJson()}');
 
-      // Optionally, show a success message
+      context.read<WardrobeBloc>().add(WardrobeEvent.addItem(request));
+    } catch (e) {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Item "${newItem.name}" added successfully!')),
+        SnackBar(content: Text('Error: ${e.toString()}')),
       );
-
-      // Navigate back to the previous screen after a short delay to allow the SnackBar to display
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pop(context);
-      });
     }
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
-
-  void _removeImage() {
-    setState(() {
-      _image = null;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add New Item'),
-        backgroundColor: LuluBrandColor.brandPrimary,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(
-                      child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () => _pickImage(ImageSource.gallery),
-                            child: Container(
-                              height: 150,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              child: _image == null
-                                  ? const SizedBox(
-                                      width: double.maxFinite,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.add_a_photo,
-                                            size: 50,
-                                            color: Colors.grey,
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Tap to add an image',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Image.file(
-                                        _image!,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: 150,
-                                      ),
-                                    ),
+    return BlocListener<WardrobeBloc, WardrobeState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          error: (failure) {
+            setState(() => _isLoading = false);
+            // Show error message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(failure.toString()),
+                backgroundColor: Colors.red,
+              ),
+            );
+          },
+          loaded: (items, _) {
+            setState(() => _isLoading = false);
+            // Show success message and pop
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Item added successfully'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.pop(true);
+          },
+          orElse: () {},
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Add New Item'),
+          backgroundColor: LuluBrandColor.brandPrimary,
+        ),
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name*',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value?.isEmpty == true
+                              ? 'Name is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: descriptionController,
+                          decoration: const InputDecoration(
+                            labelText: 'Description*',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value?.isEmpty == true
+                              ? 'Description is required'
+                              : null,
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildColorSelector(),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: brandController,
+                          decoration: const InputDecoration(
+                            labelText: 'Brand*',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value?.isEmpty == true
+                              ? 'Brand is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<Category>(
+                          value: _selectedCategory,
+                          decoration: const InputDecoration(
+                            labelText: 'Category*',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: Category.values.map((category) {
+                            return DropdownMenuItem(
+                              value: category,
+                              child: Text(category.toString().split('.').last),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() => _selectedCategory = value);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: priceController,
+                          decoration: const InputDecoration(
+                            labelText: 'Price*',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value?.isEmpty == true)
+                              return 'Price is required';
+                            if (double.tryParse(value!) == null)
+                              return 'Invalid price';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: sizeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Size*',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value?.isEmpty == true
+                              ? 'Size is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: notesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Notes',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: tagsController,
+                          decoration: const InputDecoration(
+                            labelText: 'Tags (comma-separated)',
+                            border: OutlineInputBorder(),
+                            hintText: 'casual, summer, favorite',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SwitchListTile(
+                          title: const Text('Favorite'),
+                          value: _isFavorite,
+                          onChanged: (value) =>
+                              setState(() => _isFavorite = value),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: _saveItem,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LuluBrandColor.brandPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          if (_image != null)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: IconButton(
-                                icon:
-                                    const Icon(Icons.cancel, color: Colors.red),
-                                onPressed: _removeImage,
-                                tooltip: 'Remove Image',
-                              ),
+                          child: const Text(
+                            'Save Item',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a name' : null,
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: brandController,
-                      decoration: InputDecoration(
-                        labelText: 'Brand',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a brand' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<Category>(
-                      value: _selectedCategory,
-                      items: Category.values.map((Category category) {
-                        return DropdownMenuItem<Category>(
-                          value: category,
-                          child: Text(category.toString().split('.').last),
-                        );
-                      }).toList(),
-                      onChanged: (Category? newValue) {
-                        setState(() {
-                          _selectedCategory = newValue!;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Category',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SwitchListTile(
-                      title: const Text('Favorite'),
-                      value: _isFavorite,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _isFavorite = value;
-                        });
-                      },
-                      activeColor: LuluBrandColor.brandPrimary,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: priceController,
-                      decoration: InputDecoration(
-                        labelText: 'Price',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a price' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: sizeController,
-                      decoration: InputDecoration(
-                        labelText: 'Size',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter a size' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: notesController,
-                      decoration: InputDecoration(
-                        labelText: 'Notes',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: tagsController,
-                      decoration: InputDecoration(
-                        labelText: 'Tags (comma-separated)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: saveItem,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: LuluBrandColor.brandPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
       ),
+    );
+  }
+
+  Widget _buildColorSelector() {
+    final List<String> availableColors = [
+      'Red',
+      'Blue',
+      'Green',
+      'Yellow',
+      'Black',
+      'White',
+      'Pink',
+      'Purple'
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Colors*'),
+        Wrap(
+          spacing: 8,
+          children: availableColors.map((color) {
+            final isSelected = selectedColors.contains(color);
+            return FilterChip(
+              selected: isSelected,
+              label: Text(color),
+              onSelected: (selected) {
+                if (selected) {
+                  _addColor(color);
+                } else {
+                  _removeColor(color);
+                }
+              },
+            );
+          }).toList(),
+        ),
+        if (selectedColors.isEmpty)
+          const Text(
+            'Please select at least one color',
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+      ],
     );
   }
 }

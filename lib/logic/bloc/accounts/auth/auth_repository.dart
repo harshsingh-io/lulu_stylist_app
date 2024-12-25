@@ -93,27 +93,6 @@ class AuthRepository {
     }
   }
 
-  Future<Either<AuthFailure, UserModel>> getCurrentUser() async {
-    try {
-      final accessToken = await getAccessToken();
-      if (accessToken == null) {
-        return left(const AuthFailure.tokenExpired());
-      }
-
-      final user = await _authApi.getCurrentUser(
-        AuthApi.formatBearerToken(accessToken),
-      );
-      return right(user);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return left(const AuthFailure.tokenExpired());
-      }
-      return left(const AuthFailure.serverError());
-    } catch (e) {
-      return left(const AuthFailure.serverError());
-    }
-  }
-
   Future<Either<AuthFailure, AuthTokenModel>> getStoredTokens() async {
     try {
       final accessToken = await getAccessToken();
