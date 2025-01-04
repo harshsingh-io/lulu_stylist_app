@@ -85,6 +85,7 @@ flutter:
     - assets/lottie/profile_update.json
     - assets/bottom_bar_icons/
     - assets/lottie/search_lottie.json
+    - assets/bodytype.webp
 
   uses-material-design: true
   generate: true

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -100,6 +102,51 @@ class UserRepository {
     } catch (e) {
       log.e('Unexpected error getting user', error: e);
       // Changed this line to use null-safe string conversion
+      return left(AuthFailure.serverError(e.toString()));
+    }
+  }
+
+  Future<Either<AuthFailure, String>> uploadProfilePicture(
+    String accessToken,
+    File imageFile,
+  ) async {
+    try {
+      log.d('Uploading profile picture', error: {
+        'token': 'Bearer $accessToken',
+        'fileName': imageFile.path,
+      });
+
+      if (accessToken.isEmpty) {
+        return left(const AuthFailure.tokenExpired());
+      }
+
+      final photoUrl = await _userApi.uploadProfilePicture(
+        'Bearer $accessToken',
+        imageFile,
+      );
+
+      log.d('Profile picture upload successful', error: {
+        'photoUrl': photoUrl,
+      });
+
+      return right(photoUrl);
+    } on DioException catch (e) {
+      log.e('Profile picture upload failed', error: {
+        'type': e.type,
+        'error': e.error,
+        'message': e.message,
+        'response': e.response?.data,
+      });
+
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return left(const AuthFailure.networkError());
+      }
+      if (e.response?.statusCode == 401) {
+        return left(const AuthFailure.tokenExpired());
+      }
+      return left(AuthFailure.serverError(e.message));
+    } catch (e) {
+      log.e('Unexpected error during profile picture upload', error: e);
       return left(AuthFailure.serverError(e.toString()));
     }
   }

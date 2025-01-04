@@ -1,13 +1,15 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
+import 'package:lulu_stylist_app/logic/api_base.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:lulu_stylist_app/logic/api_base.dart';
+import 'package:lulu_stylist_app/routes/routes.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
@@ -99,28 +101,6 @@ class UserProfileView extends StatelessWidget {
                 Icons.settings,
               ),
             ],
-            const SizedBox(height: 24),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () => GoRouter.of(context).push('/edit-profile'),
-                icon: const Icon(Icons.edit),
-                label: const Text('Edit Profile'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: LuluBrandColor.brandPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  textStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -161,6 +141,7 @@ class UserProfileView extends StatelessWidget {
 
   Widget _buildSectionCard(String title, Widget content, IconData icon) {
     return Card(
+      color: LuluBrandColor.brandWhite,
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -322,6 +303,7 @@ class UserProfileView extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: LuluBrandColor.brandWhite,
           appBar: AppBar(
             title: const Text(
               'User Profile',
@@ -373,7 +355,7 @@ class UserProfileView extends StatelessWidget {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => GoRouter.of(context).push('/edit-profile'),
+            onPressed: () => GoRouter.of(context).pushNamed(updateUserProfile),
             backgroundColor: LuluBrandColor.brandPrimary,
             child: const Icon(Icons.edit, color: Colors.white),
           ),

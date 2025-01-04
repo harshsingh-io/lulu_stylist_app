@@ -60,8 +60,24 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             );
           },
           loaded: (items, _) {
-            // Group items by category
-            itemsByCategory = groupItemsByCategory(items);
+            setState(() {
+              // Update items by category when items are loaded
+              itemsByCategory = groupItemsByCategory(items);
+            });
+          },
+          itemDeleted: (_) {
+            // Refresh items after deletion
+            context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Item deleted successfully')),
+            );
+          },
+          itemAdded: (_) {
+            // Refresh items after addition
+            context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Item added successfully')),
+            );
           },
           orElse: () {},
         );
@@ -153,11 +169,12 @@ class _WardrobeScreenState extends State<WardrobeScreen>
   Widget _buildFloatingActionButton() {
     return FloatingActionButton(
       onPressed: () async {
-        final result = await context.pushNamed(
+        await context.pushNamed(
           addItemWardrobeRoute,
-          extra: context.read<WardrobeBloc>(), // Pass the bloc if needed
+          extra: context.read<WardrobeBloc>(),
         );
-        if (result == true && mounted) {
+        // Refresh items after returning from add item screen
+        if (mounted) {
           context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
         }
       },
@@ -189,6 +206,29 @@ class _WardrobeScreenState extends State<WardrobeScreen>
   }
 
   Widget _buildCategoryGrid(List<WardrobeItem> items) {
+    if (items.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 48,
+              color: LuluBrandColor.brandGrey300,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No items here.',
+              style: TextStyle(
+                color: LuluBrandColor.brandGrey500,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -204,11 +244,15 @@ class _WardrobeScreenState extends State<WardrobeScreen>
 
   Widget _buildItemCard(WardrobeItem item) {
     return GestureDetector(
-      onTap: () {
-        context.pushNamed(
+      onTap: () async {
+        final result = await context.pushNamed(
           wardrobeItemDetailRoute,
           extra: item,
         );
+
+        if (result == true && context.mounted) {
+          context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+        }
       },
       child: Card(
         color: LuluBrandColor.brandWhite,

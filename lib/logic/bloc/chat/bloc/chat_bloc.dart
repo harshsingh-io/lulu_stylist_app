@@ -29,6 +29,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<_SendMessage>(_onSendMessage);
     on<_LoadHistory>(_onLoadHistory);
     on<_DeleteSession>(_onDeleteSession);
+    on<_DeleteAllSessions>(_onDeleteAllSessions);
   }
 
   String? get currentSessionId => _currentSessionId;
@@ -98,7 +99,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-// Also update the _onLoadSessions method to keep consistent sorting
+// In ChatBloc class
   Future<void> _onLoadSessions(
     _LoadSessions event,
     Emitter<ChatState> emit,
@@ -128,12 +129,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             // Sort sessions by creation date (newest first)
             final sortedSessions = List<ChatSession>.from(sessions)
               ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-            _currentSessionId ??= sortedSessions.first.sessionId;
             emit(ChatState.sessionsLoaded(sortedSessions));
-            if (_currentSessionId != null) {
-              add(ChatEvent.loadHistory(_currentSessionId!));
-            }
           }
         },
       );
@@ -267,6 +263,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             _currentSessionId = null;
           }
           add(const ChatEvent.loadSessions());
+        },
+      );
+    } catch (e) {
+      emit(ChatState.error(ChatFailure.serverError(e.toString())));
+    }
+  }
+
+  Future<void> _onDeleteAllSessions(
+    _DeleteAllSessions event,
+    Emitter<ChatState> emit,
+  ) async {
+    try {
+      final authState = _authBloc.state;
+      final accessToken = authState.maybeWhen(
+        userLoggedIn: (user, token) => token,
+        orElse: () => null,
+      );
+
+      if (accessToken == null) {
+        emit(const ChatState.error(ChatFailure.unauthorized()));
+        return;
+      }
+
+      final result = await _chatRepository.deleteAllChatSessions(accessToken);
+
+      result.fold(
+        (failure) => emit(ChatState.error(failure)),
+        (_) {
+          _currentSessionId = null;
+          emit(const ChatState.sessionsLoaded([]));
         },
       );
     } catch (e) {

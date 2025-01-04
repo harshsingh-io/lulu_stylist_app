@@ -9,4 +9,6 @@ class WardrobeState with _$WardrobeState {
     String? selectedCategory,
   }) = _Loaded;
   const factory WardrobeState.error(WardrobeFailure failure) = _Error;
+  const factory WardrobeState.itemDeleted(String itemId) = _ItemDeleted;
+  const factory WardrobeState.itemAdded(WardrobeItem item) = _ItemAdded;
 }

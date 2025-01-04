@@ -268,18 +268,34 @@ class AuthenticationBloc
         password: event.password,
       );
 
-      result.fold(
+      await result.fold(
         (failure) {
           log.e('$_logTag Registration failed', error: failure);
           emit(AuthenticationState.error(failure.toString()));
         },
-        (user) {
-          log.d('$_logTag Registration successful');
-          emit(
-            AuthenticationState.userNeedsProfileDetails(
-              user: user,
-              authToken: '',
-            ),
+        (user) async {
+          // After successful registration, perform login
+          final loginResult = await _authRepository.login(
+            email: event.email,
+            password: event.password,
+          );
+
+          await loginResult.fold(
+            (failure) {
+              log.e('$_logTag Auto-login after registration failed',
+                  error: failure);
+              emit(AuthenticationState.error(failure.toString()));
+            },
+            (tokens) async {
+              log.d('$_logTag Registration and login successful');
+              // Save tokens
+              await _authRepository.saveTokens(tokens);
+
+              emit(AuthenticationState.userNeedsProfileDetails(
+                user: user,
+                authToken: tokens.accessToken,
+              ));
+            },
           );
         },
       );

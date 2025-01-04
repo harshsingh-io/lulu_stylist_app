@@ -46,10 +46,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
             );
 
             // Navigate back to wardrobe management screen
+            // if (context.mounted) {
+            //   context.pop();
+            //   // Refresh wardrobe items
+            //   context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+            // }
             if (context.mounted) {
-              context.pop();
-              // Refresh wardrobe items
-              context.read<WardrobeBloc>().add(const WardrobeEvent.loadItems());
+              context.pop(true); // Pass true to indicate successful deletion
             }
           },
           orElse: () {},

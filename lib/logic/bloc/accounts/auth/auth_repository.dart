@@ -69,15 +69,31 @@ class AuthRepository {
   Future<Either<AuthFailure, AuthTokenModel>> refreshTokens(
       String refreshToken) async {
     try {
+      // First clear the old tokens
+      await clearTokens();
+
       final response = await _authApi.refreshToken(refreshToken);
+
+      // Validate the response
+      if (!AuthApi.validateTokenResponse(response)) {
+        return left(const AuthFailure.serverError('Invalid token response'));
+      }
+
+      // Save new tokens
       await saveTokens(response);
       return right(response);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
         return left(const AuthFailure.networkError());
       }
-      return left(const AuthFailure.tokenExpired());
+      // If refresh token is invalid or expired
+      if (e.response?.statusCode == 401) {
+        await clearTokens();
+        return left(const AuthFailure.tokenExpired());
+      }
+      return left(AuthFailure.serverError(e.message));
     } catch (e) {
+      await clearTokens();
       return left(const AuthFailure.serverError());
     }
   }

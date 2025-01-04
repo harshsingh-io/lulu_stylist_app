@@ -10,4 +10,5 @@ class ChatEvent with _$ChatEvent {
       _SendMessage;
   const factory ChatEvent.loadHistory(String sessionId) = _LoadHistory;
   const factory ChatEvent.deleteSession(String sessionId) = _DeleteSession;
+  const factory ChatEvent.deleteAllSessions() = _DeleteAllSessions;
 }

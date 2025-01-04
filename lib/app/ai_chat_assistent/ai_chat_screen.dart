@@ -78,6 +78,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
   void initState() {
     super.initState();
     context.read<ChatBloc>().add(const ChatEvent.started());
+
+    context.read<ChatBloc>().add(const ChatEvent.loadSessions());
   }
 
   void _showCreateSessionDialog() {
@@ -134,19 +136,18 @@ class _AiChatScreenState extends State<AiChatScreen> {
             ),
             actions: [
               // Only show these buttons when not creating a new session
-              if (!isCreatingNewSession) ...[
-                IconButton(
-                  icon: const Icon(LineIcons.plusCircle),
-                  onPressed: () => setState(() => isCreatingNewSession = true),
-                  color: Colors.white,
-                ),
-                IconButton(
-                  icon: const Icon(LineIcons.history, color: Colors.white),
-                  onPressed: _showChatHistory,
-                ),
-              ],
+              IconButton(
+                icon: const Icon(LineIcons.plusCircle),
+                onPressed: () => setState(() => isCreatingNewSession = true),
+                color: Colors.white,
+              ),
+              IconButton(
+                icon: const Icon(LineIcons.history, color: Colors.white),
+                onPressed: _showChatHistory,
+              ),
             ],
           ),
+          backgroundColor: LuluBrandColor.brandWhite,
           body: isCreatingNewSession
               ? _buildSessionCreationUI()
               : _buildChatStateHandler(state),
@@ -165,15 +166,42 @@ class _AiChatScreenState extends State<AiChatScreen> {
             decoration: InputDecoration(
               labelText: 'Session Name (Optional)',
               hintText: 'Enter a name for this chat session',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    const BorderSide(color: LuluBrandColor.brandPrimary),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: LuluBrandColor.brandPrimary,
+                  width: 2,
+                ),
+              ),
+              prefixIcon: const Icon(
+                LineIcons.edit,
+                color: LuluBrandColor.brandPrimary,
+              ),
+              filled: true,
+              fillColor: Colors.white,
             ),
           ),
           SizedBox(height: 20.h),
-          Text('Select Context:', style: TextStyle(fontSize: 18.sp)),
+          Text(
+            'How should I help you today?',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          SizedBox(height: 20.h),
           Wrap(
             spacing: 8.w,
             children: availableContexts.map((context) {
               return ChoiceChip(
-                label: Text(context['label'] as String),
+                selectedColor: LuluBrandColor.brandPrimary,
+                backgroundColor: LuluBrandColor.brandGrey400,
+                label: Text(
+                  context['label'] as String,
+                  style: const TextStyle(color: LuluBrandColor.brandWhite),
+                ),
                 selected: selectedContext == context['contextKey'],
                 onSelected: (selected) {
                   setState(() {
@@ -215,31 +243,247 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   void _showChatHistory() {
-    showModalBottomSheet(
+    final chatBloc = context.read<ChatBloc>();
+    chatBloc.add(const ChatEvent.loadSessions());
+
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context) {
-        return BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            return state.maybeWhen(
-              sessionsLoaded: (sessions) => ListView.builder(
-                itemCount: sessions.length,
-                itemBuilder: (context, index) {
-                  final session = sessions[index];
-                  return ListTile(
-                    title: Text(session.sessionName ?? 'Chat ${index + 1}'),
-                    subtitle: Text(session.createdAt.toString()),
-                    onTap: () {
-                      context
-                          .read<ChatBloc>()
-                          .add(ChatEvent.loadHistory(session.sessionId));
-                      Navigator.pop(context);
-                    },
-                  );
-                },
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (modalContext) {
+        return BlocProvider.value(
+          value: chatBloc,
+          child: SafeArea(
+            child: Container(
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(modalContext).size.height * 0.75),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Chat Sessions',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(modalContext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Flexible(
+                    child: BlocBuilder<ChatBloc, ChatState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          loading: () => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          sessionsLoaded: (sessions) {
+                            if (sessions.isEmpty) {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32.h),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        LineIcons.comment,
+                                        size: 48.sp,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(height: 16.h),
+                                      Text(
+                                        'No chat sessions yet',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              itemCount: sessions.length,
+                              separatorBuilder: (context, index) => Divider(
+                                height: 1,
+                                indent: 16.w,
+                                endIndent: 16.w,
+                              ),
+                              itemBuilder: (context, index) {
+                                final session = sessions[index];
+                                final isCurrentSession =
+                                    chatBloc.currentSessionId ==
+                                        session.sessionId;
+
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: isCurrentSession
+                                        ? LuluBrandColor.brandPrimary
+                                        : Colors.grey[200],
+                                    child: Icon(
+                                      LineIcons.comments,
+                                      color: isCurrentSession
+                                          ? Colors.white
+                                          : LuluBrandColor.brandPrimary,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    session.sessionName ?? 'Chat ${index + 1}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.sp,
+                                      color: isCurrentSession
+                                          ? LuluBrandColor.brandPrimary
+                                          : null,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    'Created: ${session.createdAt.toString().substring(0, 16)}',
+                                    style: TextStyle(fontSize: 14.sp),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.grey[400],
+                                          size: 20,
+                                        ),
+                                        onPressed: () {
+                                          chatBloc.add(
+                                            ChatEvent.deleteSession(
+                                                session.sessionId),
+                                          );
+                                          Navigator.pop(modalContext);
+                                        },
+                                      ),
+                                      Icon(
+                                        LineIcons.angleRight,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      isCreatingNewSession = false;
+                                    });
+                                    Navigator.pop(modalContext);
+                                    // Load history after modal is closed
+                                    chatBloc.add(
+                                      ChatEvent.loadHistory(session.sessionId),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          error: (failure) => Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 48.sp,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  Text(
+                                    'Error loading sessions: ${failure.toString()}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          orElse: () => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // Add this after the Flexible widget in _showChatHistory
+                  Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        icon:
+                            const Icon(Icons.delete_forever, color: Colors.red),
+                        label: Text(
+                          'Clear All History',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Clear All History'),
+                              content: const Text(
+                                'Are you sure you want to delete all chat sessions? This action cannot be undone.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                TextButton(
+                                  child: const Text(
+                                    'Delete All',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () {
+                                    chatBloc.add(
+                                        const ChatEvent.deleteAllSessions());
+                                    Navigator.pop(context); // Close dialog
+                                    Navigator.pop(
+                                        modalContext); // Close bottom sheet
+                                    setState(() {
+                                      isCreatingNewSession = true;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              orElse: () => const Center(child: CircularProgressIndicator()),
-            );
-          },
+            ),
+          ),
         );
       },
     );
@@ -256,14 +500,29 @@ class _AiChatScreenState extends State<AiChatScreen> {
       ),
       sessionsLoaded: (sessions) => sessions.isEmpty
           ? const Center(child: Text('No chat sessions found'))
-          : const Center(child: Text('Select a chat session')),
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LuluButton.primary(
+                    onPressed: _showChatHistory,
+                    label: 'Select a chat session',
+                  ),
+                  LuluButton.primary(
+                    onPressed: () =>
+                        setState(() => isCreatingNewSession = true),
+                    label: 'Create a new chat session',
+                  ),
+                ],
+              ),
+            ),
       orElse: () => const Center(child: Text('Something went wrong')),
     );
   }
 
   Widget _buildChatInterface(ChatSession session, bool isMessageSending) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCF2F4),
+      backgroundColor: LuluBrandColor.brandWhite,
       body: Column(
         children: [
           Expanded(
@@ -284,7 +543,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   );
                 }
 
-                final messageIndex = index - 1;
+                final messageIndex = index;
                 if (messageIndex >= session.messages.length) {
                   return const SizedBox.shrink();
                 }
@@ -323,10 +582,10 @@ class _AiChatScreenState extends State<AiChatScreen> {
               bottom: MediaQuery.of(context).viewPadding.bottom + 8.h,
             ),
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: LuluBrandColor.brandLightBackground.withOpacity(0.95),
               border: Border(
                 top: BorderSide(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: LuluBrandColor.brandGrey200,
                   width: 1,
                 ),
               ),
@@ -336,38 +595,44 @@ class _AiChatScreenState extends State<AiChatScreen> {
               children: [
                 Expanded(
                   child: Container(
-                    height: 45.h,
+                    constraints: BoxConstraints(
+                      minHeight: 45.h,
+                      maxHeight: 120.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 4,
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: TextField(
                       controller: _messageController,
-                      textInputAction: TextInputAction.send,
+                      textInputAction: TextInputAction.newline,
                       textAlignVertical: TextAlignVertical.center,
                       style: TextStyle(
                         fontSize: 14.sp,
-                        height: 1.2,
+                        height: 1.4,
+                        color: LuluBrandColor.brandBlack,
                       ),
                       minLines: 1,
-                      maxLines: 1,
+                      maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: 'Type your message here...',
                         hintStyle: TextStyle(
-                          color: Colors.grey[400],
+                          color: LuluBrandColor.brandGrey300,
                           fontSize: 14.sp,
                         ),
                         border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16.w,
-                          vertical: 0,
+                          vertical: 12.h,
                         ),
                         isDense: true,
                       ),
@@ -379,26 +644,36 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: 12.w),
                 Container(
                   width: 45.w,
                   height: 45.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF1E392A),
+                  decoration: BoxDecoration(
+                    color: LuluBrandColor.brandPrimary,
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: LuluBrandColor.brandPrimary.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: IconButton(
-                    icon: const Icon(
-                      LineIcons.paperPlane,
-                      color: Colors.white,
-                      size: 20,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(22.5),
+                      onTap: () {
+                        if (_messageController.text.trim().isNotEmpty) {
+                          _sendMessage(session.sessionId);
+                        }
+                      },
+                      child: const Icon(
+                        LineIcons.paperPlane,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      if (_messageController.text.trim().isNotEmpty) {
-                        _sendMessage(session.sessionId);
-                      }
-                    },
                   ),
                 ),
               ],

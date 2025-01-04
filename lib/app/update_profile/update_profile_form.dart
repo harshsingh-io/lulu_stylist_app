@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:lulu_stylist_app/core/services/secure_storage_service.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api_base.dart';
@@ -16,7 +17,7 @@ import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
-import 'package:path/path.dart' as path; // Import for 'path' package
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -61,18 +62,68 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   @override
   void initState() {
     super.initState();
-    _checkExistingUserData();
+    _fetchUserData();
   }
 
-  Future<void> _checkExistingUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataJson = prefs.getString('userDetails');
+  Future<void> _fetchUserData() async {
+    // Get the current user data from UserBloc
+    final userState = context.read<UserBloc>().state;
 
-    if (userDataJson != null && userDataJson.isNotEmpty) {
-      log.i('Existing user data found. Navigating to home screen.');
-      GoRouter.of(context).pushReplacementNamed(homeRoute);
-    } else {
-      log.i('No existing user data. Showing profile update form.');
+    userState.maybeWhen(
+      success: (userData) {
+        _populateFormWithUserData(userData);
+      },
+      loaded: (userData) {
+        _populateFormWithUserData(userData);
+      },
+      orElse: () {
+        // If no user data is available, fetch it
+        context.read<UserBloc>().add(const UserEvent.fetchUserData());
+      },
+    );
+  }
+
+  void _populateFormWithUserData(UserModel userData) {
+    if (userData != null && mounted) {
+      setState(() {
+        // Autofill personal information
+        userName = userData.userDetails?.name ?? '';
+        userAge = userData.userDetails?.age ?? 18;
+        userGender = userData.userDetails?.gender ?? 'Male';
+        userLocation = userData.userDetails?.locationLat?.toString() ?? '';
+
+        // Autofill body measurements
+        heightCm = userData.userDetails?.bodyMeasurements?.height ?? 170;
+        weight = userData.userDetails?.bodyMeasurements?.weight ?? 70;
+        bodyType = userData.userDetails?.bodyMeasurements?.bodyType ?? '';
+
+        // Autofill style preferences
+        favoriteColors =
+            userData.userDetails?.stylePreferences?.favoriteColors ?? [];
+        preferredBrands =
+            userData.userDetails?.stylePreferences?.preferredBrands ?? [];
+        lifestyleChoices =
+            userData.userDetails?.stylePreferences?.lifestyleChoices ?? [];
+
+        // Autofill budget
+        minBudget =
+            userData.userDetails?.stylePreferences?.budget?.minAmount ?? 100;
+        maxBudget =
+            userData.userDetails?.stylePreferences?.budget?.maxAmount ?? 1000;
+
+        // Autofill shopping habits
+        shoppingFrequency =
+            userData.userDetails?.stylePreferences?.shoppingHabits?.frequency ??
+                '';
+        preferredRetailers = userData.userDetails?.stylePreferences
+                ?.shoppingHabits?.preferredRetailers ??
+            [];
+
+        // Autofill preferences
+        receiveNotifications =
+            userData.userPreferences?.receiveNotifications ?? false;
+        allowDataSharing = userData.userPreferences?.allowDataSharing ?? false;
+      });
     }
   }
 
@@ -149,7 +200,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     if (_nameError != null || _budgetError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please fix the errors before submitting')),
+          content: Text('Please fix the errors before submitting'),
+        ),
       );
       return;
     }
@@ -157,34 +209,25 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     // Get the current authentication state
     final authState = context.read<AuthenticationBloc>().state;
 
-    // Add debug logging
-    log.d('Current auth state: $authState');
-
     final token = authState.maybeWhen(
-      userNeedsProfileDetails: (user, token) {
-        log.d('Got token from userNeedsProfileDetails: $token');
-        return token;
-      },
-      userLoggedIn: (user, token) {
-        log.d('Got token from userLoggedIn: $token');
-        return token;
-      },
-      userAuthenticated: (user, token) {
-        log.d('Got token from userAuthenticated: $token');
-        return token;
-      },
-      orElse: () {
-        log.d('No matching auth state found');
-        return null;
-      },
+      userNeedsProfileDetails: (user, token) => token,
+      userLoggedIn: (user, token) => token,
+      userAuthenticated: (user, token) => token,
+      orElse: () => null,
     );
 
     if (token == null || token.isEmpty) {
-      log.e('Token is null or empty. Auth state: $authState');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please login again')),
-      );
-      return;
+      // Try to get token from secure storage
+      final secureStorage = SecureStorageService();
+      final storedToken = await secureStorage.getAuthToken();
+
+      if (storedToken == null || storedToken.isEmpty) {
+        log.e('Token is null or empty. Auth state: $authState');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login again')),
+        );
+        return;
+      }
     }
 
     final userUpdateRequest = UpdateProfileRequestModel(
@@ -219,7 +262,6 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       ),
     );
 
-    log.d('Submitting profile update with token: $token');
     context
         .read<UserBloc>()
         .add(UserEvent.updateProfile(userData: userUpdateRequest));
@@ -230,64 +272,99 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       listener: (context, state) {
         state.maybeWhen(
           success: (user) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
-            );
-            GoRouter.of(context).pushReplacementNamed(profileUpdateSuccess);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profile updated successfully')),
+              );
+              GoRouter.of(context).pushReplacementNamed(profileUpdateSuccess);
+            }
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: $message')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $message')),
+              );
+            }
           },
           loading: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Updating profile...')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Loading...')),
+              );
+            }
           },
           orElse: () {},
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: _nextStep,
-          onStepCancel: _previousStep,
-          connectorColor: WidgetStateProperty.all(LuluBrandColor.brandPrimary),
-          steps: _steps(),
-          controlsBuilder: (BuildContext context, ControlsDetails details) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: <Widget>[
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            loading: () => const Center(
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
+              ),
+            ),
+            failure: (message) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: $message'),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: LuluBrandColor.brandPrimary,
-                    ),
-                    onPressed: details.onStepContinue,
-                    child: Text(
-                      _currentStep == _steps().length - 1 ? 'Submit' : 'Next',
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    onPressed: () => context.read<UserBloc>().add(
+                          const UserEvent.fetchUserData(),
+                        ),
+                    child: const Text('Retry'),
                   ),
-                  const SizedBox(width: 8),
-                  if (_currentStep > 0)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                      ),
-                      onPressed: details.onStepCancel,
-                      child: const Text(
-                        'Back',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+            orElse: () => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Stepper(
+                currentStep: _currentStep,
+                onStepContinue: _nextStep,
+                onStepCancel: _previousStep,
+                connectorColor:
+                    const MaterialStatePropertyAll(LuluBrandColor.brandPrimary),
+                steps: _steps(),
+                controlsBuilder:
+                    (BuildContext context, ControlsDetails details) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LuluBrandColor.brandPrimary,
+                          ),
+                          onPressed: details.onStepContinue,
+                          child: Text(
+                            _currentStep == _steps().length - 1
+                                ? 'Submit'
+                                : 'Next',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (_currentStep > 0)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                            ),
+                            onPressed: details.onStepCancel,
+                            child: const Text(
+                              'Back',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -310,8 +387,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
           ),
           const SizedBox(height: 16),
           // Profile Picture Upload
-          _buildProfilePictureUpload(),
-          const SizedBox(height: 16),
+          // _buildProfilePictureUpload(),
+          // const SizedBox(height: 16),
           _buildNameInput(),
           const SizedBox(height: 16),
           _buildAgeInput(),
@@ -615,15 +692,16 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   }
 
   void _showBodyTypeInfoDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xFFFAFFFF),
           title: const Text('Select Your Body Type'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Image.asset('assets/images/image.png'),
+              Image.asset('assets/bodytype.webp'),
               const Text(
                 'Choose the correct body type based on the descriptions provided.',
               ),
@@ -974,114 +1052,61 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     );
   }
 
-  // // Submit Form
-  // void _submitForm() {
-  //   // Additional validations if needed
-  //   if (_nameError != null || _budgetError != null) {
-  //     // Show a snackbar or dialog
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Please fix the errors before submitting'),
-  //       ),
-  //     );
-  //     return;
-  //   }
-
-  //   // Save the form data
-  //   _saveFormData();
-
-  //   // Navigate to success screen
-  //   GoRouter.of(context)
-  //       .pushReplacementNamed(profileUpdateSuccess); // Replace with your route
-  // }
-
-  // Future<void> _saveFormData() async {
-  //   log.i('Saving form data...');
-
-  //   final userUpdateRequest = UserModel(
-  //     userId: 'currentUserId', // Get this from AuthenticationBloc
-  //     email: '', // Get from AuthenticationBloc
-  //     username: '', // Get from AuthenticationBloc
-  //     isActive: true,
-  //     createdAt: DateTime.now(),
-  //     updatedAt: DateTime.now(),
-  //     userDetails: UserDetails(
-  //       id: 'detailsId', // Get from existing user details or generate
-  //       name: userName,
-  //       age: userAge,
-  //       gender: userGender,
-  //       locationLat: userLocation,
-  //       locationLong: userLocation,
-  //       bodyMeasurements: BodyMeasurements(
-  //         id: 'measurementsId', // Get from existing or generate
-  //         height: heightCm,
-  //         weight: weight,
-  //         bodyType: bodyType,
-  //       ),
-  //       stylePreferences: StylePreferences(
-  //         id: 'preferencesId', // Get from existing or generate
-  //         favoriteColors: favoriteColors,
-  //         preferredBrands: preferredBrands,
-  //         lifestyleChoices: lifestyleChoices,
-  //         budget: Budget(
-  //           id: 'budgetId', // Get from existing or generate
-  //           min: minBudget,
-  //           max: maxBudget,
-  //         ),
-  //         shoppingHabits: ShoppingHabits(
-  //           id: 'habitsId', // Get from existing or generate
-  //           frequency: shoppingFrequency,
-  //           preferredRetailers: preferredRetailers,
-  //         ),
-  //       ),
-  //     ),
-  //     wardrobeItems: [], // Get from existing user data
-  //     preferences: UserPreferences(
-  //       id: 'prefsId', // Get from existing or generate
-  //       receiveNotifications: receiveNotifications,
-  //       allowDataSharing: allowDataSharing,
-  //     ),
-  //     profileImagePath: profileImagePath,
-  //   );
-
-  //   // Get the context's BlocProvider
-  //   final userBloc = context.read<UserBloc>();
-
-  //   // Dispatch update profile event
-  //   userBloc.add(UserEvent.updateProfile(userData: userUpdateRequest));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => UserBloc(
         userRepository: UserRepository(baseUrl: apiBase),
         authBloc: context.read<AuthenticationBloc>(),
-      ),
+      )..add(const UserEvent.fetchUserData()), // Fetch data immediately
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: const Text(
               'Update Profile',
-              style: TextStyle(
-                color: Colors.white, // Replace with your color
-              ),
+              style: TextStyle(color: Colors.white),
             ),
-            backgroundColor:
-                LuluBrandColor.brandPrimary, // Replace with your color
+            backgroundColor: LuluBrandColor.brandPrimary,
           ),
           backgroundColor: Colors.white,
-          body: BlocBuilder<UserBloc, UserState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: LuluBrandColor.brandPrimary,
-                  ),
-                ),
-                orElse: _buildFormWithBlocListener,
+          body: BlocListener<UserBloc, UserState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (userData) {
+                  _populateFormWithUserData(userData);
+                },
+                loaded: (userData) {
+                  _populateFormWithUserData(userData);
+                },
+                orElse: () {},
               );
             },
+            child: BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(
+                      color: LuluBrandColor.brandPrimary,
+                    ),
+                  ),
+                  failure: (message) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Error: $message'),
+                        ElevatedButton(
+                          onPressed: () => context
+                              .read<UserBloc>()
+                              .add(const UserEvent.fetchUserData()),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  orElse: () => _buildFormWithBlocListener(),
+                );
+              },
+            ),
           ),
         ),
       ),

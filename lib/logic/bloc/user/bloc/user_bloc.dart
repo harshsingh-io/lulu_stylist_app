@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -25,6 +27,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         super(const UserState.initial()) {
     on<_UpdateProfile>(_handleUpdateProfile);
     on<_FetchUserData>(_handleFetchUserData);
+    on<_UploadDisplayPicture>(_handleUploadDisplayPicture);
   }
 
   Future<void> _handleFetchUserData(
@@ -160,6 +163,61 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       );
     } catch (e) {
       log.e('Unexpected error during profile update', error: e);
+      emit(UserState.failure(e.toString()));
+    }
+  }
+
+  Future<void> _handleUploadDisplayPicture(
+    _UploadDisplayPicture event,
+    Emitter<UserState> emit,
+  ) async {
+    try {
+      emit(const UserState.loading());
+
+      final authState = _authBloc.state;
+      final accessToken = authState.maybeWhen(
+        userNeedsProfileDetails: (user, token) => token,
+        userLoggedIn: (user, token) => token,
+        userAuthenticated: (user, token) => token,
+        orElse: () => null,
+      );
+
+      if (accessToken == null || accessToken.isEmpty) {
+        emit(const UserState.failure('Authentication token not found'));
+        return;
+      }
+
+      final result = await _userRepository.uploadProfilePicture(
+        accessToken,
+        event.displayPicture,
+      );
+
+      await result.fold(
+        (failure) {
+          final errorMessage = failure.when(
+            tokenExpired: () => 'Session expired',
+            serverError: (message) =>
+                message ?? 'Profile picture upload failed',
+            networkError: () => 'Network error',
+            invalidCredentials: () => 'Invalid credentials',
+          );
+          log.e('Profile picture upload failed', error: failure);
+          emit(UserState.failure(errorMessage));
+
+          if (failure.maybeWhen(
+            tokenExpired: () => true,
+            orElse: () => false,
+          )) {
+            _authBloc.add(const AuthenticationEvent.sessionExpired());
+          }
+        },
+        (photoUrl) {
+          log.i('Profile picture uploaded successfully');
+          add(const UserEvent.fetchUserData()); // Refresh user data
+        },
+      );
+    } catch (e) {
+      log.e('Unexpected error during profile picture upload', error: e);
       emit(UserState.failure(e.toString()));
     }
   }
