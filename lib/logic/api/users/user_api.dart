@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/upload_photo_model.dart';
@@ -46,5 +48,12 @@ abstract class UserApi {
   Future<UserModel> updateUser(
     @Header('Authorization') String token,
     @Body() UpdateProfileRequestModel updateUserRequestModel,
+  );
+
+  @MultiPart()
+  @POST('/api/users/me/profile-picture')
+  Future<String> uploadProfilePicture(
+    @Header('Authorization') String token,
+    @Part(name: 'file') File file,
   );
 }

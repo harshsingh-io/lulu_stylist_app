@@ -37,4 +37,9 @@ abstract class ChatApi {
     @Header('Authorization') String token,
     @Path('sessionId') String sessionId,
   );
+
+  @DELETE('/api/chat/chat/sessions/all')
+  Future<void> deleteAllChatSessions(
+    @Header('Authorization') String token,
+  );
 }

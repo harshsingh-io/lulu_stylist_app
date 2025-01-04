@@ -238,4 +238,41 @@ class ChatRepository {
       return left(ChatFailure.serverError(e.toString()));
     }
   }
+
+  Future<Either<ChatFailure, Unit>> deleteAllChatSessions(
+    String accessToken,
+  ) async {
+    try {
+      log.d('$_logTag Deleting all chat sessions', error: {
+        'token': 'Bearer $accessToken',
+      });
+
+      if (accessToken.isEmpty) {
+        return left(const ChatFailure.unauthorized());
+      }
+
+      await _chatApi.deleteAllChatSessions(
+        _getAuthHeader(accessToken),
+      );
+      return right(unit);
+    } on DioException catch (e) {
+      log.e('$_logTag Delete all sessions failed', error: {
+        'type': e.type,
+        'error': e.error,
+        'message': e.message,
+        'response': e.response?.data,
+      });
+
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return left(const ChatFailure.networkError());
+      }
+      if (e.response?.statusCode == 401) {
+        return left(const ChatFailure.unauthorized());
+      }
+      return left(ChatFailure.serverError(e.message));
+    } catch (e) {
+      log.e('$_logTag Unexpected error deleting all sessions', error: e);
+      return left(ChatFailure.serverError(e.toString()));
+    }
+  }
 }

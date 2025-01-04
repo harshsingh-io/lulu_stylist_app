@@ -310,8 +310,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
           ),
           const SizedBox(height: 16),
           // Profile Picture Upload
-          _buildProfilePictureUpload(),
-          const SizedBox(height: 16),
+          // _buildProfilePictureUpload(),
+          // const SizedBox(height: 16),
           _buildNameInput(),
           const SizedBox(height: 16),
           _buildAgeInput(),
@@ -615,15 +615,16 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   }
 
   void _showBodyTypeInfoDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xFFFAFFFF),
           title: const Text('Select Your Body Type'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Image.asset('assets/images/image.png'),
+              Image.asset('assets/bodytype.webp'),
               const Text(
                 'Choose the correct body type based on the descriptions provided.',
               ),

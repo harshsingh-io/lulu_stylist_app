@@ -34,7 +34,7 @@ class HomePage extends StatefulWidget with SU {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   late PageController _pageController;
 
   @override
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
           itemBuilder: (context, index) => _getTabPage(index),
-          itemCount: 4,
+          itemCount: 3,
         ),
       ),
     );
@@ -155,29 +155,29 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildNavItem(
-            icon: 'assets/bottom_bar_icons/home_4_line.svg',
-            activeIcon: 'assets/bottom_bar_icons/home_4_fill.svg',
-            label: localizations.home,
-            index: 0,
-          ),
+          // _buildNavItem(
+          //   icon: 'assets/bottom_bar_icons/home_4_line.svg',
+          //   activeIcon: 'assets/bottom_bar_icons/home_4_fill.svg',
+          //   label: localizations.home,
+          //   index: 0,
+          // ),
           _buildNavItem(
             icon: 'assets/bottom_bar_icons/chat_icon.svg',
             activeIcon: 'assets/bottom_bar_icons/chat_icon_filled.svg',
             label: localizations.chat,
-            index: 1,
+            index: 0,
           ),
           _buildNavItem(
             icon: 'assets/bottom_bar_icons/hanger_icon.svg',
             activeIcon: 'assets/bottom_bar_icons/hanger_icon_filled.svg',
             label: localizations.wardrobe,
-            index: 2,
+            index: 1,
           ),
           _buildNavItem(
             icon: 'assets/bottom_bar_icons/user_star_line.svg',
             activeIcon: 'assets/bottom_bar_icons/user_star_fill.svg',
             label: localizations.profile,
-            index: 3,
+            index: 2,
           ),
         ]
             .map((widget) => Expanded(child: widget))
@@ -227,9 +227,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _getTabPage(int index) {
     switch (index) {
+      // case 0:
+      //   return const Scaffold();
       case 0:
-        return const Scaffold();
-      case 1:
         return BlocProvider<ChatBloc>(
           create: (context) => ChatBloc(
             chatRepository: getIt<ChatRepository>(),
@@ -237,9 +237,9 @@ class _HomePageState extends State<HomePage> {
           )..add(const ChatEvent.started()), // Initialize the bloc when created
           child: const AiChatScreen(),
         );
-      case 2:
+      case 1:
         return const WardrobeScreen();
-      case 3:
+      case 2:
         return const UserProfileScreen();
       default:
         return const Placeholder();
