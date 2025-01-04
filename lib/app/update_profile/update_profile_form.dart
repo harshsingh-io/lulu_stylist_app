@@ -62,18 +62,68 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   @override
   void initState() {
     super.initState();
-    _checkExistingUserData();
+    _fetchUserData();
   }
 
-  Future<void> _checkExistingUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataJson = prefs.getString('userDetails');
+  Future<void> _fetchUserData() async {
+    // Get the current user data from UserBloc
+    final userState = context.read<UserBloc>().state;
 
-    if (userDataJson != null && userDataJson.isNotEmpty) {
-      log.i('Existing user data found. Navigating to home screen.');
-      GoRouter.of(context).pushReplacementNamed(homeRoute);
-    } else {
-      log.i('No existing user data. Showing profile update form.');
+    userState.maybeWhen(
+      success: (userData) {
+        _populateFormWithUserData(userData);
+      },
+      loaded: (userData) {
+        _populateFormWithUserData(userData);
+      },
+      orElse: () {
+        // If no user data is available, fetch it
+        context.read<UserBloc>().add(const UserEvent.fetchUserData());
+      },
+    );
+  }
+
+  void _populateFormWithUserData(UserModel userData) {
+    if (userData != null && mounted) {
+      setState(() {
+        // Autofill personal information
+        userName = userData.userDetails?.name ?? '';
+        userAge = userData.userDetails?.age ?? 18;
+        userGender = userData.userDetails?.gender ?? 'Male';
+        userLocation = userData.userDetails?.locationLat?.toString() ?? '';
+
+        // Autofill body measurements
+        heightCm = userData.userDetails?.bodyMeasurements?.height ?? 170;
+        weight = userData.userDetails?.bodyMeasurements?.weight ?? 70;
+        bodyType = userData.userDetails?.bodyMeasurements?.bodyType ?? '';
+
+        // Autofill style preferences
+        favoriteColors =
+            userData.userDetails?.stylePreferences?.favoriteColors ?? [];
+        preferredBrands =
+            userData.userDetails?.stylePreferences?.preferredBrands ?? [];
+        lifestyleChoices =
+            userData.userDetails?.stylePreferences?.lifestyleChoices ?? [];
+
+        // Autofill budget
+        minBudget =
+            userData.userDetails?.stylePreferences?.budget?.minAmount ?? 100;
+        maxBudget =
+            userData.userDetails?.stylePreferences?.budget?.maxAmount ?? 1000;
+
+        // Autofill shopping habits
+        shoppingFrequency =
+            userData.userDetails?.stylePreferences?.shoppingHabits?.frequency ??
+                '';
+        preferredRetailers = userData.userDetails?.stylePreferences
+                ?.shoppingHabits?.preferredRetailers ??
+            [];
+
+        // Autofill preferences
+        receiveNotifications =
+            userData.userPreferences?.receiveNotifications ?? false;
+        allowDataSharing = userData.userPreferences?.allowDataSharing ?? false;
+      });
     }
   }
 
@@ -222,64 +272,99 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       listener: (context, state) {
         state.maybeWhen(
           success: (user) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
-            );
-            GoRouter.of(context).pushReplacementNamed(profileUpdateSuccess);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profile updated successfully')),
+              );
+              GoRouter.of(context).pushReplacementNamed(profileUpdateSuccess);
+            }
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: $message')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $message')),
+              );
+            }
           },
           loading: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Updating profile...')),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Loading...')),
+              );
+            }
           },
           orElse: () {},
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: _nextStep,
-          onStepCancel: _previousStep,
-          connectorColor: WidgetStateProperty.all(LuluBrandColor.brandPrimary),
-          steps: _steps(),
-          controlsBuilder: (BuildContext context, ControlsDetails details) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: <Widget>[
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            loading: () => const Center(
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
+              ),
+            ),
+            failure: (message) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: $message'),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: LuluBrandColor.brandPrimary,
-                    ),
-                    onPressed: details.onStepContinue,
-                    child: Text(
-                      _currentStep == _steps().length - 1 ? 'Submit' : 'Next',
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    onPressed: () => context.read<UserBloc>().add(
+                          const UserEvent.fetchUserData(),
+                        ),
+                    child: const Text('Retry'),
                   ),
-                  const SizedBox(width: 8),
-                  if (_currentStep > 0)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                      ),
-                      onPressed: details.onStepCancel,
-                      child: const Text(
-                        'Back',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+            orElse: () => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Stepper(
+                currentStep: _currentStep,
+                onStepContinue: _nextStep,
+                onStepCancel: _previousStep,
+                connectorColor:
+                    const MaterialStatePropertyAll(LuluBrandColor.brandPrimary),
+                steps: _steps(),
+                controlsBuilder:
+                    (BuildContext context, ControlsDetails details) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LuluBrandColor.brandPrimary,
+                          ),
+                          onPressed: details.onStepContinue,
+                          child: Text(
+                            _currentStep == _steps().length - 1
+                                ? 'Submit'
+                                : 'Next',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (_currentStep > 0)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                            ),
+                            onPressed: details.onStepCancel,
+                            child: const Text(
+                              'Back',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -973,31 +1058,55 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       create: (context) => UserBloc(
         userRepository: UserRepository(baseUrl: apiBase),
         authBloc: context.read<AuthenticationBloc>(),
-      ),
+      )..add(const UserEvent.fetchUserData()), // Fetch data immediately
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: const Text(
               'Update Profile',
-              style: TextStyle(
-                color: Colors.white, // Replace with your color
-              ),
+              style: TextStyle(color: Colors.white),
             ),
-            backgroundColor:
-                LuluBrandColor.brandPrimary, // Replace with your color
+            backgroundColor: LuluBrandColor.brandPrimary,
           ),
           backgroundColor: Colors.white,
-          body: BlocBuilder<UserBloc, UserState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: LuluBrandColor.brandPrimary,
-                  ),
-                ),
-                orElse: _buildFormWithBlocListener,
+          body: BlocListener<UserBloc, UserState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (userData) {
+                  _populateFormWithUserData(userData);
+                },
+                loaded: (userData) {
+                  _populateFormWithUserData(userData);
+                },
+                orElse: () {},
               );
             },
+            child: BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(
+                      color: LuluBrandColor.brandPrimary,
+                    ),
+                  ),
+                  failure: (message) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Error: $message'),
+                        ElevatedButton(
+                          onPressed: () => context
+                              .read<UserBloc>()
+                              .add(const UserEvent.fetchUserData()),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  orElse: () => _buildFormWithBlocListener(),
+                );
+              },
+            ),
           ),
         ),
       ),

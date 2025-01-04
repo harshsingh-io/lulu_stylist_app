@@ -246,7 +246,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
     final chatBloc = context.read<ChatBloc>();
     chatBloc.add(const ChatEvent.loadSessions());
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.white,
       isScrollControlled: true,
@@ -445,7 +445,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                           ),
                         ),
                         onPressed: () {
-                          showDialog(
+                          showDialog<void>(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('Clear All History'),
@@ -543,7 +543,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   );
                 }
 
-                final messageIndex = index - 1;
+                final messageIndex = index;
                 if (messageIndex >= session.messages.length) {
                   return const SizedBox.shrink();
                 }
