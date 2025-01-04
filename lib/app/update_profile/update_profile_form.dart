@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:lulu_stylist_app/core/services/secure_storage_service.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/api_base.dart';
@@ -16,7 +17,7 @@ import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/user/user_repository.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
 import 'package:lulu_stylist_app/routes/routes.dart';
-import 'package:path/path.dart' as path; // Import for 'path' package
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -149,7 +150,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     if (_nameError != null || _budgetError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please fix the errors before submitting')),
+          content: Text('Please fix the errors before submitting'),
+        ),
       );
       return;
     }
@@ -157,34 +159,25 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
     // Get the current authentication state
     final authState = context.read<AuthenticationBloc>().state;
 
-    // Add debug logging
-    log.d('Current auth state: $authState');
-
     final token = authState.maybeWhen(
-      userNeedsProfileDetails: (user, token) {
-        log.d('Got token from userNeedsProfileDetails: $token');
-        return token;
-      },
-      userLoggedIn: (user, token) {
-        log.d('Got token from userLoggedIn: $token');
-        return token;
-      },
-      userAuthenticated: (user, token) {
-        log.d('Got token from userAuthenticated: $token');
-        return token;
-      },
-      orElse: () {
-        log.d('No matching auth state found');
-        return null;
-      },
+      userNeedsProfileDetails: (user, token) => token,
+      userLoggedIn: (user, token) => token,
+      userAuthenticated: (user, token) => token,
+      orElse: () => null,
     );
 
     if (token == null || token.isEmpty) {
-      log.e('Token is null or empty. Auth state: $authState');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please login again')),
-      );
-      return;
+      // Try to get token from secure storage
+      final secureStorage = SecureStorageService();
+      final storedToken = await secureStorage.getAuthToken();
+
+      if (storedToken == null || storedToken.isEmpty) {
+        log.e('Token is null or empty. Auth state: $authState');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login again')),
+        );
+        return;
+      }
     }
 
     final userUpdateRequest = UpdateProfileRequestModel(
@@ -219,7 +212,6 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       ),
     );
 
-    log.d('Submitting profile update with token: $token');
     context
         .read<UserBloc>()
         .add(UserEvent.updateProfile(userData: userUpdateRequest));
@@ -974,83 +966,6 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
       },
     );
   }
-
-  // // Submit Form
-  // void _submitForm() {
-  //   // Additional validations if needed
-  //   if (_nameError != null || _budgetError != null) {
-  //     // Show a snackbar or dialog
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Please fix the errors before submitting'),
-  //       ),
-  //     );
-  //     return;
-  //   }
-
-  //   // Save the form data
-  //   _saveFormData();
-
-  //   // Navigate to success screen
-  //   GoRouter.of(context)
-  //       .pushReplacementNamed(profileUpdateSuccess); // Replace with your route
-  // }
-
-  // Future<void> _saveFormData() async {
-  //   log.i('Saving form data...');
-
-  //   final userUpdateRequest = UserModel(
-  //     userId: 'currentUserId', // Get this from AuthenticationBloc
-  //     email: '', // Get from AuthenticationBloc
-  //     username: '', // Get from AuthenticationBloc
-  //     isActive: true,
-  //     createdAt: DateTime.now(),
-  //     updatedAt: DateTime.now(),
-  //     userDetails: UserDetails(
-  //       id: 'detailsId', // Get from existing user details or generate
-  //       name: userName,
-  //       age: userAge,
-  //       gender: userGender,
-  //       locationLat: userLocation,
-  //       locationLong: userLocation,
-  //       bodyMeasurements: BodyMeasurements(
-  //         id: 'measurementsId', // Get from existing or generate
-  //         height: heightCm,
-  //         weight: weight,
-  //         bodyType: bodyType,
-  //       ),
-  //       stylePreferences: StylePreferences(
-  //         id: 'preferencesId', // Get from existing or generate
-  //         favoriteColors: favoriteColors,
-  //         preferredBrands: preferredBrands,
-  //         lifestyleChoices: lifestyleChoices,
-  //         budget: Budget(
-  //           id: 'budgetId', // Get from existing or generate
-  //           min: minBudget,
-  //           max: maxBudget,
-  //         ),
-  //         shoppingHabits: ShoppingHabits(
-  //           id: 'habitsId', // Get from existing or generate
-  //           frequency: shoppingFrequency,
-  //           preferredRetailers: preferredRetailers,
-  //         ),
-  //       ),
-  //     ),
-  //     wardrobeItems: [], // Get from existing user data
-  //     preferences: UserPreferences(
-  //       id: 'prefsId', // Get from existing or generate
-  //       receiveNotifications: receiveNotifications,
-  //       allowDataSharing: allowDataSharing,
-  //     ),
-  //     profileImagePath: profileImagePath,
-  //   );
-
-  //   // Get the context's BlocProvider
-  //   final userBloc = context.read<UserBloc>();
-
-  //   // Dispatch update profile event
-  //   userBloc.add(UserEvent.updateProfile(userData: userUpdateRequest));
-  // }
 
   @override
   Widget build(BuildContext context) {

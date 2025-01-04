@@ -86,29 +86,13 @@ class _UserSignUpScreenState extends State<UserSignUpScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         state.maybeWhen(
-          checking: () {
-            // Show loading indicator
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          },
-          userNeedsProfileDetails: (user, authToken) {
-            // Registration successful - navigate to profile completion
-            Navigator.of(context).pop(); // Remove loading dialog
+          userNeedsProfileDetails: (user, token) {
+            // Navigate to profile update screen
             context.pushNamed(updateUserProfile);
           },
           error: (message) {
-            // Show error message
-            Navigator.of(context).pop(); // Remove loading dialog
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: Colors.red,
-              ),
+              SnackBar(content: Text(message)),
             );
           },
           orElse: () {},

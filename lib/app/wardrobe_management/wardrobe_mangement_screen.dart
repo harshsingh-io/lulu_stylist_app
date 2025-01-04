@@ -218,7 +218,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No items in ${_tabController.index >= 0 ? Category.values[_tabController.index].toString().split('.').last : ''} category',
+              'No items here.',
               style: TextStyle(
                 color: LuluBrandColor.brandGrey500,
                 fontSize: 16,
