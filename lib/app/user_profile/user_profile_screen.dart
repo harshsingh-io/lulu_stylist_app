@@ -30,7 +30,7 @@ class UserProfileView extends StatelessWidget {
   const UserProfileView({super.key});
 
   void _confirmLogout(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -99,6 +99,40 @@ class UserProfileView extends StatelessWidget {
                 'User Preferences',
                 _buildUserPreferences(user),
                 Icons.settings,
+              ),
+            ] else ...[
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Profile details not available',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () =>
+                          GoRouter.of(context).pushNamed(updateUserProfile),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: LuluBrandColor.brandPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Update Profile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ],
@@ -289,13 +323,18 @@ class UserProfileView extends StatelessWidget {
       listener: (context, state) {
         state.maybeWhen(
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
-            );
-            if (message == 'Session expired') {
-              context.read<AuthenticationBloc>().add(
-                    const AuthenticationEvent.sessionExpired(),
-                  );
+            // Only show snackbar for authentication-related errors
+            if (message == 'Authentication token not found' ||
+                message == 'Session expired' ||
+                message == 'Invalid credentials') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+              if (message == 'Session expired') {
+                context.read<AuthenticationBloc>().add(
+                      const AuthenticationEvent.sessionExpired(),
+                    );
+              }
             }
           },
           orElse: () {},
@@ -325,39 +364,149 @@ class UserProfileView extends StatelessWidget {
                 color: LuluBrandColor.brandPrimary,
               ),
             ),
-            loaded: (userData) => _buildProfileContent(context, userData),
-            failure: (message) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Error: $message',
-                    style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
+            loaded: (userData) {
+              if (userData.userDetails != null) {
+                return _buildProfileContent(context, userData);
+              } else {
+                // Show empty state with update button for new users
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildUserProfilePicture(
+                          userData), // Show profile picture even if details are empty
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Complete Your Profile',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: LuluBrandColor.brandPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Tell us more about yourself to get personalized recommendations',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () =>
+                            GoRouter.of(context).pushNamed(updateUserProfile),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: LuluBrandColor.brandPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          'Complete Profile',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<UserBloc>()
-                          .add(const UserEvent.fetchUserData());
-                    },
-                    child: const Text('Retry'),
+                );
+              }
+            },
+            failure: (message) {
+              // Only show error state for authentication failures
+              if (message == 'Authentication token not found' ||
+                  message == 'Session expired' ||
+                  message == 'Invalid credentials') {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: LuluBrandColor.brandRed,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        message,
+                        style: const TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context
+                            .read<UserBloc>()
+                            .add(const UserEvent.fetchUserData()),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: LuluBrandColor.brandPrimary,
+                        ),
+                        child: const Text(
+                          'Retry',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                );
+              } else {
+                // For non-authentication failures, show empty state
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Complete Your Profile',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: LuluBrandColor.brandPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () =>
+                            GoRouter.of(context).pushNamed(updateUserProfile),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: LuluBrandColor.brandPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          'Complete Profile',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
             orElse: () => const Center(
-              child: Text(
-                'No user data available',
-                style: TextStyle(fontSize: 18),
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
               ),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => GoRouter.of(context).pushNamed(updateUserProfile),
-            backgroundColor: LuluBrandColor.brandPrimary,
-            child: const Icon(Icons.edit, color: Colors.white),
+          floatingActionButton: state.maybeWhen(
+            loaded: (userData) => userData.userDetails != null
+                ? FloatingActionButton(
+                    onPressed: () =>
+                        GoRouter.of(context).pushNamed(updateUserProfile),
+                    backgroundColor: LuluBrandColor.brandPrimary,
+                    child: const Icon(Icons.edit, color: Colors.white),
+                  )
+                : null,
+            orElse: () => null,
           ),
         );
       },

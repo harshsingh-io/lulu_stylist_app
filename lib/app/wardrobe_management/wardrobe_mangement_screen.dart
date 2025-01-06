@@ -224,6 +224,33 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 fontSize: 16,
               ),
             ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () async {
+                await context.pushNamed(
+                  addItemWardrobeRoute,
+                  extra: context.read<WardrobeBloc>(),
+                );
+                if (mounted) {
+                  context
+                      .read<WardrobeBloc>()
+                      .add(const WardrobeEvent.loadItems());
+                }
+              },
+              icon: const Icon(Icons.add, color: LuluBrandColor.brandWhite),
+              label: const Text(
+                'Add Item',
+                style: TextStyle(color: LuluBrandColor.brandWhite),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: LuluBrandColor.brandPrimary,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
           ],
         ),
       );

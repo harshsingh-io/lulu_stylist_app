@@ -139,149 +139,244 @@ class _AddItemScreenState extends State<AddItemScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add New Item'),
+          title: const Text(
+            'Add New Item',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           backgroundColor: LuluBrandColor.brandPrimary,
+          elevation: 0,
         ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Name*',
-                            border: OutlineInputBorder(),
+            : Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      LuluBrandColor.brandPrimary.withAlpha(200),
+                      Colors.white,
+                    ],
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildFormSection(
+                            title: 'Basic Information',
+                            children: [
+                              _buildTextField(
+                                controller: nameController,
+                                label: 'Name',
+                                isRequired: true,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildTextField(
+                                controller: descriptionController,
+                                label: 'Description',
+                                isRequired: true,
+                                maxLines: 3,
+                              ),
+                            ],
                           ),
-                          validator: (value) => value?.isEmpty == true
-                              ? 'Name is required'
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: descriptionController,
-                          decoration: const InputDecoration(
-                            labelText: 'Description*',
-                            border: OutlineInputBorder(),
+                          const SizedBox(height: 24),
+                          _buildFormSection(
+                            title: 'Details',
+                            children: [
+                              _buildColorSelector(),
+                              const SizedBox(height: 16),
+                              _buildTextField(
+                                controller: brandController,
+                                label: 'Brand',
+                                isRequired: true,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildCategoryDropdown(),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildTextField(
+                                      controller: priceController,
+                                      label: 'Price',
+                                      isRequired: true,
+                                      keyboardType: TextInputType.number,
+                                      prefix: '\$',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: _buildTextField(
+                                      controller: sizeController,
+                                      label: 'Size',
+                                      isRequired: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          validator: (value) => value?.isEmpty == true
-                              ? 'Description is required'
-                              : null,
-                          maxLines: 3,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildColorSelector(),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: brandController,
-                          decoration: const InputDecoration(
-                            labelText: 'Brand*',
-                            border: OutlineInputBorder(),
+                          const SizedBox(height: 24),
+                          _buildFormSection(
+                            title: 'Additional Information',
+                            children: [
+                              _buildTextField(
+                                controller: notesController,
+                                label: 'Notes',
+                                maxLines: 3,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildTextField(
+                                controller: tagsController,
+                                label: 'Tags',
+                                hint: 'casual, summer, favorite',
+                              ),
+                              SwitchListTile(
+                                title: const Text('Add to Favorites'),
+                                value: _isFavorite,
+                                onChanged: (value) =>
+                                    setState(() => _isFavorite = value),
+                                activeColor: LuluBrandColor.brandPrimary,
+                                tileColor: LuluBrandColor.brandWhite,
+                                inactiveTrackColor: LuluBrandColor.brandWhite,
+                                inactiveThumbColor: LuluBrandColor.brandPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: const BorderSide(
+                                    color: LuluBrandColor.brandPrimary,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          validator: (value) => value?.isEmpty == true
-                              ? 'Brand is required'
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        DropdownButtonFormField<Category>(
-                          value: _selectedCategory,
-                          decoration: const InputDecoration(
-                            labelText: 'Category*',
-                            border: OutlineInputBorder(),
-                          ),
-                          items: Category.values.map((category) {
-                            return DropdownMenuItem(
-                              value: category,
-                              child: Text(category.toString().split('.').last),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              setState(() => _selectedCategory = value);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: priceController,
-                          decoration: const InputDecoration(
-                            labelText: 'Price*',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value?.isEmpty == true)
-                              return 'Price is required';
-                            if (double.tryParse(value!) == null)
-                              return 'Invalid price';
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: sizeController,
-                          decoration: const InputDecoration(
-                            labelText: 'Size*',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) => value?.isEmpty == true
-                              ? 'Size is required'
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: notesController,
-                          decoration: const InputDecoration(
-                            labelText: 'Notes',
-                            border: OutlineInputBorder(),
-                          ),
-                          maxLines: 3,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: tagsController,
-                          decoration: const InputDecoration(
-                            labelText: 'Tags (comma-separated)',
-                            border: OutlineInputBorder(),
-                            hintText: 'casual, summer, favorite',
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SwitchListTile(
-                          title: const Text('Favorite'),
-                          value: _isFavorite,
-                          onChanged: (value) =>
-                              setState(() => _isFavorite = value),
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: _saveItem,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: LuluBrandColor.brandPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                          const SizedBox(height: 32),
+                          ElevatedButton(
+                            onPressed: _saveItem,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: LuluBrandColor.brandPrimary,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: const Text(
+                              'Save Item',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          child: const Text(
-                            'Save Item',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
       ),
+    );
+  }
+
+  Widget _buildFormSection({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: LuluBrandColor.brandPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    bool isRequired = false,
+    int maxLines = 1,
+    String? hint,
+    TextInputType? keyboardType,
+    String? prefix,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: '$label${isRequired ? '*' : ''}',
+        labelStyle: const TextStyle(color: LuluBrandColor.brandPrimary),
+        hintText: hint,
+        prefixText: prefix,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: LuluBrandColor.brandPrimary),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
+      ),
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: isRequired
+          ? (value) => value?.isEmpty == true ? '$label is required' : null
+          : null,
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return DropdownButtonFormField<Category>(
+      value: _selectedCategory,
+      decoration: InputDecoration(
+        labelText: 'Category*',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
+      ),
+      items: Category.values.map((category) {
+        return DropdownMenuItem(
+          value: category,
+          child: Text(category.toString().split('.').last),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() => _selectedCategory = value);
+        }
+      },
     );
   }
 
@@ -300,14 +395,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Colors*'),
+        const Text(
+          'Colors*',
+          style: TextStyle(color: LuluBrandColor.brandPrimary),
+        ),
         Wrap(
           spacing: 8,
           children: availableColors.map((color) {
             final isSelected = selectedColors.contains(color);
             return FilterChip(
               selected: isSelected,
-              label: Text(color),
+              backgroundColor: LuluBrandColor.brandWhite,
+              selectedColor: LuluBrandColor.brandPrimary,
+              checkmarkColor: LuluBrandColor.brandWhite,
+              side: const BorderSide(
+                color: LuluBrandColor.brandAccentMidNightAqua,
+              ),
+              label: Text(
+                color,
+                style: TextStyle(
+                  color: isSelected ? LuluBrandColor.brandWhite : Colors.black,
+                ),
+              ),
               onSelected: (selected) {
                 if (selected) {
                   _addColor(color);
