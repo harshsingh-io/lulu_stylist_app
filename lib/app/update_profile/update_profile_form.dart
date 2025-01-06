@@ -86,6 +86,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   void _populateFormWithUserData(UserModel userData) {
     if (userData != null && mounted) {
       setState(() {
+        // Use null coalescing operator to set default values when fields are null
+
         // Autofill personal information
         userName = userData.userDetails?.name ?? '';
         userAge = userData.userDetails?.age ?? 18;
@@ -1089,20 +1091,29 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
                       color: LuluBrandColor.brandPrimary,
                     ),
                   ),
-                  failure: (message) => Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Error: $message'),
-                        ElevatedButton(
-                          onPressed: () => context
-                              .read<UserBloc>()
-                              .add(const UserEvent.fetchUserData()),
-                          child: const Text('Retry'),
+                  failure: (message) {
+                    // Only show error for authentication failures
+                    if (message == 'Authentication token not found' ||
+                        message == 'Session expired' ||
+                        message == 'Invalid credentials') {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Error: $message'),
+                            ElevatedButton(
+                              onPressed: () => context
+                                  .read<UserBloc>()
+                                  .add(const UserEvent.fetchUserData()),
+                              child: const Text('Retry'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      );
+                    }
+                    // For other failures, show the form anyway
+                    return _buildFormWithBlocListener();
+                  },
                   orElse: () => _buildFormWithBlocListener(),
                 );
               },

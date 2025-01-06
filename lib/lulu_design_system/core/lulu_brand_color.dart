@@ -9,27 +9,27 @@ class LuluBrandColor {
   static const Color brandPrimary25 = Color.fromRGBO(32, 45, 16, 0.2);
   static const Color brandPrimary10 = Color.fromRGBO(32, 45, 16, 0.1);
 
-  static const Color brandSecondary = Color(0x8C19626E);
-  static const Color brandLightBackground = Color.fromRGBO(248, 247, 242, 1);
+  static const Color brandSecondary = Color(0xFF395415);
+  static const Color brandLightBackground = Color(0xFFF8F7F2);
 
-  static const Color brandAccentMidNightAqua = Color.fromRGBO(0, 42, 58, 1);
-  static const Color brandAccentDeepTurquoise = Color.fromRGBO(0, 81, 95, 1);
-  static const Color brandAccentAbyssalGreen = Color.fromRGBO(25, 97, 110, 1);
+  static const Color brandAccentMidNightAqua = Color(0xFF1A3A2A);
+  static const Color brandAccentDeepTurquoise = Color(0xFF2D5A3C);
+  static const Color brandAccentAbyssalGreen = Color(0xFF3F7A4E);
   static const Color brandAccentSoftIvory = Color(0xFFF5F4E7);
 
-  static const Color brandWhite = Color.fromRGBO(246, 247, 246, 1);
-  static const Color brandRed = Color.fromARGB(255, 244, 67, 54);
-  static const Color brandYellow = Color(0xffF9D61E);
-  static const Color brandBlue = Color.fromARGB(255, 0, 170, 255);
+  static const Color brandWhite = Color(0xFFF6F7F6);
+  static const Color brandRed = Color(0xFFE63946);
+  static const Color brandYellow = Color(0xFFDDA15E);
+  static const Color brandBlue = Color(0xFF457B9D);
 
-  static const Color brandBlack = Color.fromRGBO(40, 47, 51, 1);
+  static const Color brandBlack = Color(0xFF1D2A1F);
 
-  static const Color brandGrey100 = Color.fromRGBO(239, 240, 239, 1);
-  static const Color brandGrey200 = Color.fromRGBO(226, 227, 224, 1);
-  static const Color brandGrey300 = Color.fromRGBO(147, 151, 153, 1);
-  static const Color brandGrey400 = Color.fromRGBO(112, 116, 119, 1);
-  static const Color brandGrey500 = Color.fromRGBO(76, 82, 85, 1);
-  static const Color brandDarkGrey50 = Color.fromRGBO(97, 121, 132, 1);
+  static const Color brandGrey100 = Color(0xFFECEFEC);
+  static const Color brandGrey200 = Color(0xFFDCE1DC);
+  static const Color brandGrey300 = Color(0xFF939999);
+  static const Color brandGrey400 = Color(0xFF707477);
+  static const Color brandGrey500 = Color(0xFF4C5255);
+  static const Color brandDarkGrey50 = Color(0xFF617984);
 
   static const Color animationBottomColorBottom = Color(0xffFAFA33);
   static const Color animationBottomColorMiddle = Color(0xffF4BB44);
@@ -45,10 +45,10 @@ class LuluBrandColor {
 
   static const Color pageSeprator = Color(0xffDDE6EA);
 
-  static const Color gradientScaffold = Color.fromARGB(255, 6, 61, 73);
-  static const Color gradientHiglightScaffold = Color(0xFF042A33);
-  static const Color brandGradientRed = Color(0xFFEF233C);
-  static const Color brandGradientPurple = Color(0x87EF23A9);
+  static const Color gradientScaffold = Color(0xFF1A3A2A);
+  static const Color gradientHiglightScaffold = Color(0xFF2D5A3C);
+  static const Color brandGradientRed = Color(0xFFE63946);
+  static const Color brandGradientPurple = Color(0xFF8338EC);
 
   static final Color blueGrey = Colors.blueGrey[200]!;
 

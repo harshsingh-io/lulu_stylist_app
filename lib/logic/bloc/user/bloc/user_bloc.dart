@@ -91,11 +91,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         },
         (userData) {
           log.i('User data fetched successfully: ${userData.toJson()}');
-          if (userData.userDetails != null) {
-            emit(UserState.loaded(userData));
-          } else {
-            emit(const UserState.failure('No user details available'));
-          }
+          // Always emit loaded state, regardless of whether userDetails exists
+          emit(UserState.loaded(userData));
         },
       );
     } catch (e) {
