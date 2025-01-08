@@ -64,6 +64,7 @@ dependencies:
   dartz: ^0.10.1
   http: ^1.2.2
   get_it: ^8.0.3
+  chips_input: ^0.1.0
 
 dev_dependencies:
   bloc_test: ^9.1.1
@@ -86,6 +87,7 @@ flutter:
     - assets/bottom_bar_icons/
     - assets/lottie/search_lottie.json
     - assets/bodytype.webp
+    - assets/images/default.png
 
   uses-material-design: true
   generate: true

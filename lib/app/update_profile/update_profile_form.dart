@@ -389,8 +389,8 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
           ),
           const SizedBox(height: 16),
           // Profile Picture Upload
-          // _buildProfilePictureUpload(),
-          // const SizedBox(height: 16),
+          _buildProfilePictureUpload(),
+          const SizedBox(height: 16),
           _buildNameInput(),
           const SizedBox(height: 16),
           _buildAgeInput(),
@@ -412,25 +412,28 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
           'Profile Picture',
           style: TextStyle(
             color: LuluBrandColor.brandPrimary,
-          ), // Replace with your color
+          ),
         ),
         const SizedBox(height: 8),
         Center(
           child: GestureDetector(
             onTap: _pickProfileImage,
-            child: CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              backgroundImage: profileImagePath != null
-                  ? FileImage(File(profileImagePath!))
-                  : null,
-              child: profileImagePath == null
-                  ? const Icon(
-                      Icons.camera_alt,
-                      size: 50,
-                      color: Colors.white,
-                    )
-                  : null,
+            child: Hero(
+              tag: 'profilePicture',
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: profileImagePath != null
+                    ? FileImage(File(profileImagePath!))
+                    : null,
+                child: profileImagePath == null
+                    ? const Icon(
+                        Icons.camera_alt,
+                        size: 50,
+                        color: Colors.white,
+                      )
+                    : null,
+              ),
             ),
           ),
         ),
@@ -452,26 +455,31 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
   Future<void> _pickProfileImage() async {
     final picker = ImagePicker();
     try {
-      final image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
+      final image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      if (image != null && mounted) {
         // Get the application documents directory
         final appDir = await getApplicationDocumentsDirectory();
         final fileName = path.basename(image.path);
         final savedImage =
             await File(image.path).copy('${appDir.path}/$fileName');
 
+        // Only update the profileImagePath state
         setState(() {
           profileImagePath = savedImage.path;
         });
       }
     } catch (e) {
       log.e('Error picking image: $e');
-      // Optionally, show an error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to pick image. Please try again.'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to pick image. Please try again.'),
+          ),
+        );
+      }
     }
   }
 
@@ -1056,68 +1064,65 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UserBloc(
-        userRepository: UserRepository(baseUrl: apiBase),
-        authBloc: context.read<AuthenticationBloc>(),
-      )..add(const UserEvent.fetchUserData()), // Fetch data immediately
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Update Profile',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: LuluBrandColor.brandPrimary,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Update Profile',
+            style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.white,
-          body: BlocListener<UserBloc, UserState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                success: (userData) {
+          backgroundColor: LuluBrandColor.brandPrimary,
+        ),
+        backgroundColor: Colors.white,
+        body: BlocListener<UserBloc, UserState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              success: (userData) {
+                if (mounted) {
                   _populateFormWithUserData(userData);
-                },
-                loaded: (userData) {
+                }
+              },
+              loaded: (userData) {
+                if (mounted) {
                   _populateFormWithUserData(userData);
+                }
+              },
+              orElse: () {},
+            );
+          },
+          child: BlocBuilder<UserBloc, UserState>(
+            buildWhen: (previous, current) => previous != current,
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(
+                    color: LuluBrandColor.brandPrimary,
+                  ),
+                ),
+                failure: (message) {
+                  if (message == 'Authentication token not found' ||
+                      message == 'Session expired' ||
+                      message == 'Invalid credentials') {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: $message'),
+                          ElevatedButton(
+                            onPressed: () => context
+                                .read<UserBloc>()
+                                .add(const UserEvent.fetchUserData()),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return _buildFormWithBlocListener();
                 },
-                orElse: () {},
+                orElse: () => _buildFormWithBlocListener(),
               );
             },
-            child: BlocBuilder<UserBloc, UserState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(
-                      color: LuluBrandColor.brandPrimary,
-                    ),
-                  ),
-                  failure: (message) {
-                    // Only show error for authentication failures
-                    if (message == 'Authentication token not found' ||
-                        message == 'Session expired' ||
-                        message == 'Invalid credentials') {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Error: $message'),
-                            ElevatedButton(
-                              onPressed: () => context
-                                  .read<UserBloc>()
-                                  .add(const UserEvent.fetchUserData()),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    // For other failures, show the form anyway
-                    return _buildFormWithBlocListener();
-                  },
-                  orElse: () => _buildFormWithBlocListener(),
-                );
-              },
-            ),
           ),
         ),
       ),
