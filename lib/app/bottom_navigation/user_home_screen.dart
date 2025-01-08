@@ -35,17 +35,14 @@ class HomePage extends StatefulWidget with SU {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _currentIndex);
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -82,7 +79,6 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
-            _pageController.jumpToPage(index);
           });
         },
         items: const [
@@ -117,7 +113,6 @@ class _HomePageState extends State<HomePage> {
   void _onBottomNavBarTap(int index) {
     setState(() {
       _currentIndex = index;
-      _pageController.jumpToPage(index);
     });
   }
 
@@ -125,22 +120,25 @@ class _HomePageState extends State<HomePage> {
     final localizations = AppLocalizations.of(context);
     return Scaffold(
       extendBody: true,
-      resizeToAvoidBottomInset:
-          false, // Prevent resizing that causes overlapping
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: _buildCustomBottomNavBar(localizations),
       body: Padding(
         padding: EdgeInsets.only(
           bottom: kBottomNavigationBarHeight + LuluSpacing.md.h,
         ),
-        child: PageView.builder(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          itemBuilder: (context, index) => _getTabPage(index),
-          itemCount: 3,
+        child: IndexedStack(
+          index: _currentIndex,
+          children: [
+            BlocProvider<ChatBloc>(
+              create: (context) => ChatBloc(
+                chatRepository: getIt<ChatRepository>(),
+                authBloc: context.read<AuthenticationBloc>(),
+              )..add(const ChatEvent.started()),
+              child: const AiChatScreen(),
+            ),
+            const WardrobeScreen(),
+            const UserProfileScreen(),
+          ],
         ),
       ),
     );
