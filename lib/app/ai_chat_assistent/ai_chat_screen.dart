@@ -127,12 +127,24 @@ class _AiChatScreenState extends State<AiChatScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: LuluBrandColor.brandPrimary,
+            automaticallyImplyLeading: false,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    LuluBrandColor.brandSecondary,
+                    LuluBrandColor.expertDashBoardGreen,
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
             title: Text(
               AppLocalizations.of(context).aiStylist,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                  ),
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: LuluBrandColor.brandWhite,
+                  fontWeight: FontWeight.bold),
             ),
             actions: [
               // Only show these buttons when not creating a new session
@@ -164,62 +176,113 @@ class _AiChatScreenState extends State<AiChatScreen> {
           TextField(
             controller: _sessionNameController,
             decoration: InputDecoration(
-              labelText: 'Session Name (Optional)',
-              hintText: 'Enter a name for this chat session',
+              hintText: 'Session Name (Optional)',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: LuluBrandColor.brandPrimary),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: LuluBrandColor.brandPrimary,
-                  width: 2,
-                ),
-              ),
-              prefixIcon: const Icon(
-                LineIcons.edit,
-                color: LuluBrandColor.brandPrimary,
-              ),
-              filled: true,
-              fillColor: Colors.white,
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 24.h),
           Text(
             'How should I help you today?',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          SizedBox(height: 20.h),
-          Wrap(
-            spacing: 8.w,
-            children: availableContexts.map((context) {
-              return ChoiceChip(
-                selectedColor: LuluBrandColor.brandPrimary,
-                backgroundColor: LuluBrandColor.brandGrey400,
-                label: Text(
-                  context['label'] as String,
-                  style: const TextStyle(color: LuluBrandColor.brandWhite),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
-                selected: selectedContext == context['contextKey'],
-                onSelected: (selected) {
-                  setState(() {
-                    selectedContext =
-                        selected ? context['contextKey'] as String : null;
-                  });
-                },
-              );
-            }).toList(),
           ),
-          SizedBox(height: 20.h),
-          LuluButton.primary(
-            onPressed: selectedContext != null ? _createNewSession : null,
-            label: 'Start Chat',
+          SizedBox(height: 24.h),
+          Column(
+            children: availableContexts
+                .map((context) => Padding(
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          selectedContext = context['contextKey'] as String;
+                        }),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          decoration: BoxDecoration(
+                            color: _getContextColor(context['label'] as String),
+                            borderRadius: BorderRadius.circular(24),
+                            border: selectedContext == context['contextKey']
+                                ? Border.all(
+                                    color: const Color(0xFF1B3B1B), width: 2)
+                                : null,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _getContextIcon(context['label'] as String),
+                              SizedBox(width: 8.w),
+                              Text(
+                                context['label'] as String,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ))
+                .toList(),
+          ),
+          SizedBox(height: 24.h),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: selectedContext != null ? _createNewSession : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1B3B1B),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Start Chat',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Color _getContextColor(String label) {
+    switch (label) {
+      case 'Fashion Advice':
+        return Colors.pink[100]!;
+      case 'Style Recommendations':
+        return Colors.purple[100]!;
+      case 'Wardrobe Management':
+        return Colors.blue[100]!;
+      case 'Outfit Planning':
+        return Colors.green[100]!;
+      default:
+        return Colors.grey[100]!;
+    }
+  }
+
+  Widget _getContextIcon(String label) {
+    switch (label) {
+      case 'Fashion Advice':
+        return const Icon(Icons.auto_awesome);
+      case 'Style Recommendations':
+        return const Icon(Icons.shopping_bag);
+      case 'Wardrobe Management':
+        return const Icon(Icons.shopping_bag);
+      case 'Outfit Planning':
+        return const Icon(Icons.auto_awesome);
+      default:
+        return const Icon(Icons.flash_on);
+    }
   }
 
   void _createNewSession() {
@@ -664,12 +727,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(22.5),
                       onTap: () {
+                        FocusScope.of(context).unfocus(); // Close keyboard
                         if (_messageController.text.trim().isNotEmpty) {
                           _sendMessage(session.sessionId);
                         }
                       },
                       child: const Icon(
-                        LineIcons.paperPlane,
+                        LineIcons.arrowRight,
                         color: Colors.white,
                         size: 20,
                       ),
