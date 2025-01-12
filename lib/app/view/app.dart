@@ -25,6 +25,8 @@ class App extends StatefulWidget {
 
   static final GlobalKey<NavigatorState> globalNavigatorKey =
       GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> notificationNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();

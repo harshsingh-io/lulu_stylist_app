@@ -95,11 +95,24 @@ class _WardrobeScreenState extends State<WardrobeScreen>
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: const Text(
+      automaticallyImplyLeading: false,
+      title: Text(
         'Wardrobe',
-        style: TextStyle(color: LuluBrandColor.brandWhite),
+        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            color: LuluBrandColor.brandWhite, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: LuluBrandColor.brandPrimary,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              LuluBrandColor.brandSecondary,
+              LuluBrandColor.expertDashBoardGreen,
+            ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+      ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(130),
         child: Column(
@@ -114,7 +127,16 @@ class _WardrobeScreenState extends State<WardrobeScreen>
 
   Widget _buildSearchBar() {
     return Container(
-      color: LuluBrandColor.brandPrimary,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            LuluBrandColor.brandSecondary,
+            LuluBrandColor.expertDashBoardGreen,
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
       padding: const EdgeInsets.all(16),
       child: TextField(
         style: const TextStyle(color: LuluBrandColor.brandWhite),
@@ -128,7 +150,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             color: LuluBrandColor.brandWhite,
           ),
           filled: true,
-          fillColor: LuluBrandColor.brandPrimary,
+          fillColor: Colors.transparent,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,

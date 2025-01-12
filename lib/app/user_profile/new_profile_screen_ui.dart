@@ -137,7 +137,16 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
         children: [
           // Header Section
           Container(
-            color: const Color(0xFF202D10),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  LuluBrandColor.brandSecondary,
+                  LuluBrandColor.expertDashBoardGreen,
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
             child: Column(
               children: [
                 // App Bar
@@ -153,11 +162,12 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
                     children: [
                       Text(
                         'Profile',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineLarge
+                            ?.copyWith(
+                                color: LuluBrandColor.brandWhite,
+                                fontWeight: FontWeight.bold),
                       ),
                       IconButton(
                         icon: Icon(
@@ -230,10 +240,10 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
               children: [
                 Text(
                   userData.userDetails?.name ?? 'No Name',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 4.h),
                 Row(
@@ -497,11 +507,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
         Row(
           children: [
             if (icon != null) ...[
-              Icon(
-                icon,
-                size: 16.sp,
-                color: Colors.grey,
-              ),
+              Icon(icon, size: 16.sp, color: Colors.grey),
               SizedBox(width: 8.w),
             ],
             Text(
@@ -509,22 +515,59 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: 12.h),
         Wrap(
           spacing: 8.w,
-          children: items
-              .map((item) => Chip(
-                    label: Text(item, style: TextStyle(fontSize: 12.sp)),
-                    backgroundColor: Colors.grey.shade200,
-                    labelPadding: EdgeInsets.symmetric(horizontal: 8.w),
-                  ))
-              .toList(),
+          runSpacing: 8.h,
+          children: items.map((item) => _buildCustomChip(item)).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildCustomChip(String label) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            LuluBrandColor.brandSecondary,
+            LuluBrandColor.expertDashBoardGreen,
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20.r),
+          onTap: () {}, // Add your tap handler here
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

@@ -61,9 +61,26 @@ class WardrobeItemDetailScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: LuluBrandColor.brandWhite,
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  LuluBrandColor.brandSecondary,
+                  LuluBrandColor.expertDashBoardGreen,
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+          ),
           title: Text(
             'Item Details',
-            style: TextStyle(color: LuluBrandColor.brandWhite),
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: LuluBrandColor.brandWhite, fontWeight: FontWeight.bold),
           ),
           backgroundColor: LuluBrandColor.brandPrimary,
           actions: [

@@ -19,7 +19,7 @@ class LuluTheme {
     cardTheme: LuluCardTheme.cardLightThemeData,
     scaffoldBackgroundColor: LuluBrandColor.brandWhite,
     bottomNavigationBarTheme: LuluBottomNavBarTheme.bottomNavigationLightTheme,
-    appBarTheme: LuluAppBarTheme.appBarLightThemeData,
+    // appBarTheme: LuluAppBarTheme.appBarLightThemeData,
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -35,6 +35,6 @@ class LuluTheme {
     cardTheme: LuluCardTheme.cardDarkThemeData,
     scaffoldBackgroundColor: LuluBrandColor.brandBlack,
     bottomNavigationBarTheme: LuluBottomNavBarTheme.bottomNavigationDarkTheme,
-    appBarTheme: LuluAppBarTheme.appBarDarkThemeData,
+    // appBarTheme: LuluAppBarTheme.appBarDarkThemeData,
   );
 }

@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:lulu_stylist_app/app/view/app.dart';
 import 'package:lulu_stylist_app/core/services/secure_storage_service.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
@@ -453,12 +454,14 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
 
   // Function to Pick Profile Image
   Future<void> _pickProfileImage() async {
-    final picker = ImagePicker();
     try {
-      final image = await picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      // Set a flag to prevent navigation
+      final currentContext = App.globalNavigatorKey.currentContext!;
+      if (!mounted) return;
+
+      // Your image selection code
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+
       if (image != null && mounted) {
         // Get the application documents directory
         final appDir = await getApplicationDocumentsDirectory();
@@ -472,14 +475,7 @@ class _UserUpdateFormState extends State<UserUpdateForm> {
         });
       }
     } catch (e) {
-      log.e('Error picking image: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to pick image. Please try again.'),
-          ),
-        );
-      }
+      print('Error selecting image: $e');
     }
   }
 
