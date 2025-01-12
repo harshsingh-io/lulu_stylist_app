@@ -69,14 +69,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // Check token validity when app comes to foreground
-      _authBloc.add(const AuthenticationEvent.checkExisting());
-    }
-  }
-
   void setLocale(Locale locale) {
     setState(() {
       _appLocale = locale;
