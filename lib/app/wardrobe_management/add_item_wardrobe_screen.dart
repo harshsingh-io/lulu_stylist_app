@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:lulu_stylist_app/app/view/app.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/category.dart';
 import 'package:lulu_stylist_app/logic/api/wardrobe/models/create_wardrobe_item_request.dart';
 import 'package:lulu_stylist_app/logic/bloc/wardrobe/bloc/wardrobe_bloc.dart';
@@ -27,6 +30,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   bool _isFavorite = false;
   bool _isLoading = false;
   late final WardrobeBloc _wardrobeBloc;
+  String? imagePath;
 
   @override
   void initState() {
@@ -46,6 +50,48 @@ class _AddItemScreenState extends State<AddItemScreen> {
     super.dispose();
   }
 
+  Future<void> selectImage() async {
+    try {
+      if (!mounted) return;
+
+      final picker = ImagePicker();
+      final image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 1200,
+        maxHeight: 1200,
+      );
+
+      if (image != null && mounted) {
+        final file = File(image.path);
+        final sizeInBytes = await file.length();
+        final sizeInMb = sizeInBytes / (1024 * 1024);
+
+        if (sizeInMb > 5) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Image size should be less than 5MB')),
+          );
+          return;
+        }
+
+        // Prevent unnecessary rebuilds
+        if (mounted) {
+          setState(() {
+            imagePath = image.path;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error selecting image: $e')),
+        );
+      }
+      print('Error selecting image: $e');
+    }
+  }
+
   void _addColor(String color) {
     if (!selectedColors.contains(color)) {
       setState(() {
@@ -62,6 +108,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   Future<void> _saveItem() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Add image validation
+    if (imagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an image')),
+      );
+      return;
+    }
+
     if (selectedColors.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select at least one color')),
@@ -170,6 +225,34 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           _buildFormSection(
                             title: 'Basic Information',
                             children: [
+                              Center(
+                                child: GestureDetector(
+                                  onTap: selectImage,
+                                  child: Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: imagePath != null
+                                          ? DecorationImage(
+                                              image:
+                                                  FileImage(File(imagePath!)),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                    ),
+                                    child: imagePath == null
+                                        ? const Icon(
+                                            Icons.add_a_photo,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
                               _buildTextField(
                                 controller: nameController,
                                 label: 'Name',
