@@ -1,13 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/update_profile_request_model.dart';
 import 'package:lulu_stylist_app/logic/api/users/models/user_model.dart';
 import 'package:lulu_stylist_app/logic/bloc/accounts/auth/authentication_bloc.dart';
 import 'package:lulu_stylist_app/logic/bloc/user/bloc/user_bloc.dart';
 import 'package:lulu_stylist_app/lulu_design_system/core/lulu_brand_color.dart';
-import 'package:lulu_stylist_app/routes/routes.dart';
+import 'package:lulu_stylist_app/services/here_api_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,6 +19,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  Future<void> _refreshUserData() async {
+    context.read<UserBloc>().add(const UserEvent.fetchUserData());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -25,72 +31,94 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UserBloc, UserState>(
-      listener: (context, state) {
-        state.maybeWhen(
-          failure: (message) {
-            if (message == 'Authentication token not found' ||
-                message == 'Session expired' ||
-                message == 'Invalid credentials') {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
-              if (message == 'Session expired') {
-                context.read<AuthenticationBloc>().add(
-                      const AuthenticationEvent.sessionExpired(),
-                    );
+    return RefreshIndicator(
+      onRefresh: _refreshUserData,
+      color: LuluBrandColor.brandPrimary,
+      child: BlocConsumer<UserBloc, UserState>(
+        listener: (context, state) {
+          state.maybeWhen(
+            failure: (message) {
+              if (message == 'Authentication token not found' ||
+                  message == 'Session expired' ||
+                  message == 'Invalid credentials') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message)),
+                );
+                if (message == 'Session expired') {
+                  context.read<AuthenticationBloc>().add(
+                        const AuthenticationEvent.sessionExpired(),
+                      );
+                }
+              } else {
+                // Show error message for other failures
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message)),
+                );
               }
-            }
-          },
-          orElse: () {},
-        );
-      },
-      builder: (context, state) {
-        return state.maybeWhen(
-          loading: () => const Center(
-            child: CircularProgressIndicator(
-              color: LuluBrandColor.brandPrimary,
+            },
+            profilePictureUploaded: (photoUrl) {
+              // Show success message
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Profile picture updated successfully'),
+                  backgroundColor: LuluBrandColor.brandPrimary,
+                ),
+              );
+              // Update profile picture in UI
+              setState(() {
+                context.read<UserBloc>().add(const UserEvent.fetchUserData());
+              });
+            },
+            orElse: () {},
+          );
+        },
+        builder: (context, state) {
+          return state.maybeWhen(
+            loading: () => const Center(
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
+              ),
             ),
-          ),
-          loaded: (userData) => _ProfilePageContent(userData: userData),
-          failure: (message) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 48.sp,
-                  color: LuluBrandColor.brandRed,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 18.sp),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: () => context
-                      .read<UserBloc>()
-                      .add(const UserEvent.fetchUserData()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: LuluBrandColor.brandPrimary,
+            loaded: (userData) => _ProfilePageContent(userData: userData),
+            failure: (message) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48.sp,
+                    color: LuluBrandColor.brandRed,
                   ),
-                  child: Text(
-                    'Retry',
-                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                  SizedBox(height: 16.h),
+                  Text(
+                    message,
+                    style: TextStyle(fontSize: 18.sp),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () => context
+                        .read<UserBloc>()
+                        .add(const UserEvent.fetchUserData()),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: LuluBrandColor.brandPrimary,
+                    ),
+                    child: Text(
+                      'Retry',
+                      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          orElse: () => const Center(
-            child: CircularProgressIndicator(
-              color: LuluBrandColor.brandPrimary,
+            orElse: () => const Center(
+              child: CircularProgressIndicator(
+                color: LuluBrandColor.brandPrimary,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
@@ -109,6 +137,8 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
   late TabController _tabController;
   bool notificationsEnabled = false;
   bool dataSharing = true;
+  String? profileImageUrl;
+  bool isLoadingImage = false;
 
   @override
   void initState() {
@@ -118,6 +148,17 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
       notificationsEnabled =
           widget.userData.userPreferences!.receiveNotifications;
       dataSharing = widget.userData.userPreferences!.allowDataSharing;
+    }
+    profileImageUrl = widget.userData.profileImageUrl;
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfilePageContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userData.profileImageUrl != widget.userData.profileImageUrl) {
+      setState(() {
+        profileImageUrl = widget.userData.profileImageUrl;
+      });
     }
   }
 
@@ -198,16 +239,23 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        CircleAvatar(
-                          radius: 40.r,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: userData.profileImageUrl != null
-                              ? NetworkImage(userData.profileImageUrl!)
-                              : null,
-                          child: userData.profileImageUrl == null
-                              ? Icon(Icons.person,
-                                  size: 40.sp, color: Colors.white)
-                              : null,
+                        GestureDetector(
+                          onTap: _showProfilePictureOptions,
+                          child: CircleAvatar(
+                            radius: 40.r,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: profileImageUrl != null
+                                ? NetworkImage(profileImageUrl!)
+                                : null,
+                            child: isLoadingImage
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : (profileImageUrl == null
+                                    ? Icon(Icons.person,
+                                        size: 40.sp, color: Colors.white)
+                                    : null),
+                          ),
                         ),
                         Positioned(
                           right: -4.w,
@@ -246,26 +294,31 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 4.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16.sp,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      userData.userDetails?.locationLat != null &&
-                              userData.userDetails?.locationLong != null
-                          ? '${userData.userDetails?.locationLat}, ${userData.userDetails?.locationLong}'
-                          : 'Location not set',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ],
+                FutureBuilder<String>(
+                  future: _getLocationName(
+                    userData.userDetails?.locationLat,
+                    userData.userDetails?.locationLong,
+                  ),
+                  builder: (context, snapshot) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16.sp,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          snapshot.data ?? 'Loading location...',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 SizedBox(height: 16.h),
                 TabBar(
@@ -297,6 +350,17 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
         ],
       ),
     );
+  }
+
+  Future<String> _getLocationName(String? lat, String? lng) async {
+    if (lat == null || lng == null) return 'Location not set';
+    try {
+      final double latitude = double.parse(lat);
+      final double longitude = double.parse(lng);
+      return await HereApiService.getLocationName(latitude, longitude);
+    } catch (e) {
+      return 'Invalid location';
+    }
   }
 
   Widget _buildDetailsTab() {
@@ -1146,6 +1210,263 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
               '• Size recommendations'),
         ),
       ],
+    );
+  }
+
+  void _showProfilePictureOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.visibility,
+                    color: LuluBrandColor.brandPrimary),
+                title: const Text('View Profile Picture'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showProfilePicture();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt,
+                    color: LuluBrandColor.brandPrimary),
+                title: const Text('Upload Profile Picture'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showImageSourceOptions();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showProfilePicture() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 300.w,
+                height: 300.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.r),
+                  image: widget.userData.profileImageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(widget.userData.profileImageUrl!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: widget.userData.profileImageUrl == null
+                    ? Icon(Icons.person, size: 150.sp, color: Colors.grey)
+                    : null,
+              ),
+              Positioned(
+                top: -10.h,
+                right: -10.w,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: LuluBrandColor.brandPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 24.sp,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showImageSourceOptions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera,
+                    color: LuluBrandColor.brandPrimary),
+                title: const Text('Take Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library,
+                    color: LuluBrandColor.brandPrimary),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        if (!mounted) return;
+        _showImagePreview(image, source);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    }
+  }
+
+  void _showImagePreview(XFile image, ImageSource source) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            width: double.maxFinite,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 300.w,
+                  height: 300.h,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(15.r)),
+                    image: DecorationImage(
+                      image: FileImage(File(image.path)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.r),
+                  child: Wrap(
+                    spacing: 8.w,
+                    alignment: WrapAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 85.w,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _pickImage(source);
+                          },
+                          icon: Icon(
+                            source == ImageSource.camera
+                                ? Icons.camera_alt
+                                : Icons.photo_library,
+                            color: LuluBrandColor.brandPrimary,
+                            size: 16.sp,
+                          ),
+                          label: Text(
+                            source == ImageSource.camera ? 'Retake' : 'Choose',
+                            style: TextStyle(
+                              color: LuluBrandColor.brandPrimary,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 85.w,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            context.read<UserBloc>().add(
+                                  UserEvent.uploadDisplayPicture(
+                                    displayPicture: File(image.path),
+                                  ),
+                                );
+                          },
+                          icon: Icon(
+                            Icons.check,
+                            color: LuluBrandColor.brandPrimary,
+                            size: 16.sp,
+                          ),
+                          label: Text(
+                            'Upload',
+                            style: TextStyle(
+                              color: LuluBrandColor.brandPrimary,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 85.w,
+                        child: TextButton.icon(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 16.sp,
+                          ),
+                          label: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

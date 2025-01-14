@@ -10,10 +10,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
 import 'package:lulu_stylist_app/app/app.dart';
 import 'package:lulu_stylist_app/bootstrap.dart';
-import 'package:lulu_stylist_app/firebase/firebase/stg/firebase_options.dart';
+import 'package:lulu_stylist_app/config/env.dart';
 import 'package:lulu_stylist_app/lulu_design_system/sa_bloc_observer.dart';
-import 'package:lulu_stylist_app/notification/notification_controller.dart';
 import 'package:lulu_stylist_app/utils/injection.dart';
+
 // import 'package:workmanager/workmanager.dart';
 
 // Toggle this to cause an async error to be thrown during initialization
@@ -33,7 +33,16 @@ String _installationId = 'Unknown';
 
 void main() {
   bootstrap(() async {
+    // Initialize Flutter bindings first
     WidgetsFlutterBinding.ensureInitialized();
+
+    try {
+      await EnvLoader.loadEnv();
+    } catch (e) {
+      debugPrint('Error loading .env file: $e');
+      rethrow;
+    }
+
     await HomeWidget.setAppGroupId('group.lulu_stylist_app');
     await Firebase.initializeApp();
     // Configure Crashlytics

@@ -211,6 +211,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         (photoUrl) {
           log.i('Profile picture uploaded successfully');
           add(const UserEvent.fetchUserData()); // Refresh user data
+          emit(UserState.profilePictureUploaded(photoUrl));
         },
       );
     } catch (e) {

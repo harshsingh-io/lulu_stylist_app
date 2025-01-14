@@ -113,3 +113,6 @@ app.*.map.json
 
 *.freezed.dart
 *.g.dart
+
+# Add this if not already present
+.env
