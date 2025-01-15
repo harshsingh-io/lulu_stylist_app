@@ -4,6 +4,10 @@
 
 Lulu, is an AI-driven personal styling assistant that provides outfit recommendations based on your wardrobe and personal style preferences. It includes features like AI chat for fashion advice, wardrobe management, and user profile customization for a highly personalized fashion experience.
 
+[Backend Of Lulu AI Fashion App](https://github.com/harshsingh-io/lulu_stylist_backend)
+
+[Docs](http://54.197.163.177:8000/docs)
+
 ---
 ## Demo
 
